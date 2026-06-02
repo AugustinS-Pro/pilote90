@@ -130,7 +130,7 @@ export default async function DashboardPage() {
                 />
               </div>
               <p className="text-xs text-slate-400 mt-1">
-                {caProgress}% de l'objectif
+                {caProgress}% de l&apos;objectif
               </p>
             </>
           )}
