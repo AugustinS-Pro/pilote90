@@ -20,13 +20,14 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email }
         })
 
+        console.log('USER FOUND:', user?.email, '| HAS PASSWORD:', !!user?.password)
         if (!user || !user.password) return null
 
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
         )
-        if (!isValid) return null
+        console.log('PASSWORD VALID:', isValid)
 
         return {
           id:    user.id,
