@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pilote90
 
-## Getting Started
+**Pilote90** est une application web de pilotage stratégique conçue pour les entrepreneurs indépendants et les dirigeants de petites structures. Elle centralise en un seul endroit tout ce qui permet de piloter une activité : vision, finances, clients, communication et plan d'action — organisé autour de cycles de 90 jours.
 
-First, run the development server:
+Développé en partenariat avec [Pilote et Vous], un cabinet de conseil en stratégie et organisation pour TPE et solopreneurs.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pourquoi Pilote90 ?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La plupart des entrepreneurs jonglent entre plusieurs outils déconnectés : tableurs Excel, applications de tâches, agendas, outils marketing... Cette fragmentation génère une charge mentale importante et nuit à la clarté décisionnelle.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Pilote90 répond à un besoin simple : **un seul outil, une vision claire, des actions alignées**.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Ce que permet l'application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+L'application s'articule autour de **5 axes interconnectés** :
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Vision CEO** — Définir sa mission, ses valeurs et ses priorités stratégiques pour le cycle en cours. Capturer ses idées sans se disperser.
 
-## Deploy on Vercel
+**Chiffres & Administratif** — Suivre ses revenus et charges, visualiser son résultat net en temps réel, ne plus rater aucune échéance administrative.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Offres & Clients** — Centraliser son catalogue de services, gérer ses fiches clients et suivre la satisfaction après chaque prestation.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Communication & Ventes** — Planifier son contenu éditorial, suivre ses prospects dans un pipeline visuel, mesurer l'impact de ses actions commerciales.
+
+**Pilotage 90 jours** — Structurer son activité par cycles de 12 semaines, avec un plan mensuel, un focus hebdomadaire et une revue stratégique régulière.
+
+L'innovation clé : **les axes sont interconnectés**. Modifier un objectif stratégique impacte automatiquement les actions suggérées au quotidien.
+
+---
+
+## Module Audit & Prévisionnel
+
+Pour les entrepreneurs accompagnés, un espace dédié permet de visualiser les indicateurs financiers clés, d'anticiper la trésorerie sur 6 mois avec 3 scénarios, et de générer des rapports PDF pour le comptable.
+
+---
+
+## Stack technique
+
+- **Framework** : Next.js 15 (App Router) + React 19
+- **Langage** : TypeScript
+- **Base de données** : PostgreSQL via Supabase
+- **ORM** : Prisma
+- **Authentification** : NextAuth.js (JWT)
+- **UI** : Tailwind CSS + Recharts
+- **Déploiement** : Vercel
+
+---
+
+## Licence
+
+Projet privé — tous droits réservés.
