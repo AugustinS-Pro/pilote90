@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(CLIENT)
+  createdAt DateTime @default(now())
+  client    Client?  @relation("ClientUser")
+  managed   Client[] @relation("AdminClients")
+}
+
+model Client {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  user         User          @relation("ClientUser", fields: [userId], references: [id])
+  adminId      String?
+  admin        User?         @relation("AdminClients", fields: [adminId], references: [id])
+  companyName  String
+  sector       String?
+  status       String?
+  cycles       Cycle[]
+  transactions Transaction[]
+}
+
+model Cycle {
+  id              String      @id @default(cuid())
+  clientId        String
+  client          Client      @relation(fields: [clientId], references: [id])
+  cycleNumber     Int
+  mainObjective   String
+  caTargetMonthly Float       @default(0)
+  startDate       DateTime
+  endDate         DateTime
+  status          CycleStatus @default(ACTIVE)
+  weeks           Week[]
+  objectives      Objective[]
+  createdAt       DateTime    @default(now())
+}
+
+model Week {
+  id         String    @id @default(cuid())
+  cycleId    String
+  cycle      Cycle     @relation(fields: [cycleId], references: [id])
+  weekNumber Int
+  startDate  DateTime?
+  focusTitle String?
+  actions    String[]
+  createdAt  DateTime  @default(now())
+}
+
+model Objective {
+  id          String          @id @default(cuid())
+  cycleId     String
+  cycle       Cycle           @relation(fields: [cycleId], references: [id])
+  title       String
+  description String?
+  progressPct Int             @default(0)
+  status      ObjectiveStatus @default(IN_PROGRESS)
+  createdAt   DateTime        @default(now())
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id])
+  type            TransactionType
+  amountHt        Float
+  transactionDate DateTime
+  label           String?
+  category        String?
+  recurrence      String?
+  createdAt       DateTime        @default(now())
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum CycleStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum TransactionType {
+  REVENUE
+  EXPENSE
+}
+
+enum ObjectiveStatus {
+  IN_PROGRESS
+  COMPLETED
+  LATE
+}
