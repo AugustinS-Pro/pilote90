@@ -20,9 +20,9 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-      <aside className="fixed top-0 left-0 bottom-0 w-16 hover:w-52
-                  bg-[#F0EDE5] flex flex-col items-start
-                  overflow-hidden transition-all duration-300 z-50 group">
+    <aside className="fixed top-0 left-0 bottom-0 w-16 hover:w-52
+                      bg-white flex flex-col items-start
+                      overflow-hidden transition-all duration-300 z-50 group">
 
       {/* Logo */}
       <div className="flex items-center gap-3 px-3.5 py-5 w-full">
