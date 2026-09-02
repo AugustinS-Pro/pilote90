@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.github
+tests
+deploy
+*.md
+.env*
+!.env.example
+Dockerfile
+.dockerignore
+vitest.config.mts

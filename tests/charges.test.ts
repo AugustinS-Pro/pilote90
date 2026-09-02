@@ -79,17 +79,33 @@ describe('chargesEstimees et revenuNet', () => {
 })
 
 describe('joursAvant', () => {
-  const reference = new Date('2026-09-15T08:00:00Z')
+  /**
+   * `joursAvant` raisonne en jours calendaires LOCAUX : c'est ce qu'attend
+   * l'utilisatrice quand elle lit « dans 3 jours ». Les dates de test sont
+   * donc construites en heure locale et non en UTC — une echeance a 23 h UTC
+   * tombe deja le lendemain a Paris, et le test deviendrait dependant du
+   * fuseau de la machine qui l'execute.
+   */
+  const local = (annee: number, mois: number, jour: number, heure = 0) =>
+    new Date(annee, mois - 1, jour, heure, 0, 0, 0)
+
+  const reference = local(2026, 9, 15, 8)
 
   it('compte les jours restants', () => {
-    expect(joursAvant(new Date('2026-09-25T20:00:00Z'), reference)).toBe(10)
+    expect(joursAvant(local(2026, 9, 25, 20), reference)).toBe(10)
   })
 
   it('renvoie zero le jour meme, quelle que soit l heure', () => {
-    expect(joursAvant(new Date('2026-09-15T23:00:00Z'), reference)).toBe(0)
+    expect(joursAvant(local(2026, 9, 15, 23), reference)).toBe(0)
+    expect(joursAvant(local(2026, 9, 15, 0), reference)).toBe(0)
   })
 
   it('renvoie un nombre negatif pour une echeance depassee', () => {
-    expect(joursAvant(new Date('2026-09-10T00:00:00Z'), reference)).toBe(-5)
+    expect(joursAvant(local(2026, 9, 10), reference)).toBe(-5)
+  })
+
+  it('reste juste au passage a l heure d hiver', () => {
+    // Dans la nuit du 25 octobre 2026, la journee locale dure 25 heures.
+    expect(joursAvant(local(2026, 10, 26), local(2026, 10, 24))).toBe(2)
   })
 })
