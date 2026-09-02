@@ -1,19 +1,180 @@
 @import "tailwindcss";
 
+/* ===========================================================================
+   Pilote90 — couche de design tokens
+   ---------------------------------------------------------------------------
+   Aucune couleur n'est ecrite en dur dans les composants : ils n'utilisent que
+   les jetons semantiques definis ici (surface, ink, accent, positive...).
+
+   Changer de theme revient a redefinir ces variables. Rien d'autre a toucher.
+   =========================================================================== */
+
 :root {
-  --background: #FAF9F6;
-  --foreground: #1a1a1a;
+  /* --- Surfaces --------------------------------------------------------- */
+  --p90-canvas:         #faf9f6;  /* fond general de l'application */
+  --p90-surface:        #ffffff;  /* cartes et panneaux */
+  --p90-surface-muted:  #f8fafc;  /* zones creuses, colonnes, survol */
+  --p90-inverse:        #0f172a;  /* bandeaux sombres, barre laterale */
+  --p90-inverse-soft:   #1e293b;
+
+  /* --- Bordures --------------------------------------------------------- */
+  --p90-border:         #e2e8f0;
+  --p90-border-faint:   #f1f5f9;
+  --p90-border-strong:  #cbd5e1;
+
+  /* --- Texte ------------------------------------------------------------ */
+  --p90-ink:            #0f172a;  /* titres */
+  --p90-ink-soft:       #1e293b;  /* corps de texte */
+  --p90-ink-muted:      #64748b;  /* libelles secondaires */
+  --p90-ink-faint:      #94a3b8;  /* mentions discretes */
+  --p90-ink-ghost:      #cbd5e1;  /* texte desactive, vides */
+  --p90-on-inverse:     #ffffff;
+  --p90-on-accent:      #ffffff;  /* texte pose sur un aplat de couleur */
+
+  /* --- Accent ----------------------------------------------------------- */
+  --p90-accent:         #6366f1;
+  --p90-accent-strong:  #4f46e5;  /* survol */
+  --p90-accent-soft:    #eef2ff;  /* fonds teintes */
+  --p90-accent-ink:     #4338ca;  /* texte sur fond teinte */
+  --p90-accent-alt:     #a855f7;  /* second point des degrades */
+
+  /* --- Couleurs porteuses de sens metier -------------------------------- */
+  --p90-positive:       #0d9488;  /* revenus, reussite */
+  --p90-positive-soft:  #f0fdfa;
+  --p90-positive-ink:   #0f766e;
+  --p90-negative:       #ef4444;  /* charges, alertes */
+  --p90-negative-soft:  #fef2f2;
+  --p90-negative-ink:   #b91c1c;
+  --p90-warning:        #f59e0b;  /* vigilance */
+  --p90-warning-soft:   #fffbeb;
+  --p90-warning-ink:    #b45309;
 }
 
+/* ---------------------------------------------------------------------------
+   Theme PILOTE90 — marine, or et sable.
+   Reprend la charte de la version Notion du produit. S'active en posant
+   data-theme="pilote90" sur <html>.
+   --------------------------------------------------------------------------- */
+[data-theme='pilote90'] {
+  --p90-canvas:         #f6f2ea;
+  --p90-surface:        #fffdf9;
+  --p90-surface-muted:  #f2ece0;
+  --p90-inverse:        #1b2a4a;
+  --p90-inverse-soft:   #26385f;
+
+  --p90-border:         #e3d9c6;
+  --p90-border-faint:   #efe8da;
+  --p90-border-strong:  #c8b99a;
+
+  --p90-ink:            #1b2a4a;
+  --p90-ink-soft:       #2c3d61;
+  --p90-ink-muted:      #6b7a94;
+  --p90-ink-faint:      #9aa5b8;
+  --p90-ink-ghost:      #c8cdd8;
+  --p90-on-inverse:     #f6f2ea;
+  /* L'or ne supporte pas le texte blanc : on pose du marine dessus. */
+  --p90-on-accent:      #1b2a4a;
+
+  --p90-accent:         #c9a84c;
+  --p90-accent-strong:  #ad8d36;
+  --p90-accent-soft:    #f7efdb;
+  --p90-accent-ink:     #8a6f24;
+  --p90-accent-alt:     #c8b99a;
+
+  --p90-positive:       #2f7d6b;
+  --p90-positive-soft:  #eef5f2;
+  --p90-positive-ink:   #245e51;
+  --p90-negative:       #a83f3f;
+  --p90-negative-soft:  #f9eeee;
+  --p90-negative-ink:   #8a3030;
+  --p90-warning:        #b8862b;
+  --p90-warning-soft:   #faf2e2;
+  --p90-warning-ink:    #8a6420;
+}
+
+/* ---------------------------------------------------------------------------
+   Exposition a Tailwind. `inline` conserve les var(), ce qui rend le
+   basculement de theme instantane, sans recompilation.
+   --------------------------------------------------------------------------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-canvas:        var(--p90-canvas);
+  --color-surface:       var(--p90-surface);
+  --color-surface-muted: var(--p90-surface-muted);
+  --color-inverse:       var(--p90-inverse);
+  --color-inverse-soft:  var(--p90-inverse-soft);
+
+  --color-subtle:        var(--p90-border);
+  --color-faint:         var(--p90-border-faint);
+  --color-firm:          var(--p90-border-strong);
+
+  --color-ink:           var(--p90-ink);
+  --color-ink-soft:      var(--p90-ink-soft);
+  --color-muted:         var(--p90-ink-muted);
+  --color-ghost:         var(--p90-ink-faint);
+  --color-disabled:      var(--p90-ink-ghost);
+  --color-on-inverse:    var(--p90-on-inverse);
+  --color-on-accent:     var(--p90-on-accent);
+
+  --color-accent:        var(--p90-accent);
+  --color-accent-strong: var(--p90-accent-strong);
+  --color-accent-soft:   var(--p90-accent-soft);
+  --color-accent-ink:    var(--p90-accent-ink);
+  --color-accent-alt:    var(--p90-accent-alt);
+
+  --color-positive:      var(--p90-positive);
+  --color-positive-soft: var(--p90-positive-soft);
+  --color-positive-ink:  var(--p90-positive-ink);
+  --color-negative:      var(--p90-negative);
+  --color-negative-soft: var(--p90-negative-soft);
+  --color-negative-ink:  var(--p90-negative-ink);
+  --color-warning:       var(--p90-warning);
+  --color-warning-soft:  var(--p90-warning-soft);
+  --color-warning-ink:   var(--p90-warning-ink);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--p90-canvas);
+  color: var(--p90-ink);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Le basculement de theme ne doit pas donner l'impression d'un rechargement. */
+body,
+body * {
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+/*
+  Barre de defilement discrete, pour les colonnes sombres de l'interface.
+  Elle ne se materialise qu'au survol : une barre laterale de navigation
+  n'a pas a exhiber son ascenseur en permanence.
+*/
+.barre-discrete {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.barre-discrete:hover {
+  scrollbar-color: var(--p90-ink-faint) transparent;
+}
+
+.barre-discrete::-webkit-scrollbar {
+  width: 6px;
+  height: 0;
+}
+
+.barre-discrete::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.barre-discrete::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+}
+
+.barre-discrete:hover::-webkit-scrollbar-thumb {
+  background-color: var(--p90-ink-faint);
 }

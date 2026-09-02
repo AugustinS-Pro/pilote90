@@ -12,7 +12,7 @@ function BoutonAjout() {
     <button
       type="submit"
       disabled={pending}
-      className="text-xs bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white
+      className="text-xs bg-accent hover:bg-accent-strong disabled:opacity-60 text-on-accent
                  font-semibold px-3 py-1.5 rounded-lg transition-colors"
     >
       {pending ? 'Ajout...' : 'Ajouter la priorite'}
@@ -33,13 +33,13 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
   }
 
   const champ =
-    'w-full px-3 py-2 rounded-lg border border-slate-200 bg-[#FAF9F6] text-sm ' +
-    'focus:outline-none focus:border-indigo-400 focus:bg-white'
+    'w-full px-3 py-2 rounded-lg border border-subtle bg-canvas text-sm ' +
+    'focus:outline-none focus:border-accent focus:bg-surface'
 
   if (!cycleActif) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 text-center">
-        <p className="text-sm text-slate-400">
+      <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5 text-center">
+        <p className="text-sm text-ghost">
           Aucun cycle actif. Creez un cycle de 90 jours pour definir vos priorites.
         </p>
       </div>
@@ -50,9 +50,9 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
     return (
       <button
         onClick={() => setOuvert(true)}
-        className="w-full bg-white rounded-2xl border border-dashed border-slate-300
-                   shadow-sm p-5 text-sm text-slate-500 hover:border-indigo-400
-                   hover:text-indigo-600 transition-colors"
+        className="w-full bg-surface rounded-2xl border border-dashed border-firm
+                   shadow-sm p-5 text-sm text-muted hover:border-accent
+                   hover:text-accent-ink transition-colors"
       >
         + Ajouter une priorite
       </button>
@@ -60,17 +60,17 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-indigo-200 shadow-sm p-5">
-      <h3 className="text-sm font-bold text-slate-700 mb-3">Nouvelle priorite du cycle</h3>
+    <div className="bg-surface rounded-2xl border border-accent shadow-sm p-5">
+      <h3 className="text-sm font-bold text-ink-soft mb-3">Nouvelle priorite du cycle</h3>
       <form action={action} className="space-y-3">
         <div>
           <input name="title" placeholder="Ce que je veux atteindre" required maxLength={120} className={champ} />
-          {etat.erreurs?.title && <p className="text-xs text-red-600 mt-1">{etat.erreurs.title}</p>}
+          {etat.erreurs?.title && <p className="text-xs text-negative-ink mt-1">{etat.erreurs.title}</p>}
         </div>
         <div>
           <input name="description" placeholder="Precision (facultatif)" maxLength={300} className={champ} />
           {etat.erreurs?.description && (
-            <p className="text-xs text-red-600 mt-1">{etat.erreurs.description}</p>
+            <p className="text-xs text-negative-ink mt-1">{etat.erreurs.description}</p>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -78,12 +78,12 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
           <button
             type="button"
             onClick={() => setOuvert(false)}
-            className="text-xs text-slate-500 hover:text-slate-700 px-3 py-1.5"
+            className="text-xs text-muted hover:text-ink-soft px-3 py-1.5"
           >
             Annuler
           </button>
         </div>
-        {etat.message && !etat.ok && <p className="text-xs text-red-700">{etat.message}</p>}
+        {etat.message && !etat.ok && <p className="text-xs text-negative-ink">{etat.message}</p>}
       </form>
     </div>
   )

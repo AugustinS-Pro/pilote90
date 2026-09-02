@@ -14,9 +14,9 @@ import { GrapheCaCharges, GraphePrevisionnel } from '../../audit/Graphes'
 import { estConfidentiel, masquer } from '@/lib/confidentialite'
 
 const STYLE = {
-  ALERTE: { fond: 'bg-red-50 border-red-200', texte: 'text-red-800', libelle: 'Alerte' },
-  ATTENTION: { fond: 'bg-amber-50 border-amber-200', texte: 'text-amber-800', libelle: 'Attention' },
-  ANALYSE: { fond: 'bg-indigo-50 border-indigo-200', texte: 'text-indigo-800', libelle: 'Analyse' },
+  ALERTE: { fond: 'bg-negative-soft border-negative', texte: 'text-negative-ink', libelle: 'Alerte' },
+  ATTENTION: { fond: 'bg-warning-soft border-warning', texte: 'text-warning-ink', libelle: 'Attention' },
+  ANALYSE: { fond: 'bg-accent-soft border-accent', texte: 'text-accent-ink', libelle: 'Analyse' },
 } as const
 
 export default async function FicheClientPage({ params }: { params: Promise<{ id: string }> }) {
@@ -48,18 +48,18 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
   const nom = masquer(client.companyName, confidentiel)
 
   const bandeau =
-    situation.ton === 'ALERTE' ? 'bg-red-50 border-red-200 text-red-800'
-    : situation.ton === 'ATTENTION' ? 'bg-amber-50 border-amber-200 text-amber-800'
-    : 'bg-teal-50 border-teal-200 text-teal-800'
+    situation.ton === 'ALERTE' ? 'bg-negative-soft border-negative text-negative-ink'
+    : situation.ton === 'ATTENTION' ? 'bg-warning-soft border-warning text-warning-ink'
+    : 'bg-positive-soft border-positive text-positive-ink'
 
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <Link href="/clients" className="text-xs text-slate-500 hover:text-slate-700">
+        <Link href="/clients" className="text-xs text-muted hover:text-ink-soft">
           ← Retour au portefeuille
         </Link>
-        <h1 className="text-2xl font-extrabold text-slate-900 mt-2">{nom}</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-extrabold text-ink mt-2">{nom}</h1>
+        <p className="text-muted text-sm mt-1">
           {[client.sector, client.status].filter(Boolean).join(' · ') || 'Fiche client'}
           {cycle && ` · Cycle ${cycle.cycleNumber}, ${cycle.mainObjective}`}
         </p>
@@ -71,13 +71,13 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-teal-600' : 'text-red-500' },
-          { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-teal-600' },
-          { t: 'Charges du mois', v: euros(indicateurs.chargesDuMois), c: 'text-red-500' },
-          { t: 'Resultat net', v: euros(indicateurs.resultatNet), c: indicateurs.resultatNet >= 0 ? 'text-indigo-600' : 'text-red-500' },
+          { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
+          { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-positive' },
+          { t: 'Charges du mois', v: euros(indicateurs.chargesDuMois), c: 'text-negative' },
+          { t: 'Resultat net', v: euros(indicateurs.resultatNet), c: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
         ].map((k) => (
-          <div key={k.t} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">{k.t}</p>
+          <div key={k.t} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.t}</p>
             <p className={`text-2xl font-extrabold ${k.c}`}>{k.v}</p>
           </div>
         ))}
@@ -95,7 +95,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
                   <div key={i} className={`rounded-xl border ${s.fond} px-4 py-3`}>
                     <p className={`text-[11px] font-bold uppercase tracking-wide ${s.texte}`}>{s.libelle}</p>
                     <p className={`text-sm font-semibold ${s.texte} mt-0.5`}>{c.titre} — {c.valeur}</p>
-                    <p className="text-[11px] text-slate-500 mt-1.5">{c.regle}</p>
+                    <p className="text-[11px] text-muted mt-1.5">{c.regle}</p>
                   </div>
                 )
               })}
@@ -111,11 +111,11 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
               {cycle.objectives.map((o) => (
                 <div key={o.id}>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-slate-700">{o.title}</span>
-                    <span className="text-slate-500 font-semibold">{o.progressPct} %</span>
+                    <span className="text-ink-soft">{o.title}</span>
+                    <span className="text-muted font-semibold">{o.progressPct} %</span>
                   </div>
-                  <div className="h-1.5 bg-slate-100 rounded-full">
-                    <div className="h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                  <div className="h-1.5 bg-surface-muted rounded-full">
+                    <div className="h-1.5 bg-gradient-to-r from-accent to-accent-alt rounded-full"
                          style={{ width: `${o.progressPct}%` }} />
                   </div>
                 </div>
@@ -138,12 +138,12 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
         {client.transactions.length > 0 ? (
           <div className="space-y-1.5">
             {client.transactions.slice(0, 10).map((t) => (
-              <div key={t.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-slate-50">
+              <div key={t.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-muted">
                 <div>
-                  <p className="text-sm text-slate-800">{t.label ?? (t.type === 'REVENUE' ? 'Revenu' : 'Charge')}</p>
-                  <p className="text-xs text-slate-400">{new Date(t.transactionDate).toLocaleDateString('fr-FR')}</p>
+                  <p className="text-sm text-ink-soft">{t.label ?? (t.type === 'REVENUE' ? 'Revenu' : 'Charge')}</p>
+                  <p className="text-xs text-ghost">{new Date(t.transactionDate).toLocaleDateString('fr-FR')}</p>
                 </div>
-                <span className={`text-sm font-bold ${t.type === 'REVENUE' ? 'text-teal-600' : 'text-red-500'}`}>
+                <span className={`text-sm font-bold ${t.type === 'REVENUE' ? 'text-positive' : 'text-negative'}`}>
                   {t.type === 'REVENUE' ? '+' : '-'}{euros(t.amountHt)}
                 </span>
               </div>
@@ -154,7 +154,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
         )}
       </Carte>
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-ghost">
         <Etiquette texte="Lecture seule" ton="neutre" /> Le consultant consulte, il ne saisit pas a la place du client.
       </p>
     </div>

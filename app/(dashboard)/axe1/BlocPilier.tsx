@@ -23,20 +23,20 @@ export function BlocPilier({
       sousTitre={pilier.sousTitre}
       action={
         <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-          rempli ? 'bg-teal-50 text-teal-700' : 'bg-slate-100 text-slate-500'
+          rempli ? 'bg-positive-soft text-positive-ink' : 'bg-surface-muted text-muted'
         }`}>
           {rempli ? 'Renseigne' : 'A remplir'}
         </span>
       }
     >
       {valeurs.synthesis && (
-        <blockquote className="rounded-xl bg-indigo-50/60 border-l-2 border-indigo-400 px-4 py-3 mb-4">
-          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{valeurs.synthesis}</p>
+        <blockquote className="rounded-xl bg-accent-soft border-l-2 border-accent px-4 py-3 mb-4">
+          <p className="text-sm text-ink-soft leading-relaxed whitespace-pre-line">{valeurs.synthesis}</p>
         </blockquote>
       )}
 
       <details className="group">
-        <summary className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-700">
+        <summary className="cursor-pointer text-xs font-semibold text-muted hover:text-ink-soft">
           {valeurs.synthesis ? 'Reprendre mes reponses' : 'Repondre aux questions'}
         </summary>
 

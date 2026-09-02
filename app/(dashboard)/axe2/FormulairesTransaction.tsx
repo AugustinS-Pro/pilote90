@@ -12,7 +12,7 @@ function BoutonEnvoi({ libelle, couleur }: { libelle: string; couleur: string })
     <button
       type="submit"
       disabled={pending}
-      className={`w-full ${couleur} disabled:opacity-60 text-white font-semibold
+      className={`w-full ${couleur} disabled:opacity-60 text-on-accent font-semibold
                   py-2.5 rounded-lg text-sm transition-colors`}
     >
       {pending ? 'Enregistrement...' : libelle}
@@ -44,12 +44,12 @@ function Formulaire({
   }, [etat])
 
   const champ =
-    'w-full px-3 py-2 rounded-lg border border-slate-200 bg-[#FAF9F6] text-sm ' +
-    'focus:outline-none focus:border-indigo-400 focus:bg-white'
+    'w-full px-3 py-2 rounded-lg border border-subtle bg-canvas text-sm ' +
+    'focus:outline-none focus:border-accent focus:bg-surface'
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-      <h2 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+    <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+      <h2 className="text-sm font-bold text-ink-soft mb-4 flex items-center gap-2">
         <span className={`w-2 h-2 ${pastille} rounded-full`} />
         {titre}
       </h2>
@@ -60,13 +60,13 @@ function Formulaire({
         <div>
           <input type="date" name="transactionDate" defaultValue={aujourdhui} required className={champ} />
           {etat.erreurs?.transactionDate && (
-            <p className="text-xs text-red-600 mt-1">{etat.erreurs.transactionDate}</p>
+            <p className="text-xs text-negative-ink mt-1">{etat.erreurs.transactionDate}</p>
           )}
         </div>
 
         <div>
           <input type="text" name="label" placeholder={placeholderTiers} required maxLength={120} className={champ} />
-          {etat.erreurs?.label && <p className="text-xs text-red-600 mt-1">{etat.erreurs.label}</p>}
+          {etat.erreurs?.label && <p className="text-xs text-negative-ink mt-1">{etat.erreurs.label}</p>}
         </div>
 
         <div>
@@ -78,7 +78,7 @@ function Formulaire({
             required
             className={champ}
           />
-          {etat.erreurs?.amount && <p className="text-xs text-red-600 mt-1">{etat.erreurs.amount}</p>}
+          {etat.erreurs?.amount && <p className="text-xs text-negative-ink mt-1">{etat.erreurs.amount}</p>}
         </div>
 
         <BoutonEnvoi libelle={libelleBouton} couleur={couleurBouton} />
@@ -88,8 +88,8 @@ function Formulaire({
             role="status"
             className={`text-xs rounded-lg px-3 py-2 ${
               etat.ok
-                ? 'text-teal-700 bg-teal-50 border border-teal-200'
-                : 'text-red-700 bg-red-50 border border-red-200'
+                ? 'text-positive-ink bg-positive-soft border border-positive'
+                : 'text-negative-ink bg-negative-soft border border-negative'
             }`}
           >
             {etat.message}
@@ -106,18 +106,18 @@ export function FormulairesTransaction() {
       <Formulaire
         type="REVENUE"
         titre="Enregistrer un revenu"
-        pastille="bg-teal-500"
+        pastille="bg-positive"
         placeholderTiers="Client"
         libelleBouton="Enregistrer le revenu"
-        couleurBouton="bg-teal-500 hover:bg-teal-600"
+        couleurBouton="bg-positive hover:bg-positive"
       />
       <Formulaire
         type="EXPENSE"
         titre="Enregistrer une charge"
-        pastille="bg-red-500"
+        pastille="bg-negative"
         placeholderTiers="Fournisseur"
         libelleBouton="Enregistrer la charge"
-        couleurBouton="bg-red-500 hover:bg-red-600"
+        couleurBouton="bg-negative hover:bg-negative"
       />
     </div>
   )

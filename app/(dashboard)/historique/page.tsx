@@ -40,8 +40,8 @@ export default async function HistoriquePage() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Historique des cycles</h1>
-        <p className="text-sm text-slate-500">Espace reserve aux entrepreneurs accompagnes.</p>
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Historique des cycles</h1>
+        <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
       </div>
     )
   }
@@ -52,8 +52,8 @@ export default async function HistoriquePage() {
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Historique des cycles</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-extrabold text-ink">Historique des cycles</h1>
+        <p className="text-muted text-sm mt-1">
           Ce que vous avez vise, ce que vous avez obtenu, et ce que vous en avez appris
         </p>
       </div>
@@ -72,14 +72,14 @@ export default async function HistoriquePage() {
             {[...enAttente, ...arbitrees].map((idee) => {
               const l = LIBELLE_ISSUE[idee.outcome] ?? LIBELLE_ISSUE.PARKED
               return (
-                <div key={idee.id} className="group flex items-start justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3">
+                <div key={idee.id} className="group flex items-start justify-between gap-3 rounded-xl border border-subtle px-4 py-3">
                   <div className="min-w-0">
-                    <p className={`text-sm ${idee.outcome === 'DROPPED' ? 'text-slate-400 line-through' : 'text-slate-800'}`}>
+                    <p className={`text-sm ${idee.outcome === 'DROPPED' ? 'text-ghost line-through' : 'text-ink-soft'}`}>
                       {idee.content}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <Etiquette texte={l.texte} ton={l.ton} />
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-ghost">
                         garee le {new Date(idee.createdAt).toLocaleDateString('fr-FR')}
                       </span>
                     </div>
@@ -119,36 +119,36 @@ export default async function HistoriquePage() {
               sousTitre={`Du ${debut.toLocaleDateString('fr-FR')} au ${fin.toLocaleDateString('fr-FR')}`}
               action={<Etiquette texte={`${atteinte} % de l'objectif`} ton={atteinte >= 80 ? 'succes' : atteinte >= 50 ? 'attente' : 'alerte'} />}
             >
-              <p className="text-sm font-semibold text-slate-800 mb-4">{cycle.mainObjective}</p>
+              <p className="text-sm font-semibold text-ink-soft mb-4">{cycle.mainObjective}</p>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
-                <div className="rounded-xl bg-slate-50 p-3.5">
-                  <p className="text-lg font-extrabold text-slate-700">{euros(objectif90)}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Objectif sur 90 jours</p>
+                <div className="rounded-xl bg-surface-muted p-3.5">
+                  <p className="text-lg font-extrabold text-ink-soft">{euros(objectif90)}</p>
+                  <p className="text-xs text-ghost mt-0.5">Objectif sur 90 jours</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3.5">
-                  <p className="text-lg font-extrabold text-teal-600">{euros(caRealise)}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Realise</p>
+                <div className="rounded-xl bg-surface-muted p-3.5">
+                  <p className="text-lg font-extrabold text-positive">{euros(caRealise)}</p>
+                  <p className="text-xs text-ghost mt-0.5">Realise</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3.5">
-                  <p className="text-lg font-extrabold text-indigo-600">{revues.length} / 12</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Revues hebdomadaires tenues</p>
+                <div className="rounded-xl bg-surface-muted p-3.5">
+                  <p className="text-lg font-extrabold text-accent-ink">{revues.length} / 12</p>
+                  <p className="text-xs text-ghost mt-0.5">Revues hebdomadaires tenues</p>
                 </div>
               </div>
 
               {cycle.objectives.length > 0 && (
                 <div className="mb-5">
-                  <p className="text-xs font-bold text-slate-500 mb-2">Les priorites, et ou elles se sont arretees</p>
+                  <p className="text-xs font-bold text-muted mb-2">Les priorites, et ou elles se sont arretees</p>
                   <div className="space-y-2">
                     {cycle.objectives.map((o) => (
                       <div key={o.id}>
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-700">{o.title}</span>
-                          <span className="text-slate-500 font-semibold">{o.progressPct} %</span>
+                          <span className="text-ink-soft">{o.title}</span>
+                          <span className="text-muted font-semibold">{o.progressPct} %</span>
                         </div>
-                        <div className="h-1.5 bg-slate-100 rounded-full">
+                        <div className="h-1.5 bg-surface-muted rounded-full">
                           <div
-                            className="h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                            className="h-1.5 bg-gradient-to-r from-accent to-accent-alt rounded-full"
                             style={{ width: `${o.progressPct}%` }}
                           />
                         </div>
@@ -159,33 +159,33 @@ export default async function HistoriquePage() {
               )}
 
               {cycle.closingNote && (
-                <div className="rounded-xl bg-indigo-50/60 border border-indigo-100 px-4 py-3 mb-5">
-                  <p className="text-xs font-bold text-indigo-700 mb-1">Ce que j&apos;en retiens</p>
-                  <p className="text-sm text-slate-700 leading-relaxed">{cycle.closingNote}</p>
+                <div className="rounded-xl bg-accent-soft border border-accent px-4 py-3 mb-5">
+                  <p className="text-xs font-bold text-accent-ink mb-1">Ce que j&apos;en retiens</p>
+                  <p className="text-sm text-ink-soft leading-relaxed">{cycle.closingNote}</p>
                 </div>
               )}
 
               {revues.length > 0 && (
                 <details className="group">
-                  <summary className="cursor-pointer text-xs font-bold text-slate-500 hover:text-slate-700">
+                  <summary className="cursor-pointer text-xs font-bold text-muted hover:text-ink-soft">
                     Voir les {revues.length} revue{revues.length > 1 ? 's' : ''} hebdomadaire{revues.length > 1 ? 's' : ''}
                   </summary>
                   <div className="mt-3 space-y-2">
                     {revues.map((w) => (
-                      <div key={w.id} className="rounded-xl border border-slate-200 px-4 py-3">
-                        <p className="text-xs font-bold text-slate-500 mb-2">Semaine {w.weekNumber}</p>
+                      <div key={w.id} className="rounded-xl border border-subtle px-4 py-3">
+                        <p className="text-xs font-bold text-muted mb-2">Semaine {w.weekNumber}</p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                           <div>
-                            <p className="text-[11px] font-semibold text-teal-600 mb-0.5">Ce qui marche</p>
-                            <p className="text-slate-600">{w.review?.whatWorks || '—'}</p>
+                            <p className="text-[11px] font-semibold text-positive mb-0.5">Ce qui marche</p>
+                            <p className="text-muted">{w.review?.whatWorks || '—'}</p>
                           </div>
                           <div>
-                            <p className="text-[11px] font-semibold text-red-500 mb-0.5">Ce qui bloque</p>
-                            <p className="text-slate-600">{w.review?.whatBlocks || '—'}</p>
+                            <p className="text-[11px] font-semibold text-negative mb-0.5">Ce qui bloque</p>
+                            <p className="text-muted">{w.review?.whatBlocks || '—'}</p>
                           </div>
                           <div>
-                            <p className="text-[11px] font-semibold text-indigo-600 mb-0.5">Mes ajustements</p>
-                            <p className="text-slate-600">{w.review?.adjustments || '—'}</p>
+                            <p className="text-[11px] font-semibold text-accent-ink mb-0.5">Mes ajustements</p>
+                            <p className="text-muted">{w.review?.adjustments || '—'}</p>
                           </div>
                         </div>
                       </div>

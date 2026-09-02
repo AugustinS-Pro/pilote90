@@ -123,62 +123,62 @@ export default async function Axe2Page() {
 
       {/* En-tête */}
       <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-slate-900">
+        <h1 className="text-2xl font-extrabold text-ink">
           Chiffres & Administratif
         </h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <p className="text-muted text-sm mt-1">
           Suivez vos revenus et charges en temps réel
         </p>
       </div>
 
       {/* 4 KPIs Bento */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">
             CA ce mois
           </p>
-          <p className="text-2xl font-extrabold text-teal-600">
+          <p className="text-2xl font-extrabold text-positive">
             {(revenue / 100).toLocaleString('fr-FR')}€
           </p>
           {caTarget > 0 && (
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-ghost mt-1">
               {caProgress}% de l&apos;objectif
             </p>
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">
             Charges ce mois
           </p>
-          <p className="text-2xl font-extrabold text-red-500">
+          <p className="text-2xl font-extrabold text-negative">
             {(expenses / 100).toLocaleString('fr-FR')}€
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-ghost mt-1">
             Ratio {chargeRatio}%
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">
             Résultat net
           </p>
-          <p className={`text-2xl font-extrabold ${netResult >= 0 ? 'text-indigo-600' : 'text-red-500'}`}>
+          <p className={`text-2xl font-extrabold ${netResult >= 0 ? 'text-accent-ink' : 'text-negative'}`}>
             {(netResult / 100).toLocaleString('fr-FR')}€
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-ghost mt-1">
             CA moins charges
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">
             Objectif 90j
           </p>
-          <p className="text-2xl font-extrabold text-purple-600">
+          <p className="text-2xl font-extrabold text-accent-ink">
             {((caTarget * 3) / 100).toLocaleString('fr-FR')}€
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-ghost mt-1">
             Cycle {cycle?.cycleNumber ?? '—'}
           </p>
         </div>
@@ -186,9 +186,9 @@ export default async function Axe2Page() {
 
       {/* Alerte ratio charges si nécessaire */}
       {chargeRatio > 40 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex items-center gap-3">
+        <div className="bg-warning-soft border border-warning rounded-2xl p-4 mb-6 flex items-center gap-3">
           <span className="text-xl">⚠️</span>
-          <p className="text-sm text-amber-800">
+          <p className="text-sm text-warning-ink">
             Le ratio charges/CA dépasse 40% ce mois-ci. Pensez à revoir vos postes de dépense.
           </p>
         </div>
@@ -201,8 +201,8 @@ export default async function Axe2Page() {
         <FormulairesTransaction />
 
         {/* Liste des transactions récentes */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <h2 className="text-sm font-bold text-slate-700 mb-4">
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <h2 className="text-sm font-bold text-ink-soft mb-4">
             Transactions récentes
           </h2>
           {recentTransactions.length > 0 ? (
@@ -210,19 +210,19 @@ export default async function Axe2Page() {
               {recentTransactions.map(t => (
                 <div
                   key={t.id}
-                  className="group flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-slate-50"
+                  className="group flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-surface-muted"
                 >
                   <div>
-                    <p className="text-sm font-medium text-slate-800">
+                    <p className="text-sm font-medium text-ink-soft">
                       {t.label ?? (t.type === 'REVENUE' ? 'Revenu' : 'Charge')}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-ghost">
                       {new Date(t.transactionDate).toLocaleDateString('fr-FR')}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`text-sm font-bold ${
-                      t.type === 'REVENUE' ? 'text-teal-600' : 'text-red-500'
+                      t.type === 'REVENUE' ? 'text-positive' : 'text-negative'
                     }`}>
                       {t.type === 'REVENUE' ? '+' : '-'}{(t.amountHt / 100).toLocaleString('fr-FR')}€
                     </span>
@@ -233,7 +233,7 @@ export default async function Axe2Page() {
                         aria-label={`Supprimer la transaction ${t.label ?? ''}`}
                         title="Supprimer"
                         className="opacity-0 group-hover:opacity-100 transition-opacity
-                                   text-slate-300 hover:text-red-500 text-sm px-1"
+                                   text-disabled hover:text-negative text-sm px-1"
                       >
                         ✕
                       </button>
@@ -243,7 +243,7 @@ export default async function Axe2Page() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate-400 text-center py-8">
+            <p className="text-sm text-ghost text-center py-8">
               Aucune transaction enregistrée pour l&apos;instant.
             </p>
           )}

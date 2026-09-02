@@ -36,8 +36,8 @@ export default async function Axe5Page() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Pilotage 90 jours</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Pilotage 90 jours</h1>
+        <p className="text-sm text-muted">
           Cet axe appartient a l&apos;espace des entrepreneurs accompagnes.
         </p>
       </div>
@@ -120,8 +120,8 @@ export default async function Axe5Page() {
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Pilotage 90 jours</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-extrabold text-ink">Pilotage 90 jours</h1>
+        <p className="text-muted text-sm mt-1">
           Le cockpit : du cap trimestriel jusqu&apos;a la tache du jour
         </p>
       </div>

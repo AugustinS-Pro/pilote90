@@ -6,25 +6,25 @@ export const metadata = {
 
 function Section({ titre, children }: { titre: string; children: React.ReactNode }) {
   return (
-    <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-      <h2 className="text-sm font-bold text-slate-800 mb-3">{titre}</h2>
-      <div className="text-sm text-slate-600 leading-relaxed space-y-2">{children}</div>
+    <section className="bg-surface rounded-2xl border border-subtle shadow-sm p-6">
+      <h2 className="text-sm font-bold text-ink-soft mb-3">{titre}</h2>
+      <div className="text-sm text-muted leading-relaxed space-y-2">{children}</div>
     </section>
   )
 }
 
 export default function MentionsLegalesPage() {
   return (
-    <main className="min-h-screen bg-[#FAF9F6] py-12 px-6">
+    <main className="min-h-screen bg-canvas py-12 px-6">
       <div className="max-w-2xl mx-auto space-y-5">
         <div>
-          <Link href="/dashboard" className="text-xs text-slate-500 hover:text-slate-700">
+          <Link href="/dashboard" className="text-xs text-muted hover:text-ink-soft">
             ← Retour à l&apos;application
           </Link>
-          <h1 className="text-2xl font-extrabold text-slate-900 mt-2">
+          <h1 className="text-2xl font-extrabold text-ink mt-2">
             Mentions légales et protection des données
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted mt-1">
             Pilote90 traite des données financières. Voici lesquelles, pourquoi, et ce que vous
             pouvez exiger à leur sujet.
           </p>
@@ -102,7 +102,7 @@ export default function MentionsLegalesPage() {
           </p>
         </Section>
 
-        <p className="text-xs text-slate-400 text-center pt-2">
+        <p className="text-xs text-ghost text-center pt-2">
           Document rédigé dans le cadre du développement de Pilote90. Il devra être revu avec un
           conseil juridique avant la mise en service auprès de clients réels.
         </p>

@@ -45,7 +45,14 @@ export function revenuNet(ca: number, total: number): number {
   return ca - chargesEstimees(ca, total)
 }
 
-/** Nombre de jours avant une echeance. Negatif si elle est depassee. */
+/**
+ * Nombre de jours avant une echeance, negatif si elle est depassee.
+ *
+ * Le calcul se fait en jours calendaires LOCAUX : les deux dates sont ramenees
+ * a midi avant comparaison. C'est ce qui donne « aujourd'hui » pour une
+ * echeance a 23 h, et ce qui rend le resultat juste au passage a l'heure
+ * d'hiver, ou la journee locale dure vingt-cinq heures.
+ */
 export function joursAvant(echeance: Date, reference: Date = new Date()): number {
   const a = new Date(echeance); a.setHours(12, 0, 0, 0)
   const b = new Date(reference); b.setHours(12, 0, 0, 0)

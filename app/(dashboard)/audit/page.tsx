@@ -12,9 +12,9 @@ const euros = (centimes: number) =>
   `${(centimes / 100).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €`
 
 const STYLE_NIVEAU = {
-  ALERTE: { pastille: 'bg-red-500', fond: 'bg-red-50 border-red-200', texte: 'text-red-800', libelle: 'Alerte' },
-  ATTENTION: { pastille: 'bg-amber-500', fond: 'bg-amber-50 border-amber-200', texte: 'text-amber-800', libelle: 'Attention' },
-  ANALYSE: { pastille: 'bg-indigo-500', fond: 'bg-indigo-50 border-indigo-200', texte: 'text-indigo-800', libelle: 'Analyse' },
+  ALERTE: { pastille: 'bg-negative', fond: 'bg-negative-soft border-negative', texte: 'text-negative-ink', libelle: 'Alerte' },
+  ATTENTION: { pastille: 'bg-warning', fond: 'bg-warning-soft border-warning', texte: 'text-warning-ink', libelle: 'Attention' },
+  ANALYSE: { pastille: 'bg-accent', fond: 'bg-accent-soft border-accent', texte: 'text-accent-ink', libelle: 'Analyse' },
 } as const
 
 export default async function AuditPage() {
@@ -35,8 +35,8 @@ export default async function AuditPage() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Audit &amp; Previsionnel</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Audit &amp; Previsionnel</h1>
+        <p className="text-sm text-muted">
           Cet espace est celui des entrepreneurs accompagnes. Depuis un compte administrateur,
           ouvrez l&apos;audit d&apos;un client depuis votre portefeuille.
         </p>
@@ -55,16 +55,16 @@ export default async function AuditPage() {
 
   const bandeau =
     situation.ton === 'ALERTE'
-      ? 'bg-red-50 border-red-200 text-red-800'
+      ? 'bg-negative-soft border-negative text-negative-ink'
       : situation.ton === 'ATTENTION'
-      ? 'bg-amber-50 border-amber-200 text-amber-800'
-      : 'bg-teal-50 border-teal-200 text-teal-800'
+      ? 'bg-warning-soft border-warning text-warning-ink'
+      : 'bg-positive-soft border-positive text-positive-ink'
 
   const kpis = [
-    { titre: 'Tresorerie', valeur: euros(indicateurs.tresorerie), formule: 'Encaissements moins decaissements depuis le debut', couleur: indicateurs.tresorerie >= 0 ? 'text-teal-600' : 'text-red-500' },
-    { titre: 'CA du mois', valeur: euros(indicateurs.caDuMois), formule: 'Somme des revenus rattaches au mois en cours', couleur: 'text-teal-600' },
-    { titre: 'Charges du mois', valeur: euros(indicateurs.chargesDuMois), formule: `Somme des charges du mois — ratio ${indicateurs.ratioCharges} % du CA`, couleur: 'text-red-500' },
-    { titre: 'Resultat net', valeur: euros(indicateurs.resultatNet), formule: 'CA du mois moins charges du mois', couleur: indicateurs.resultatNet >= 0 ? 'text-indigo-600' : 'text-red-500' },
+    { titre: 'Tresorerie', valeur: euros(indicateurs.tresorerie), formule: 'Encaissements moins decaissements depuis le debut', couleur: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
+    { titre: 'CA du mois', valeur: euros(indicateurs.caDuMois), formule: 'Somme des revenus rattaches au mois en cours', couleur: 'text-positive' },
+    { titre: 'Charges du mois', valeur: euros(indicateurs.chargesDuMois), formule: `Somme des charges du mois — ratio ${indicateurs.ratioCharges} % du CA`, couleur: 'text-negative' },
+    { titre: 'Resultat net', valeur: euros(indicateurs.resultatNet), formule: 'CA du mois moins charges du mois', couleur: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
   ]
 
   return (
@@ -72,18 +72,27 @@ export default async function AuditPage() {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Audit &amp; Previsionnel</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-extrabold text-ink">Audit &amp; Previsionnel</h1>
+          <p className="text-muted text-sm mt-1">
             {client.companyName} — support de travail des seances d&apos;accompagnement
           </p>
         </div>
-        <a
-          href="/audit/export"
-          className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-200
-                     bg-white text-slate-700 hover:bg-slate-50 transition-colors whitespace-nowrap"
-        >
-          Exporter pour le comptable (CSV)
-        </a>
+        <div className="flex items-center gap-2 shrink-0">
+          <a
+            href="/audit/rapport"
+            className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-transparent
+                       bg-inverse text-on-inverse hover:opacity-90 transition-opacity whitespace-nowrap"
+          >
+            Rapport comptable (PDF)
+          </a>
+          <a
+            href="/audit/export"
+            className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-subtle
+                       bg-surface text-ink-soft hover:bg-surface-muted transition-colors whitespace-nowrap"
+          >
+            Donnees brutes (CSV)
+          </a>
+        </div>
       </div>
 
       <div className={`rounded-2xl border px-5 py-4 ${bandeau}`}>
@@ -96,10 +105,10 @@ export default async function AuditPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
-          <div key={k.titre} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">{k.titre}</p>
+          <div key={k.titre} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.titre}</p>
             <p className={`text-2xl font-extrabold ${k.couleur}`}>{k.valeur}</p>
-            <p className="text-[11px] text-slate-400 mt-2 leading-snug">{k.formule}</p>
+            <p className="text-[11px] text-ghost mt-2 leading-snug">{k.formule}</p>
           </div>
         ))}
       </div>
@@ -109,9 +118,9 @@ export default async function AuditPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FormulairesTransaction />
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <h2 className="text-sm font-bold text-slate-700 mb-1">Audit financier automatique</h2>
-          <p className="text-xs text-slate-400 mb-4">
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <h2 className="text-sm font-bold text-ink-soft mb-1">Audit financier automatique</h2>
+          <p className="text-xs text-ghost mb-4">
             Chaque constat indique la regle qui l&apos;a declenche.
           </p>
 
@@ -129,13 +138,13 @@ export default async function AuditPage() {
                     </div>
                     <p className={`text-sm font-semibold ${s.texte}`}>{c.titre}</p>
                     <p className={`text-sm ${s.texte} opacity-90`}>{c.valeur}</p>
-                    <p className="text-[11px] text-slate-500 mt-1.5 leading-snug">{c.regle}</p>
+                    <p className="text-[11px] text-muted mt-1.5 leading-snug">{c.regle}</p>
                   </div>
                 )
               })}
             </div>
           ) : (
-            <p className="text-sm text-slate-400 text-center py-8">
+            <p className="text-sm text-ghost text-center py-8">
               Aucun signal a signaler sur la periode.
             </p>
           )}

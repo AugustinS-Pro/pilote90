@@ -32,8 +32,8 @@ export default async function DashboardPage() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Tableau de bord</h1>
-        <p className="text-sm text-slate-500">Aucun dossier client rattache a ce compte.</p>
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Tableau de bord</h1>
+        <p className="text-sm text-muted">Aucun dossier client rattache a ce compte.</p>
       </div>
     )
   }
@@ -60,43 +60,43 @@ export default async function DashboardPage() {
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">
+        <h1 className="text-2xl font-extrabold text-ink">
           Bonjour {utilisateur.name?.split(' ')[0] ?? ''}
         </h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <p className="text-muted text-sm mt-1">
           {aujourdhui.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
       </div>
 
       {cycle ? (
-        <div className="bg-slate-900 rounded-2xl p-5 text-white">
+        <div className="bg-inverse rounded-2xl p-5 text-on-inverse">
           <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">
+              <p className="text-xs text-ghost uppercase tracking-wider mb-1">
                 Cycle {cycle.cycleNumber} — semaine {semaine} sur 12
               </p>
               <p className="font-bold text-lg">{cycle.mainObjective}</p>
-              {vision && <p className="text-xs text-slate-400 mt-1.5 max-w-2xl">{vision}</p>}
+              {vision && <p className="text-xs text-ghost mt-1.5 max-w-2xl">{vision}</p>}
             </div>
-            <span className="flex items-center gap-1.5 bg-teal-500/20 text-teal-300 text-xs font-semibold px-3 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse" />
+            <span className="flex items-center gap-1.5 bg-positive/20 text-positive text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span className="w-1.5 h-1.5 bg-positive rounded-full animate-pulse" />
               Actif
             </span>
           </div>
           <div className="flex gap-1">
             {Array.from({ length: 12 }, (_, i) => (
               <div key={i} className={`h-1.5 flex-1 rounded-full ${
-                i + 1 < semaine ? 'bg-indigo-500' : i + 1 === semaine ? 'bg-teal-400' : 'bg-slate-700'
+                i + 1 < semaine ? 'bg-accent' : i + 1 === semaine ? 'bg-positive' : 'bg-inverse-soft'
               }`} />
             ))}
           </div>
         </div>
       ) : (
         <Carte titre="Aucun cycle en cours">
-          <p className="text-sm text-slate-500 mb-3">
+          <p className="text-sm text-muted mb-3">
             Tout part d&apos;un cycle de 90 jours : l&apos;objectif, les priorites, les semaines.
           </p>
-          <Link href="/axe5" className="text-sm font-semibold text-indigo-600 hover:underline">
+          <Link href="/axe5" className="text-sm font-semibold text-accent-ink hover:underline">
             Ouvrir un cycle →
           </Link>
         </Carte>
@@ -106,15 +106,15 @@ export default async function DashboardPage() {
         {axes.map((a) => (
           <Link
             key={a.href} href={a.href}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5
-                       hover:border-indigo-300 hover:shadow-md transition-all"
+            className="bg-surface rounded-2xl border border-subtle shadow-sm p-5
+                       hover:border-accent hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg">{a.icone}</span>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide">{a.titre}</p>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wide">{a.titre}</p>
             </div>
-            <p className="text-2xl font-extrabold text-slate-800">{a.valeur}</p>
-            <p className="text-[11px] text-slate-400 mt-1">{a.detail}</p>
+            <p className="text-2xl font-extrabold text-ink-soft">{a.valeur}</p>
+            <p className="text-[11px] text-ghost mt-1">{a.detail}</p>
           </Link>
         ))}
       </div>
@@ -123,19 +123,19 @@ export default async function DashboardPage() {
         <Carte
           titre="Mon top du jour"
           sousTitre="Les trois prochaines actions, et la priorite qu'elles font avancer"
-          action={<Link href="/axe5" className="text-xs font-semibold text-indigo-600 hover:underline">Le cockpit</Link>}
+          action={<Link href="/axe5" className="text-xs font-semibold text-accent-ink hover:underline">Le cockpit</Link>}
         >
           {client.tasks.length > 0 ? (
             <div className="space-y-2">
               {client.tasks.map((t, i) => (
-                <div key={t.id} className="flex items-start gap-3 rounded-xl border border-slate-200 px-4 py-3">
-                  <span className="w-5 h-5 rounded-md bg-slate-100 text-indigo-600 text-xs font-bold
+                <div key={t.id} className="flex items-start gap-3 rounded-xl border border-subtle px-4 py-3">
+                  <span className="w-5 h-5 rounded-md bg-surface-muted text-accent-ink text-xs font-bold
                                    flex items-center justify-center shrink-0">
                     {i + 1}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-slate-800">{t.label}</p>
-                    {t.objective && <p className="text-xs text-indigo-500 mt-0.5">↳ {t.objective.title}</p>}
+                    <p className="text-sm font-medium text-ink-soft">{t.label}</p>
+                    {t.objective && <p className="text-xs text-accent mt-0.5">↳ {t.objective.title}</p>}
                   </div>
                 </div>
               ))}
@@ -147,18 +147,18 @@ export default async function DashboardPage() {
 
         <Carte
           titre="Les priorites du cycle"
-          action={<Link href="/axe1" className="text-xs font-semibold text-indigo-600 hover:underline">Vision CEO</Link>}
+          action={<Link href="/axe1" className="text-xs font-semibold text-accent-ink hover:underline">Vision CEO</Link>}
         >
           {cycle && cycle.objectives.length > 0 ? (
             <div className="space-y-4">
               {cycle.objectives.map((o) => (
                 <div key={o.id}>
                   <div className="flex justify-between text-sm mb-1.5">
-                    <span className="font-medium text-slate-800">{o.title}</span>
-                    <span className="text-slate-500 font-semibold">{o.progressPct} %</span>
+                    <span className="font-medium text-ink-soft">{o.title}</span>
+                    <span className="text-muted font-semibold">{o.progressPct} %</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full">
-                    <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all"
+                  <div className="h-2 bg-surface-muted rounded-full">
+                    <div className="h-2 bg-gradient-to-r from-accent to-accent-alt rounded-full transition-all"
                          style={{ width: `${o.progressPct}%` }} />
                   </div>
                 </div>
@@ -172,13 +172,13 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-teal-600' : 'text-red-500' },
-          { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-teal-600' },
-          { t: 'Charges du mois', v: euros(indicateurs.chargesDuMois), c: 'text-red-500' },
-          { t: 'Objectif mensuel', v: `${indicateurs.progressionObjectif} %`, c: 'text-indigo-600' },
+          { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
+          { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-positive' },
+          { t: 'Charges du mois', v: euros(indicateurs.chargesDuMois), c: 'text-negative' },
+          { t: 'Objectif mensuel', v: `${indicateurs.progressionObjectif} %`, c: 'text-accent-ink' },
         ].map((k) => (
-          <div key={k.t} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">{k.t}</p>
+          <div key={k.t} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.t}</p>
             <p className={`text-2xl font-extrabold ${k.c}`}>{k.v}</p>
           </div>
         ))}
@@ -186,7 +186,7 @@ export default async function DashboardPage() {
 
       <div className="flex items-center gap-2">
         <Etiquette texte="Audit & Previsionnel" ton="info" />
-        <Link href="/audit" className="text-sm text-slate-500 hover:text-slate-700">
+        <Link href="/audit" className="text-sm text-muted hover:text-ink-soft">
           Voir le detail financier, le previsionnel et l&apos;audit automatique →
         </Link>
       </div>

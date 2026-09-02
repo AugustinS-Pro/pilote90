@@ -37,8 +37,8 @@ export default async function Axe3Page() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Offres &amp; Clients</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Offres &amp; Clients</h1>
+        <p className="text-sm text-muted">
           Cet axe appartient a l&apos;espace des entrepreneurs accompagnes.
         </p>
       </div>
@@ -109,27 +109,27 @@ export default async function Axe3Page() {
   const clientsActifs = client.crmClients.filter((f) => f.status === 'ACTIF').length
 
   const kpis = [
-    { titre: 'Offres actives', valeur: String(offresActives), detail: `sur ${client.offers.length} au catalogue`, couleur: 'text-indigo-600' },
-    { titre: 'Clients actifs', valeur: String(clientsActifs), detail: `sur ${client.crmClients.length} fiches`, couleur: 'text-teal-600' },
-    { titre: 'CA du catalogue', valeur: euros(caCatalogue), detail: `${client.purchases.length} achat${client.purchases.length > 1 ? 's' : ''} enregistre${client.purchases.length > 1 ? 's' : ''}`, couleur: 'text-purple-600' },
-    { titre: 'Satisfaction', valeur: moyenne !== null ? `${moyenne.toFixed(1)} / 5` : '—', detail: `${client.feedbacks.length} retour${client.feedbacks.length > 1 ? 's' : ''}`, couleur: 'text-amber-500' },
+    { titre: 'Offres actives', valeur: String(offresActives), detail: `sur ${client.offers.length} au catalogue`, couleur: 'text-accent-ink' },
+    { titre: 'Clients actifs', valeur: String(clientsActifs), detail: `sur ${client.crmClients.length} fiches`, couleur: 'text-positive' },
+    { titre: 'CA du catalogue', valeur: euros(caCatalogue), detail: `${client.purchases.length} achat${client.purchases.length > 1 ? 's' : ''} enregistre${client.purchases.length > 1 ? 's' : ''}`, couleur: 'text-accent-ink' },
+    { titre: 'Satisfaction', valeur: moyenne !== null ? `${moyenne.toFixed(1)} / 5` : '—', detail: `${client.feedbacks.length} retour${client.feedbacks.length > 1 ? 's' : ''}`, couleur: 'text-warning' },
   ]
 
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Offres &amp; Clients</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-extrabold text-ink">Offres &amp; Clients</h1>
+        <p className="text-muted text-sm mt-1">
           Votre catalogue, vos clients et ce que chaque offre rapporte reellement
         </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
-          <div key={k.titre} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">{k.titre}</p>
+          <div key={k.titre} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.titre}</p>
             <p className={`text-2xl font-extrabold ${k.couleur}`}>{k.valeur}</p>
-            <p className="text-[11px] text-slate-400 mt-1.5">{k.detail}</p>
+            <p className="text-[11px] text-ghost mt-1.5">{k.detail}</p>
           </div>
         ))}
       </div>

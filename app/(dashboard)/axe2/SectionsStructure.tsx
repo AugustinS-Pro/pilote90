@@ -69,11 +69,11 @@ export function SectionStructure({ structure }: { structure: StructureVue | null
 
   return (
     <Carte titre="Ma structure administrative" sousTitre="Se renseigne une fois, se relit chaque annee">
-      <div className="divide-y divide-slate-100 mb-4">
+      <div className="divide-y divide-faint mb-4">
         {lignes.map((l) => (
           <div key={l.libelle} className="flex justify-between items-center py-2 text-sm">
-            <span className="text-slate-500">{l.libelle}</span>
-            <span className={l.valeur ? 'text-slate-800 font-medium' : 'text-slate-300'}>
+            <span className="text-muted">{l.libelle}</span>
+            <span className={l.valeur ? 'text-ink-soft font-medium' : 'text-disabled'}>
               {l.valeur || 'Non renseigne'}
             </span>
           </div>
@@ -81,7 +81,7 @@ export function SectionStructure({ structure }: { structure: StructureVue | null
       </div>
 
       <details>
-        <summary className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-700">
+        <summary className="cursor-pointer text-xs font-semibold text-muted hover:text-ink-soft">
           Modifier
         </summary>
         <form action={action} className="mt-4 space-y-3">
@@ -99,14 +99,14 @@ export function SectionStructure({ structure }: { structure: StructureVue | null
           </div>
 
           <div className="flex flex-wrap gap-5 pt-1">
-            <label className="flex items-center gap-2 text-sm text-slate-600">
+            <label className="flex items-center gap-2 text-sm text-muted">
               <input type="checkbox" name="proBankAccount" defaultChecked={structure?.proBankAccount}
-                     className="w-4 h-4 accent-indigo-500" />
+                     className="w-4 h-4 accent-accent" />
               Compte bancaire professionnel
             </label>
-            <label className="flex items-center gap-2 text-sm text-slate-600">
+            <label className="flex items-center gap-2 text-sm text-muted">
               <input type="checkbox" name="proInsurance" defaultChecked={structure?.proInsurance}
-                     className="w-4 h-4 accent-indigo-500" />
+                     className="w-4 h-4 accent-accent" />
               Assurance professionnelle
             </label>
           </div>
@@ -132,30 +132,30 @@ export function SectionTaux({ taux }: { taux: TauxVue }) {
       sousTitre="Le total ne se saisit pas : il s'additionne"
       action={
         <div className="text-right">
-          <p className="text-2xl font-extrabold text-red-500">{taux.total} %</p>
-          <p className="text-[11px] text-slate-400">total des charges</p>
+          <p className="text-2xl font-extrabold text-negative">{taux.total} %</p>
+          <p className="text-[11px] text-ghost">total des charges</p>
         </div>
       }
     >
-      <div className="divide-y divide-slate-100 mb-4">
+      <div className="divide-y divide-faint mb-4">
         {[
           { l: 'Cotisations sociales', v: taux.socialContributionPct },
           { l: 'Impot (versement liberatoire)', v: taux.incomeTaxPct },
           { l: 'Contribution a la formation professionnelle', v: taux.trainingPct },
         ].map((x) => (
           <div key={x.l} className="flex justify-between items-center py-2 text-sm">
-            <span className="text-slate-500">{x.l}</span>
-            <span className="text-slate-800 font-medium">{x.v} %</span>
+            <span className="text-muted">{x.l}</span>
+            <span className="text-ink-soft font-medium">{x.v} %</span>
           </div>
         ))}
         <div className="flex justify-between items-center py-2 text-sm">
-          <span className="text-slate-500">Categorie</span>
+          <span className="text-muted">Categorie</span>
           <Etiquette texte={taux.category} ton="info" />
         </div>
       </div>
 
       <details>
-        <summary className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-700">
+        <summary className="cursor-pointer text-xs font-semibold text-muted hover:text-ink-soft">
           Modifier mes taux
         </summary>
         <form action={action} className="mt-4 space-y-3">
@@ -198,32 +198,32 @@ export function SectionObjectifRevenu({
       {objectifs.length > 0 ? (
         <div className="space-y-3 mb-4">
           {objectifs.map((o) => (
-            <div key={o.id} className="group rounded-xl border border-slate-200 p-4">
+            <div key={o.id} className="group rounded-xl border border-subtle p-4">
               <div className="flex items-start justify-between gap-3 mb-3">
-                <p className="text-sm font-semibold text-slate-800">{o.offerName}</p>
+                <p className="text-sm font-semibold text-ink-soft">{o.offerName}</p>
                 <BoutonSuppression action={supprimerObjectifRevenu} id={o.id} intitule="Supprimer cet objectif" />
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
-                  <p className="text-lg font-bold text-slate-700">{euros(o.netTargetHt)}</p>
-                  <p className="text-[11px] text-slate-400">revenu net vise</p>
+                  <p className="text-lg font-bold text-ink-soft">{euros(o.netTargetHt)}</p>
+                  <p className="text-[11px] text-ghost">revenu net vise</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-slate-700">{euros(o.offerPriceHt)}</p>
-                  <p className="text-[11px] text-slate-400">prix de l&apos;offre</p>
+                  <p className="text-lg font-bold text-ink-soft">{euros(o.offerPriceHt)}</p>
+                  <p className="text-[11px] text-ghost">prix de l&apos;offre</p>
                 </div>
                 <div>
-                  <p className="text-lg font-extrabold text-indigo-600">
+                  <p className="text-lg font-extrabold text-accent-ink">
                     {o.caNecessaire !== null ? euros(o.caNecessaire) : '—'}
                   </p>
-                  <p className="text-[11px] text-indigo-400">CA necessaire · calcule</p>
+                  <p className="text-[11px] text-accent">CA necessaire · calcule</p>
                 </div>
                 <div>
-                  <p className="text-lg font-extrabold text-teal-600">
+                  <p className="text-lg font-extrabold text-positive">
                     {o.clientsNecessaires !== null ? o.clientsNecessaires : '—'}
                   </p>
-                  <p className="text-[11px] text-teal-500">clients necessaires · calcule</p>
+                  <p className="text-[11px] text-positive">clients necessaires · calcule</p>
                 </div>
               </div>
             </div>
@@ -281,14 +281,14 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
       {echeances.length > 0 ? (
         <div className="space-y-2 mb-4">
           {echeances.map((e) => (
-            <div key={e.id} className="group flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <div key={e.id} className="group flex items-center gap-3 rounded-xl border border-subtle px-4 py-3">
               <form action={basculerEcheance}>
                 <input type="hidden" name="id" value={e.id} />
                 <button
                   type="submit"
                   aria-label={e.done ? `Rouvrir ${e.label}` : `Marquer ${e.label} comme fait`}
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                    e.done ? 'bg-teal-500 border-teal-500 text-white' : 'border-slate-300 hover:border-teal-400'
+                    e.done ? 'bg-positive border-positive text-on-accent' : 'border-firm hover:border-positive'
                   }`}
                 >
                   {e.done && <span className="text-[11px] leading-none">✓</span>}
@@ -296,10 +296,10 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
               </form>
 
               <div className="flex-1 min-w-0">
-                <p className={`text-sm ${e.done ? 'text-slate-400 line-through' : 'text-slate-800 font-medium'}`}>
+                <p className={`text-sm ${e.done ? 'text-ghost line-through' : 'text-ink-soft font-medium'}`}>
                   {e.label}
                 </p>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-ghost">
                   {e.echeance}{e.recurrence && ` · ${e.recurrence}`}
                 </p>
               </div>
@@ -348,7 +348,7 @@ export function SectionSuiviMensuel({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
+            <tr className="text-left text-xs font-semibold text-muted border-b border-subtle">
               <th className="pb-2">Mois</th>
               <th className="pb-2 text-right">Chiffre d&apos;affaires</th>
               <th className="pb-2 text-right">Charges estimees</th>
@@ -357,11 +357,11 @@ export function SectionSuiviMensuel({
           </thead>
           <tbody>
             {lignes.map((l) => (
-              <tr key={l.mois} className="border-b border-slate-100 last:border-0">
-                <td className="py-2 text-slate-700">{l.mois}</td>
-                <td className="py-2 text-right font-medium text-teal-600">{euros(l.ca)}</td>
-                <td className="py-2 text-right text-red-500">{euros(l.charges)}</td>
-                <td className="py-2 text-right font-bold text-indigo-600">{euros(l.net)}</td>
+              <tr key={l.mois} className="border-b border-faint last:border-0">
+                <td className="py-2 text-ink-soft">{l.mois}</td>
+                <td className="py-2 text-right font-medium text-positive">{euros(l.ca)}</td>
+                <td className="py-2 text-right text-negative">{euros(l.charges)}</td>
+                <td className="py-2 text-right font-bold text-accent-ink">{euros(l.net)}</td>
               </tr>
             ))}
           </tbody>

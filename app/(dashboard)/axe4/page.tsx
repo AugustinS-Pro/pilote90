@@ -30,8 +30,8 @@ export default async function Axe4Page() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Communication &amp; Ventes</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Communication &amp; Ventes</h1>
+        <p className="text-sm text-muted">
           Cet axe appartient a l&apos;espace des entrepreneurs accompagnes.
         </p>
       </div>
@@ -76,27 +76,27 @@ export default async function Axe4Page() {
   const signesDuMois = signes.filter((p) => new Date(p.updatedAt) >= debutDuMois).length
 
   const kpis = [
-    { titre: 'Prospects actifs', valeur: String(enCours.length), detail: 'dans le pipeline', couleur: 'text-indigo-600' },
-    { titre: 'Taux de conversion', valeur: `${tauxConversion} %`, detail: `${signes.length} signe${signes.length > 1 ? 's' : ''} sur ${client.prospects.length}`, couleur: 'text-teal-600' },
-    { titre: 'CA potentiel', valeur: euros(caPotentiel), detail: 'en cours de vente', couleur: 'text-purple-600' },
-    { titre: 'Signatures ce mois', valeur: String(signesDuMois), detail: 'nouvelles missions', couleur: 'text-amber-500' },
+    { titre: 'Prospects actifs', valeur: String(enCours.length), detail: 'dans le pipeline', couleur: 'text-accent-ink' },
+    { titre: 'Taux de conversion', valeur: `${tauxConversion} %`, detail: `${signes.length} signe${signes.length > 1 ? 's' : ''} sur ${client.prospects.length}`, couleur: 'text-positive' },
+    { titre: 'CA potentiel', valeur: euros(caPotentiel), detail: 'en cours de vente', couleur: 'text-accent-ink' },
+    { titre: 'Signatures ce mois', valeur: String(signesDuMois), detail: 'nouvelles missions', couleur: 'text-warning' },
   ]
 
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Communication &amp; Ventes</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-extrabold text-ink">Communication &amp; Ventes</h1>
+        <p className="text-muted text-sm mt-1">
           Ce que vous dites, a qui, et ou en sont vos opportunites
         </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
-          <div key={k.titre} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">{k.titre}</p>
+          <div key={k.titre} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.titre}</p>
             <p className={`text-2xl font-extrabold ${k.couleur}`}>{k.valeur}</p>
-            <p className="text-[11px] text-slate-400 mt-1.5">{k.detail}</p>
+            <p className="text-[11px] text-ghost mt-1.5">{k.detail}</p>
           </div>
         ))}
       </div>

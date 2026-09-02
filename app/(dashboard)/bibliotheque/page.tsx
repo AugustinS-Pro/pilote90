@@ -30,8 +30,8 @@ export default async function BibliothequePage() {
   return (
     <div className="p-8 w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Bibliotheque strategique</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-extrabold text-ink">Bibliotheque strategique</h1>
+        <p className="text-muted text-sm mt-1">
           Guides de demarrage, rituels et modeles de cycle — les ressources partagees par votre accompagnant
         </p>
       </div>
@@ -41,17 +41,17 @@ export default async function BibliothequePage() {
           <Carte key={g.type} titre={g.libelle}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {g.items.map((r) => (
-                <div key={r.id} className="group rounded-xl border border-slate-200 px-4 py-3">
+                <div key={r.id} className="group rounded-xl border border-subtle px-4 py-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-800">{r.title}</p>
+                      <p className="text-sm font-semibold text-ink-soft">{r.title}</p>
                       {r.description && (
-                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">{r.description}</p>
+                        <p className="text-xs text-muted mt-1 leading-relaxed">{r.description}</p>
                       )}
                       {r.url && (
                         <a
                           href={r.url} target="_blank" rel="noopener noreferrer"
-                          className="text-xs text-indigo-600 hover:underline mt-1.5 inline-block"
+                          className="text-xs text-accent-ink hover:underline mt-1.5 inline-block"
                         >
                           Ouvrir la ressource
                         </a>

@@ -47,10 +47,10 @@ export const STATUTS_CONTENU = [
 
 /** Le pipeline compte quatre etapes, conformement au dossier professionnel. */
 export const ETAPES = [
-  { valeur: 'DECOUVERTE', libelle: 'Decouverte', teinte: 'border-slate-300', fond: 'bg-slate-50' },
-  { valeur: 'QUALIFICATION', libelle: 'Qualification', teinte: 'border-indigo-300', fond: 'bg-indigo-50/60' },
-  { valeur: 'PROPOSITION', libelle: 'Proposition', teinte: 'border-amber-300', fond: 'bg-amber-50/60' },
-  { valeur: 'SIGNE', libelle: 'Signe', teinte: 'border-teal-300', fond: 'bg-teal-50/60' },
+  { valeur: 'DECOUVERTE', libelle: 'Decouverte', teinte: 'border-firm', fond: 'bg-surface-muted' },
+  { valeur: 'QUALIFICATION', libelle: 'Qualification', teinte: 'border-accent', fond: 'bg-accent-soft' },
+  { valeur: 'PROPOSITION', libelle: 'Proposition', teinte: 'border-warning', fond: 'bg-warning-soft/60' },
+  { valeur: 'SIGNE', libelle: 'Signe', teinte: 'border-positive', fond: 'bg-positive-soft/60' },
 ] as const
 
 const libelleDe = (liste: { valeur: string; libelle: string }[], v: string) =>
@@ -114,7 +114,7 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
         <div className="overflow-x-auto mb-4">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
+              <tr className="text-left text-xs font-semibold text-muted border-b border-subtle">
                 <th className="pb-2 pr-3">Probleme vecu</th>
                 <th className="pb-2 pr-3">Question qu&apos;il se pose</th>
                 <th className="pb-2 pr-3">Ce qu&apos;il cherche a comprendre</th>
@@ -125,12 +125,12 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
             </thead>
             <tbody>
               {problemes.map((p) => (
-                <tr key={p.id} className="group border-b border-slate-100 last:border-0 align-top">
-                  <td className="py-2.5 pr-3 text-slate-800 font-medium">{p.problem}</td>
-                  <td className="py-2.5 pr-3 text-slate-500">{p.question ?? '—'}</td>
-                  <td className="py-2.5 pr-3 text-slate-500">{p.understanding ?? '—'}</td>
-                  <td className="py-2.5 pr-3 text-slate-500">{p.topic ?? '—'}</td>
-                  <td className="py-2.5 pr-3 text-slate-500">{p.angle ?? '—'}</td>
+                <tr key={p.id} className="group border-b border-faint last:border-0 align-top">
+                  <td className="py-2.5 pr-3 text-ink-soft font-medium">{p.problem}</td>
+                  <td className="py-2.5 pr-3 text-muted">{p.question ?? '—'}</td>
+                  <td className="py-2.5 pr-3 text-muted">{p.understanding ?? '—'}</td>
+                  <td className="py-2.5 pr-3 text-muted">{p.topic ?? '—'}</td>
+                  <td className="py-2.5 pr-3 text-muted">{p.angle ?? '—'}</td>
                   <td className="py-2.5">
                     <BoutonSuppression action={supprimerProbleme} id={p.id} intitule="Supprimer cette ligne" />
                   </td>
@@ -176,19 +176,19 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
       {thematiques.length > 0 ? (
         <div className="space-y-2 mb-4">
           {thematiques.map((t) => (
-            <div key={t.id} className="group rounded-xl border border-slate-200 px-4 py-3">
+            <div key={t.id} className="group rounded-xl border border-subtle px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-800">{t.label}</p>
+                  <p className="text-sm font-semibold text-ink-soft">{t.label}</p>
                   {t.whyImportant && (
-                    <p className="text-xs text-slate-500 mt-1">
-                      <span className="text-slate-400">Pourquoi c&apos;est important : </span>
+                    <p className="text-xs text-muted mt-1">
+                      <span className="text-ghost">Pourquoi c&apos;est important : </span>
                       {t.whyImportant}
                     </p>
                   )}
                   {t.linkToOffer && (
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      <span className="text-slate-400">Lien avec l&apos;offre : </span>
+                    <p className="text-xs text-muted mt-0.5">
+                      <span className="text-ghost">Lien avec l&apos;offre : </span>
                       {t.linkToOffer}
                     </p>
                   )}
@@ -235,23 +235,23 @@ const LISERET_STATUT: Record<string, string> = {
 function CarteIdee({ idee }: { idee: IdeeVue }) {
   return (
     <div
-      className={`group rounded-lg border border-slate-200 border-l-[3px] bg-white px-3 py-2.5 ${
+      className={`group rounded-lg border border-subtle border-l-[3px] bg-surface px-3 py-2.5 ${
         LISERET_STATUT[idee.status] ?? LISERET_STATUT.IDEE
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm font-medium text-slate-800 leading-snug">{idee.subject}</p>
+        <p className="text-sm font-medium text-ink-soft leading-snug">{idee.subject}</p>
         <BoutonSuppression action={supprimerIdeeContenu} id={idee.id} intitule="Supprimer ce contenu" />
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5 mt-2">
         <Etiquette texte={libelleDe(FORMATS_CONTENU, idee.format)} ton="neutre" />
         <Etiquette texte={libelleDe(OBJECTIFS, idee.marketingGoal)} ton="info" />
-        {idee.platform && <span className="text-[11px] text-slate-400">{idee.platform}</span>}
+        {idee.platform && <span className="text-[11px] text-ghost">{idee.platform}</span>}
       </div>
 
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
-        <span className="text-[11px] text-slate-400">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-faint">
+        <span className="text-[11px] text-ghost">
           {libelleDe(TYPES_CONTENU, idee.contentType)}
           {idee.themeLabel && ` · ${idee.themeLabel}`}
         </span>
@@ -261,8 +261,8 @@ function CarteIdee({ idee }: { idee: IdeeVue }) {
             name="status" defaultValue={idee.status}
             onChange={(e) => e.currentTarget.form?.requestSubmit()}
             aria-label={`Statut de ${idee.subject}`}
-            className="text-[11px] px-1.5 py-0.5 rounded border border-slate-200 bg-white
-                       focus:outline-none focus:border-indigo-400"
+            className="text-[11px] px-1.5 py-0.5 rounded border border-subtle bg-surface
+                       focus:outline-none focus:border-accent"
           >
             {STATUTS_CONTENU.map((s) => (
               <option key={s.valeur} value={s.valeur}>{s.libelle}</option>
@@ -294,12 +294,12 @@ export function SectionCalendrier({
         {[1, 2, 3, 4].map((semaine) => {
           const duCreneau = idees.filter((i) => i.weekNumber === semaine)
           return (
-            <div key={semaine} className="rounded-xl bg-slate-50 border border-slate-200 p-3">
-              <p className="text-xs font-bold text-slate-600 mb-2.5">Semaine {semaine}</p>
+            <div key={semaine} className="rounded-xl bg-surface-muted border border-subtle p-3">
+              <p className="text-xs font-bold text-muted mb-2.5">Semaine {semaine}</p>
               <div className="space-y-2">
                 {duCreneau.length > 0
                   ? duCreneau.map((i) => <CarteIdee key={i.id} idee={i} />)
-                  : <p className="text-xs text-slate-300 text-center py-4">Vide</p>}
+                  : <p className="text-xs text-disabled text-center py-4">Vide</p>}
               </div>
             </div>
           )
@@ -308,7 +308,7 @@ export function SectionCalendrier({
 
       {nonPlanifiees.length > 0 && (
         <div className="mb-4">
-          <p className="text-xs font-bold text-slate-500 mb-2">Sans creneau</p>
+          <p className="text-xs font-bold text-muted mb-2">Sans creneau</p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
             {nonPlanifiees.map((i) => <CarteIdee key={i.id} idee={i} />)}
           </div>
@@ -366,27 +366,27 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
           return (
             <div key={etape.valeur} className={`rounded-xl border ${etape.teinte} ${etape.fond} p-3`}>
               <div className="flex items-center justify-between mb-2.5">
-                <p className="text-xs font-bold text-slate-600">{etape.libelle}</p>
-                <span className="text-[11px] font-semibold text-slate-500">{colonne.length}</span>
+                <p className="text-xs font-bold text-muted">{etape.libelle}</p>
+                <span className="text-[11px] font-semibold text-muted">{colonne.length}</span>
               </div>
 
               <div className="space-y-2">
                 {colonne.length > 0 ? (
                   colonne.map((p) => (
-                    <div key={p.id} className="group rounded-lg bg-white border border-slate-200 px-3 py-2.5">
+                    <div key={p.id} className="group rounded-lg bg-surface border border-subtle px-3 py-2.5">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-slate-800 truncate">{p.companyName}</p>
-                          {p.contactName && <p className="text-xs text-slate-500">{p.contactName}</p>}
+                          <p className="text-sm font-semibold text-ink-soft truncate">{p.companyName}</p>
+                          {p.contactName && <p className="text-xs text-muted">{p.contactName}</p>}
                         </div>
                         <BoutonSuppression action={supprimerProspect} id={p.id} intitule={`Supprimer ${p.companyName}`} />
                       </div>
 
-                      <p className="text-base font-extrabold text-slate-800 mt-1.5">{euros(p.estimatedHt)}</p>
+                      <p className="text-base font-extrabold text-ink-soft mt-1.5">{euros(p.estimatedHt)}</p>
 
                       <div className="flex items-center justify-between gap-2 mt-2">
-                        {p.source && <span className="text-[11px] text-slate-400 truncate">{p.source}</span>}
-                        {p.echeance && <span className="text-[11px] text-slate-400">{p.echeance}</span>}
+                        {p.source && <span className="text-[11px] text-ghost truncate">{p.source}</span>}
+                        {p.echeance && <span className="text-[11px] text-ghost">{p.echeance}</span>}
                       </div>
 
                       <form action={deplacerProspect} className="mt-2">
@@ -395,8 +395,8 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
                           name="stage" defaultValue={p.stage}
                           onChange={(e) => e.currentTarget.form?.requestSubmit()}
                           aria-label={`Etape de ${p.companyName}`}
-                          className="w-full text-[11px] px-1.5 py-1 rounded border border-slate-200 bg-white
-                                     focus:outline-none focus:border-indigo-400"
+                          className="w-full text-[11px] px-1.5 py-1 rounded border border-subtle bg-surface
+                                     focus:outline-none focus:border-accent"
                         >
                           {ETAPES.map((e) => (
                             <option key={e.valeur} value={e.valeur}>{e.libelle}</option>
@@ -406,12 +406,12 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-slate-300 text-center py-4">Vide</p>
+                  <p className="text-xs text-disabled text-center py-4">Vide</p>
                 )}
               </div>
 
               {total > 0 && (
-                <p className="text-[11px] font-semibold text-slate-500 mt-2.5 pt-2 border-t border-slate-200/70">
+                <p className="text-[11px] font-semibold text-muted mt-2.5 pt-2 border-t border-subtle">
                   {euros(total)}
                 </p>
               )}

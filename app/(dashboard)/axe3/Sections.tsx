@@ -139,17 +139,17 @@ export function SectionPersona({ personas }: { personas: PersonaVue[] }) {
       {personas.length > 0 ? (
         <div className="space-y-3 mb-4">
           {personas.map((p) => (
-            <details key={p.id} className="group rounded-xl border border-slate-200 overflow-hidden">
-              <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-slate-50">
+            <details key={p.id} className="group rounded-xl border border-subtle overflow-hidden">
+              <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-surface-muted">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-800">{p.name}</p>
+                  <p className="text-sm font-semibold text-ink-soft">{p.name}</p>
                   {p.magicSentence && (
-                    <p className="text-xs text-slate-500 mt-0.5 truncate">{p.magicSentence}</p>
+                    <p className="text-xs text-muted mt-0.5 truncate">{p.magicSentence}</p>
                   )}
                 </div>
                 <BoutonSuppression action={supprimerPersona} id={p.id} intitule={`Supprimer ${p.name}`} />
               </summary>
-              <div className="px-4 pb-4 pt-1 border-t border-slate-100 bg-slate-50/50">
+              <div className="px-4 pb-4 pt-1 border-t border-faint bg-surface-muted">
                 <FormulairePersona persona={p} />
               </div>
             </details>
@@ -178,11 +178,11 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
       {offres.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           {offres.map((o) => (
-            <div key={o.id} className="group rounded-xl border border-slate-200 p-4 hover:shadow-sm transition-shadow">
+            <div key={o.id} className="group rounded-xl border border-subtle p-4 hover:shadow-sm transition-shadow">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-800">{o.name}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-sm font-semibold text-ink-soft">{o.name}</p>
+                  <p className="text-xs text-ghost mt-0.5">
                     {libelleDe(FORMATS, o.format)}
                     {o.personaNom && ` · pour ${o.personaNom}`}
                   </p>
@@ -193,14 +193,14 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
                 </div>
               </div>
 
-              {o.promise && <p className="text-xs text-slate-500 mb-3 leading-relaxed">{o.promise}</p>}
+              {o.promise && <p className="text-xs text-muted mb-3 leading-relaxed">{o.promise}</p>}
 
-              <p className="text-xl font-extrabold text-indigo-600">{euros(o.priceHt)}</p>
+              <p className="text-xl font-extrabold text-accent-ink">{euros(o.priceHt)}</p>
 
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                <p className="text-xs text-slate-500">
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-faint">
+                <p className="text-xs text-muted">
                   {o.ventes} vente{o.ventes > 1 ? 's' : ''} ·{' '}
-                  <span className="font-semibold text-slate-700">{euros(o.caGenere)}</span> genere
+                  <span className="font-semibold text-ink-soft">{euros(o.caGenere)}</span> genere
                 </p>
                 <form action={changerStatutOffre}>
                   <input type="hidden" name="id" value={o.id} />
@@ -208,8 +208,8 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
                     name="status" defaultValue={o.status}
                     onChange={(e) => e.currentTarget.form?.requestSubmit()}
                     aria-label={`Statut de ${o.name}`}
-                    className="text-xs px-2 py-1 rounded-md border border-slate-200 bg-white
-                               focus:outline-none focus:border-indigo-400"
+                    className="text-xs px-2 py-1 rounded-md border border-subtle bg-surface
+                               focus:outline-none focus:border-accent"
                   >
                     {STATUTS_OFFRE.map((s) => (
                       <option key={s.valeur} value={s.valeur}>{s.libelle}</option>
@@ -262,16 +262,16 @@ export function SectionArchitecture({ niveaux }: { niveaux: NiveauVue[] }) {
       {niveaux.length > 0 ? (
         <div className="space-y-2 mb-4">
           {niveaux.map((n) => (
-            <div key={n.id} className="group flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <div key={n.id} className="group flex items-center justify-between gap-3 rounded-xl border border-subtle px-4 py-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <Etiquette texte={n.level} ton="info" />
-                  <p className="text-sm font-semibold text-slate-800 truncate">{n.offerName}</p>
+                  <p className="text-sm font-semibold text-ink-soft truncate">{n.offerName}</p>
                 </div>
-                {n.goal && <p className="text-xs text-slate-500 mt-1">{n.goal}</p>}
+                {n.goal && <p className="text-xs text-muted mt-1">{n.goal}</p>}
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                {n.price && <span className="text-sm font-bold text-slate-700">{n.price}</span>}
+                {n.price && <span className="text-sm font-bold text-ink-soft">{n.price}</span>}
                 <BoutonSuppression action={supprimerNiveauOffre} id={n.id} intitule="Supprimer ce niveau" />
               </div>
             </div>
@@ -313,24 +313,24 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
       {fiches.length > 0 ? (
         <div className="space-y-2 mb-4">
           {fiches.map((f) => (
-            <div key={f.id} className="group rounded-xl border border-slate-200 px-4 py-3">
+            <div key={f.id} className="group rounded-xl border border-subtle px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold text-slate-800">{f.companyName}</p>
+                    <p className="text-sm font-semibold text-ink-soft">{f.companyName}</p>
                     <Etiquette
                       texte={libelleDe(STATUTS_CLIENT, f.status)}
                       ton={f.status === 'ACTIF' ? 'succes' : f.status === 'PROSPECT' ? 'info' : 'neutre'}
                     />
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-muted mt-0.5">
                     {[f.contactName, f.email, f.phone].filter(Boolean).join(' · ') || 'Aucun contact renseigne'}
                   </p>
-                  {f.notes && <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{f.notes}</p>}
+                  {f.notes && <p className="text-xs text-ghost mt-1.5 leading-relaxed">{f.notes}</p>}
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-teal-600">{euros(f.totalAchats)}</p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-sm font-bold text-positive">{euros(f.totalAchats)}</p>
+                  <p className="text-[11px] text-ghost">
                     {f.nombreAchats} achat{f.nombreAchats > 1 ? 's' : ''}
                     {f.dernierAchat && ` · ${f.dernierAchat}`}
                   </p>
@@ -412,8 +412,8 @@ export function SectionRetours({
       action={
         moyenne !== null ? (
           <div className="text-right">
-            <p className="text-2xl font-extrabold text-amber-500">{moyenne.toFixed(1)}</p>
-            <p className="text-[11px] text-slate-400">sur 5 en moyenne</p>
+            <p className="text-2xl font-extrabold text-warning">{moyenne.toFixed(1)}</p>
+            <p className="text-[11px] text-ghost">sur 5 en moyenne</p>
           </div>
         ) : undefined
       }
@@ -421,18 +421,18 @@ export function SectionRetours({
       {retours.length > 0 ? (
         <div className="space-y-2 mb-4">
           {retours.map((r) => (
-            <div key={r.id} className="group flex items-start justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <div key={r.id} className="group flex items-start justify-between gap-3 rounded-xl border border-subtle px-4 py-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-amber-500 text-sm" aria-label={`${r.rating} sur 5`}>
+                  <span className="text-warning text-sm" aria-label={`${r.rating} sur 5`}>
                     {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-ghost">
                     {[r.clientNom, r.offreNom].filter(Boolean).join(' · ')}
                   </span>
                 </div>
-                {r.comment && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{r.comment}</p>}
-                <p className="text-[11px] text-slate-400 mt-1">{r.createdAt}</p>
+                {r.comment && <p className="text-sm text-muted mt-1.5 leading-relaxed">{r.comment}</p>}
+                <p className="text-[11px] text-ghost mt-1">{r.createdAt}</p>
               </div>
               <BoutonSuppression action={supprimerRetour} id={r.id} intitule="Supprimer ce retour" />
             </div>

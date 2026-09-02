@@ -16,8 +16,8 @@ export default async function PortefeuillePage() {
   if (utilisateur.role !== 'ADMIN') {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Portefeuille</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Portefeuille</h1>
+        <p className="text-sm text-muted">
           Cette page est reservee au compte consultant.
         </p>
       </div>
@@ -65,8 +65,8 @@ export default async function PortefeuillePage() {
     <div className="p-8 w-full space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Mon portefeuille</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-extrabold text-ink">Mon portefeuille</h1>
+          <p className="text-muted text-sm mt-1">
             Les entreprises que vous accompagnez, et leur situation du moment
           </p>
         </div>
@@ -76,8 +76,8 @@ export default async function PortefeuillePage() {
             type="submit"
             className={`text-xs font-semibold px-3.5 py-2 rounded-lg border transition-colors ${
               confidentiel
-                ? 'bg-slate-900 text-white border-slate-900'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                ? 'bg-inverse text-on-inverse border-inverse'
+                : 'bg-surface text-ink-soft border-subtle hover:bg-surface-muted'
             }`}
           >
             {confidentiel ? 'Mode Confidentialite actif' : 'Activer le mode Confidentialite'}
@@ -86,25 +86,25 @@ export default async function PortefeuillePage() {
       </div>
 
       {confidentiel && (
-        <div className="rounded-2xl border border-slate-300 bg-slate-100 px-5 py-3">
-          <p className="text-sm text-slate-700">
+        <div className="rounded-2xl border border-firm bg-surface-muted px-5 py-3">
+          <p className="text-sm text-ink-soft">
             Les noms des entreprises sont masques. Les chiffres restent visibles pour la demonstration.
           </p>
         </div>
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Clients suivis</p>
-          <p className="text-2xl font-extrabold text-indigo-600">{fiches.length}</p>
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">Clients suivis</p>
+          <p className="text-2xl font-extrabold text-accent-ink">{fiches.length}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">CA cumule du mois</p>
-          <p className="text-2xl font-extrabold text-teal-600">{euros(caTotal)}</p>
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">CA cumule du mois</p>
+          <p className="text-2xl font-extrabold text-positive">{euros(caTotal)}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Clients en alerte</p>
-          <p className={`text-2xl font-extrabold ${enAlerte > 0 ? 'text-red-500' : 'text-slate-400'}`}>{enAlerte}</p>
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">Clients en alerte</p>
+          <p className={`text-2xl font-extrabold ${enAlerte > 0 ? 'text-negative' : 'text-ghost'}`}>{enAlerte}</p>
         </div>
       </div>
 
@@ -115,34 +115,34 @@ export default async function PortefeuillePage() {
               <Link
                 key={f.id}
                 href={`/clients/${f.id}`}
-                className="block rounded-xl border border-slate-200 px-4 py-3 hover:border-indigo-300 hover:bg-slate-50/60 transition-colors"
+                className="block rounded-xl border border-subtle px-4 py-3 hover:border-accent hover:bg-surface-muted transition-colors"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold text-slate-800">{f.nom}</p>
+                      <p className="text-sm font-semibold text-ink-soft">{f.nom}</p>
                       {f.secteur && <Etiquette texte={f.secteur} ton="neutre" />}
                       {f.cycle && <Etiquette texte={f.cycle} ton="info" />}
                       {f.alerte && <Etiquette texte={f.alerte} ton="alerte" />}
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">{f.contact}</p>
-                    {f.objectif && <p className="text-xs text-slate-400 mt-1">{f.objectif}</p>}
+                    <p className="text-xs text-muted mt-0.5">{f.contact}</p>
+                    {f.objectif && <p className="text-xs text-ghost mt-1">{f.objectif}</p>}
                   </div>
 
                   <div className="flex items-center gap-6 shrink-0">
                     <div className="text-right">
-                      <p className="text-sm font-bold text-teal-600">{euros(f.caDuMois)}</p>
-                      <p className="text-[11px] text-slate-400">CA du mois</p>
+                      <p className="text-sm font-bold text-positive">{euros(f.caDuMois)}</p>
+                      <p className="text-[11px] text-ghost">CA du mois</p>
                     </div>
                     <div className="text-right">
-                      <p className={`text-sm font-bold ${f.resultatNet >= 0 ? 'text-indigo-600' : 'text-red-500'}`}>
+                      <p className={`text-sm font-bold ${f.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative'}`}>
                         {euros(f.resultatNet)}
                       </p>
-                      <p className="text-[11px] text-slate-400">Resultat net</p>
+                      <p className="text-[11px] text-ghost">Resultat net</p>
                     </div>
                     <div className="text-right w-16">
-                      <p className="text-sm font-bold text-slate-700">{f.progression} %</p>
-                      <p className="text-[11px] text-slate-400">Objectif</p>
+                      <p className="text-sm font-bold text-ink-soft">{f.progression} %</p>
+                      <p className="text-[11px] text-ghost">Objectif</p>
                     </div>
                   </div>
                 </div>

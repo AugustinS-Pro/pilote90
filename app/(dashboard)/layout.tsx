@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   if (!utilisateur) redirect('/login')
 
   return (
-    <div className="flex min-h-screen bg-[#FAF9F6]">
+    <div className="flex min-h-screen bg-canvas">
       <Sidebar role={utilisateur.role} />
       <main className="flex-1 ml-16 min-w-0">{children}</main>
     </div>

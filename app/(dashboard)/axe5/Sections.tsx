@@ -93,7 +93,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
           </div>
           <BoutonSoumettre>Ouvrir un cycle de 90 jours</BoutonSoumettre>
           <Retour etat={etatCreation} />
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-ghost">
             Les douze semaines et les trois plans mensuels sont crees automatiquement.
           </p>
         </form>
@@ -106,20 +106,20 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
     : 0
 
   return (
-    <div className="bg-slate-900 rounded-2xl p-6 text-white">
+    <div className="bg-inverse rounded-2xl p-6 text-on-inverse">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
         <div>
-          <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">
+          <p className="text-xs text-ghost uppercase tracking-wider mb-1">
             Cycle {cycle.cycleNumber}
             {cycle.name && ` — ${cycle.name}`} · semaine {cycle.semaineCourante} sur 12
           </p>
           <p className="font-bold text-xl">{cycle.mainObjective}</p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-ghost mt-1">
             Du {cycle.debut} au {cycle.fin}
           </p>
         </div>
-        <span className="flex items-center gap-1.5 bg-teal-500/20 text-teal-300 text-xs font-semibold px-3 py-1.5 rounded-full">
-          <span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse" />
+        <span className="flex items-center gap-1.5 bg-positive/20 text-positive text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span className="w-1.5 h-1.5 bg-positive rounded-full animate-pulse" />
           En cours
         </span>
       </div>
@@ -129,34 +129,34 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
           <div
             key={i}
             className={`h-1.5 flex-1 rounded-full ${
-              i + 1 < cycle.semaineCourante ? 'bg-indigo-500'
-              : i + 1 === cycle.semaineCourante ? 'bg-teal-400'
-              : 'bg-slate-700'
+              i + 1 < cycle.semaineCourante ? 'bg-accent'
+              : i + 1 === cycle.semaineCourante ? 'bg-positive'
+              : 'bg-inverse-soft'
             }`}
           />
         ))}
       </div>
-      <div className="flex justify-between text-xs text-slate-500 mb-5">
+      <div className="flex justify-between text-xs text-muted mb-5">
         <span>Demarrage</span><span>Mois 1</span><span>Mois 2</span><span>Fin</span>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
-        <div className="bg-white/5 rounded-xl p-3.5">
+        <div className="bg-surface/5 rounded-xl p-3.5">
           <p className="text-xl font-extrabold">{euros(cycle.caTargetMonthly)}</p>
-          <p className="text-xs text-slate-400 mt-0.5">Objectif mensuel</p>
+          <p className="text-xs text-ghost mt-0.5">Objectif mensuel</p>
         </div>
-        <div className="bg-white/5 rounded-xl p-3.5">
-          <p className="text-xl font-extrabold text-teal-300">{euros(cycle.caRealise)}</p>
-          <p className="text-xs text-slate-400 mt-0.5">Realise sur le cycle</p>
+        <div className="bg-surface/5 rounded-xl p-3.5">
+          <p className="text-xl font-extrabold text-positive">{euros(cycle.caRealise)}</p>
+          <p className="text-xs text-ghost mt-0.5">Realise sur le cycle</p>
         </div>
-        <div className="bg-white/5 rounded-xl p-3.5">
+        <div className="bg-surface/5 rounded-xl p-3.5">
           <p className="text-xl font-extrabold">{progression} %</p>
-          <p className="text-xs text-slate-400 mt-0.5">De l&apos;objectif 90 jours</p>
+          <p className="text-xs text-ghost mt-0.5">De l&apos;objectif 90 jours</p>
         </div>
       </div>
 
       <details className="group">
-        <summary className="cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+        <summary className="cursor-pointer text-xs text-ghost hover:text-on-inverse">
           Cloturer ce cycle
         </summary>
         <form action={actionCloture} className="mt-3 space-y-2">
@@ -164,8 +164,8 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
           <textarea
             name="closingNote" rows={2} maxLength={600}
             placeholder="Ce que je retiens de ces 90 jours"
-            className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-sm
-                       text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-400"
+            className="w-full px-3 py-2 rounded-lg bg-surface/10 border border-white/20 text-sm
+                       text-on-inverse placeholder:text-muted focus:outline-none focus:border-positive"
           />
           <BoutonSoumettre variante="discret">Cloturer le cycle</BoutonSoumettre>
           <Retour etat={etatCloture} />
@@ -183,10 +183,10 @@ function FormulaireMois({ cycleId, plan }: { cycleId: string; plan: PlanMoisVue 
   const [etat, action] = useActionState(enregistrerPlanMensuel, ETAT_INITIAL)
 
   return (
-    <form action={action} className="rounded-xl border border-slate-200 p-4 space-y-2.5">
+    <form action={action} className="rounded-xl border border-subtle p-4 space-y-2.5">
       <input type="hidden" name="cycleId" value={cycleId} />
       <input type="hidden" name="monthNumber" value={plan.monthNumber} />
-      <p className="text-xs font-bold text-slate-600">Mois {plan.monthNumber}</p>
+      <p className="text-xs font-bold text-muted">Mois {plan.monthNumber}</p>
       <Champ nom="theme" idUnique={`theme-${plan.monthNumber}`} libelle="Theme du mois" maxLength={120}
              defaultValue={plan.theme ?? ''} placeholder="Structurer l'offre" />
       <Champ nom="caTarget" idUnique={`caTarget-${plan.monthNumber}`} libelle="CA vise (€)" inputMode="decimal"
@@ -220,23 +220,23 @@ function LigneSemaine({ semaine }: { semaine: SemaineVue }) {
   const [etatRevue, actionRevue] = useActionState(enregistrerRevue, ETAT_INITIAL)
 
   return (
-    <details className={`rounded-xl border ${semaine.estCourante ? 'border-teal-300 bg-teal-50/40' : 'border-slate-200'}`}>
-      <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-slate-50/60 rounded-xl">
+    <details className={`rounded-xl border ${semaine.estCourante ? 'border-positive bg-positive-soft/40' : 'border-subtle'}`}>
+      <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-surface-muted rounded-xl">
         <div className="flex items-center gap-3 min-w-0">
-          <span className={`text-xs font-bold w-16 shrink-0 ${semaine.estCourante ? 'text-teal-700' : 'text-slate-500'}`}>
+          <span className={`text-xs font-bold w-16 shrink-0 ${semaine.estCourante ? 'text-positive-ink' : 'text-muted'}`}>
             Sem. {semaine.weekNumber}
           </span>
-          <span className="text-sm text-slate-700 truncate">
-            {semaine.focusTitle || <span className="text-slate-300">Aucun focus defini</span>}
+          <span className="text-sm text-ink-soft truncate">
+            {semaine.focusTitle || <span className="text-disabled">Aucun focus defini</span>}
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {semaine.revue && <Etiquette texte="Revue faite" ton="succes" />}
-          {semaine.debut && <span className="text-xs text-slate-400">{semaine.debut}</span>}
+          {semaine.debut && <span className="text-xs text-ghost">{semaine.debut}</span>}
         </div>
       </summary>
 
-      <div className="px-4 pb-4 pt-1 space-y-3 border-t border-slate-100">
+      <div className="px-4 pb-4 pt-1 space-y-3 border-t border-faint">
         <form action={actionFocus} className="flex items-end gap-2">
           <input type="hidden" name="weekId" value={semaine.id} />
           <div className="flex-1">
@@ -247,9 +247,9 @@ function LigneSemaine({ semaine }: { semaine: SemaineVue }) {
         </form>
         <Retour etat={etatFocus} />
 
-        <form action={actionRevue} className="space-y-2.5 pt-2 border-t border-slate-100">
+        <form action={actionRevue} className="space-y-2.5 pt-2 border-t border-faint">
           <input type="hidden" name="weekId" value={semaine.id} />
-          <p className="text-xs font-bold text-slate-600">Revue de la semaine</p>
+          <p className="text-xs font-bold text-muted">Revue de la semaine</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <ZoneTexte nom="whatWorks" idUnique={`works-${semaine.id}`} libelle="Ce qui marche" rows={2}
                        maxLength={600} defaultValue={semaine.revue?.whatWorks ?? ''} />
@@ -295,14 +295,14 @@ export function SectionTaches({
   const pct = taches.length > 0 ? Math.round((faites.length / taches.length) * 100) : 0
 
   const Ligne = ({ t }: { t: TacheVue }) => (
-    <div className="group flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+    <div className="group flex items-center gap-3 rounded-xl border border-subtle px-4 py-3">
       <form action={basculerTache}>
         <input type="hidden" name="id" value={t.id} />
         <button
           type="submit"
           aria-label={t.done ? `Rouvrir ${t.label}` : `Terminer ${t.label}`}
           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-            t.done ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-300 hover:border-indigo-400'
+            t.done ? 'bg-accent border-accent text-on-accent' : 'border-firm hover:border-accent'
           }`}
         >
           {t.done && <span className="text-[11px] leading-none">✓</span>}
@@ -310,15 +310,15 @@ export function SectionTaches({
       </form>
 
       <div className="flex-1 min-w-0">
-        <p className={`text-sm ${t.done ? 'text-slate-400 line-through' : 'text-slate-800 font-medium'}`}>
+        <p className={`text-sm ${t.done ? 'text-ghost line-through' : 'text-ink-soft font-medium'}`}>
           {t.label}
         </p>
         {t.prioriteTitre && (
-          <p className="text-xs text-indigo-500 mt-0.5">↳ {t.prioriteTitre}</p>
+          <p className="text-xs text-accent mt-0.5">↳ {t.prioriteTitre}</p>
         )}
       </div>
 
-      {t.echeance && <span className="text-xs text-slate-400 shrink-0">{t.echeance}</span>}
+      {t.echeance && <span className="text-xs text-ghost shrink-0">{t.echeance}</span>}
       <Etiquette texte={libelleDe(ETIQUETTES_TACHE, t.tag)} ton={TON_TAG[t.tag] ?? 'neutre'} />
       <BoutonSuppression action={supprimerTache} id={t.id} intitule={`Supprimer ${t.label}`} />
     </div>
@@ -331,8 +331,8 @@ export function SectionTaches({
       action={
         taches.length > 0 ? (
           <div className="text-right">
-            <p className="text-2xl font-extrabold text-indigo-600">{pct} %</p>
-            <p className="text-[11px] text-slate-400">{faites.length} sur {taches.length}</p>
+            <p className="text-2xl font-extrabold text-accent-ink">{pct} %</p>
+            <p className="text-[11px] text-ghost">{faites.length} sur {taches.length}</p>
           </div>
         ) : undefined
       }
@@ -342,7 +342,7 @@ export function SectionTaches({
           {aFaire.map((t) => <Ligne key={t.id} t={t} />)}
           {faites.length > 0 && (
             <>
-              <p className="text-xs font-bold text-slate-400 pt-2">Terminees</p>
+              <p className="text-xs font-bold text-ghost pt-2">Terminees</p>
               {faites.map((t) => <Ligne key={t.id} t={t} />)}
             </>
           )}
@@ -368,7 +368,7 @@ export function SectionTaches({
           </div>
           <BoutonSoumettre>Ajouter</BoutonSoumettre>
           <Retour etat={etat} />
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-ghost">
             Une tache rattachee a une priorite fait avancer sa progression automatiquement.
           </p>
         </form>

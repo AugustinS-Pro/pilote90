@@ -31,29 +31,29 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAF9F6] flex items-center justify-center p-4">
+    <main className="min-h-screen bg-canvas flex items-center justify-center p-4">
       <div className="w-full max-w-md">
 
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-14 h-14
-                          rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500
-                          text-white font-bold text-2xl mb-4">
+                          rounded-2xl bg-gradient-to-br from-accent to-accent-alt
+                          text-on-accent font-bold text-2xl mb-4">
             P
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900">Pilote90</h1>
-          <p className="text-slate-500 mt-1 text-sm">
+          <h1 className="text-3xl font-extrabold text-ink">Pilote90</h1>
+          <p className="text-muted mt-1 text-sm">
             Pilotez votre activité par cycles de 90 jours
           </p>
         </div>
 
         {/* Formulaire */}
-        <div className="bg-white rounded-2xl border border-slate-200
+        <div className="bg-surface rounded-2xl border border-subtle
                         shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500
+              <label className="block text-xs font-semibold text-muted
                                 uppercase tracking-wide mb-1.5">
                 Adresse email
               </label>
@@ -63,15 +63,15 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="vous@exemple.com"
                 required
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200
-                           bg-[#FAF9F6] text-slate-900 text-sm
-                           focus:outline-none focus:border-indigo-400 focus:bg-white
+                className="w-full px-4 py-2.5 rounded-xl border border-subtle
+                           bg-canvas text-ink text-sm
+                           focus:outline-none focus:border-accent focus:bg-surface
                            transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500
+              <label className="block text-xs font-semibold text-muted
                                 uppercase tracking-wide mb-1.5">
                 Mot de passe
               </label>
@@ -81,15 +81,15 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200
-                           bg-[#FAF9F6] text-slate-900 text-sm
-                           focus:outline-none focus:border-indigo-400 focus:bg-white
+                className="w-full px-4 py-2.5 rounded-xl border border-subtle
+                           bg-canvas text-ink text-sm
+                           focus:outline-none focus:border-accent focus:bg-surface
                            transition-colors"
               />
             </div>
 
             {error && (
-              <p className="text-red-600 text-sm bg-red-50 border border-red-200
+              <p className="text-negative-ink text-sm bg-negative-soft border border-negative
                             rounded-lg px-4 py-2">
                 {error}
               </p>
@@ -98,10 +98,10 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60
-                         text-white font-semibold py-2.5 rounded-xl text-sm
+              className="w-full bg-accent hover:bg-accent-strong disabled:opacity-60
+                         text-on-accent font-semibold py-2.5 rounded-xl text-sm
                          transition-all duration-200 hover:-translate-y-0.5
-                         hover:shadow-lg hover:shadow-indigo-200"
+                         hover:shadow-lg hover:shadow-accent-soft"
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
@@ -109,11 +109,11 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
+        <p className="text-center text-xs text-ghost mt-6">
           Pilote et Vous — Accès réservé
         </p>
-        <p className="text-center text-xs text-slate-400 mt-2">
-          <a href="/mentions-legales" className="hover:text-slate-600 underline underline-offset-2">
+        <p className="text-center text-xs text-ghost mt-2">
+          <a href="/mentions-legales" className="hover:text-muted underline underline-offset-2">
             Mentions légales et protection des données
           </a>
         </p>

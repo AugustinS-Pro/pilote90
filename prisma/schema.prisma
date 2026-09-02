@@ -28,6 +28,10 @@ model User {
   role      Role     @default(CLIENT)
   createdAt DateTime @default(now())
 
+  /// Preference d'affichage, rattachee au compte et non au navigateur :
+  /// deux utilisateurs du meme poste gardent chacun son theme.
+  theme     Theme    @default(CLAIR)
+
   client  Client?  @relation("ClientUser")
   managed Client[] @relation("AdminClients")
 }
@@ -516,6 +520,11 @@ model Resource {
 // -----------------------------------------------------------------------------
 // Enumerations
 // -----------------------------------------------------------------------------
+
+enum Theme {
+  CLAIR
+  PILOTE90
+}
 
 enum Role {
   ADMIN

@@ -36,8 +36,8 @@ export default async function Axe1Page() {
   if (!client) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Vision CEO</h1>
-        <p className="text-sm text-slate-500">Espace reserve aux entrepreneurs accompagnes.</p>
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Vision CEO</h1>
+        <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
       </div>
     )
   }
@@ -72,33 +72,33 @@ export default async function Axe1Page() {
   return (
     <div className="p-8 w-full space-y-6">
 
-      <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 text-white">
-        <p className="text-xs uppercase tracking-wider text-indigo-100 font-semibold mb-2">
+      <div className="bg-gradient-to-br from-accent to-accent-alt rounded-3xl p-8 text-on-accent">
+        <p className="text-xs uppercase tracking-wider text-on-inverse font-semibold mb-2">
           Vision strategique
         </p>
         <h1 className="text-2xl md:text-3xl font-extrabold leading-snug mb-1 max-w-3xl">
           {vision ?? cycle?.mainObjective ?? 'Definissez le cap de votre activite'}
         </h1>
-        <p className="text-indigo-100 text-sm">
+        <p className="text-on-inverse text-sm">
           {cycle ? `Cycle ${cycle.cycleNumber} · ${joursRestants} jours restants` : 'Aucun cycle en cours'}
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+          <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{euros(cycle?.caTargetMonthly ?? 0)}</p>
-            <p className="text-xs text-indigo-100 mt-1">Objectif de CA mensuel</p>
+            <p className="text-xs text-on-inverse mt-1">Objectif de CA mensuel</p>
           </div>
-          <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+          <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{progressionMoyenne} %</p>
-            <p className="text-xs text-indigo-100 mt-1">Progression moyenne</p>
+            <p className="text-xs text-on-inverse mt-1">Progression moyenne</p>
           </div>
-          <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+          <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{objectives.length} / 3</p>
-            <p className="text-xs text-indigo-100 mt-1">Priorites definies</p>
+            <p className="text-xs text-on-inverse mt-1">Priorites definies</p>
           </div>
-          <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+          <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{client.ideas.length}</p>
-            <p className="text-xs text-indigo-100 mt-1">Idees garees</p>
+            <p className="text-xs text-on-inverse mt-1">Idees garees</p>
           </div>
         </div>
       </div>
@@ -145,10 +145,10 @@ export default async function Axe1Page() {
           {client.ideas.length > 0 ? (
             <div className="space-y-2">
               {client.ideas.map((idee) => (
-                <div key={idee.id} className="group flex items-start justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3">
+                <div key={idee.id} className="group flex items-start justify-between gap-3 rounded-xl border border-subtle px-4 py-3">
                   <div className="min-w-0">
-                    <p className="text-sm text-slate-800">{idee.content}</p>
-                    <p className="text-[11px] text-slate-400 mt-1">
+                    <p className="text-sm text-ink-soft">{idee.content}</p>
+                    <p className="text-[11px] text-ghost mt-1">
                       {new Date(idee.createdAt).toLocaleDateString('fr-FR')}
                     </p>
                   </div>
@@ -168,7 +168,7 @@ export default async function Axe1Page() {
           titre="Mes dernieres decisions"
           sousTitre="Extrait du centre de decisions"
           action={
-            <Link href="/decisions" className="text-xs font-semibold text-indigo-600 hover:underline">
+            <Link href="/decisions" className="text-xs font-semibold text-accent-ink hover:underline">
               Tout voir
             </Link>
           }
@@ -176,14 +176,14 @@ export default async function Axe1Page() {
           {client.decisions.length > 0 ? (
             <div className="space-y-2">
               {client.decisions.map((d) => (
-                <div key={d.id} className="rounded-xl border border-slate-200 px-4 py-3">
+                <div key={d.id} className="rounded-xl border border-subtle px-4 py-3">
                   <div className="flex items-center gap-2 mb-1">
                     <Etiquette texte={d.category.toLowerCase()} ton="info" />
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-ghost">
                       {new Date(d.decidedAt).toLocaleDateString('fr-FR')}
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-slate-800">{d.title}</p>
+                  <p className="text-sm font-medium text-ink-soft">{d.title}</p>
                 </div>
               ))}
             </div>
@@ -195,7 +195,7 @@ export default async function Axe1Page() {
 
       {objectifAnnuel && (
         <Carte titre="Mon objectif annuel" sousTitre="Le cap dont chaque cycle de 90 jours est une etape">
-          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{objectifAnnuel}</p>
+          <p className="text-sm text-ink-soft leading-relaxed whitespace-pre-line">{objectifAnnuel}</p>
         </Carte>
       )}
     </div>

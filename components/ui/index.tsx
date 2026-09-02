@@ -13,8 +13,8 @@ export type EtatAction = {
 export const ETAT_INITIAL: EtatAction = { ok: false }
 
 export const CHAMP =
-  'w-full px-3 py-2 rounded-lg border border-slate-200 bg-[#FAF9F6] text-sm text-slate-800 ' +
-  'placeholder:text-slate-400 focus:outline-none focus:border-indigo-400 focus:bg-white transition-colors'
+  'w-full px-3 py-2 rounded-lg border border-subtle bg-canvas text-sm text-ink-soft ' +
+  'placeholder:text-ghost focus:outline-none focus:border-accent focus:bg-surface transition-colors'
 
 // ---------------------------------------------------------------------------
 // Blocs de mise en page
@@ -34,12 +34,12 @@ export function Carte({
   className?: string
 }) {
   return (
-    <section className={`bg-white rounded-2xl border border-slate-200 shadow-sm p-5 ${className}`}>
+    <section className={`bg-surface rounded-2xl border border-subtle shadow-sm p-5 ${className}`}>
       {(titre || action) && (
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            {titre && <h2 className="text-sm font-bold text-slate-700">{titre}</h2>}
-            {sousTitre && <p className="text-xs text-slate-400 mt-0.5">{sousTitre}</p>}
+            {titre && <h2 className="text-sm font-bold text-ink-soft">{titre}</h2>}
+            {sousTitre && <p className="text-xs text-ghost mt-0.5">{sousTitre}</p>}
           </div>
           {action}
         </div>
@@ -50,7 +50,7 @@ export function Carte({
 }
 
 export function Vide({ texte }: { texte: string }) {
-  return <p className="text-sm text-slate-400 text-center py-8">{texte}</p>
+  return <p className="text-sm text-ghost text-center py-8">{texte}</p>
 }
 
 export function Etiquette({
@@ -61,11 +61,11 @@ export function Etiquette({
   ton?: 'neutre' | 'succes' | 'alerte' | 'attente' | 'info'
 }) {
   const tons = {
-    neutre: 'bg-slate-100 text-slate-600',
-    succes: 'bg-teal-50 text-teal-700',
-    alerte: 'bg-red-50 text-red-700',
-    attente: 'bg-amber-50 text-amber-700',
-    info: 'bg-indigo-50 text-indigo-700',
+    neutre: 'bg-surface-muted text-muted',
+    succes: 'bg-positive-soft text-positive-ink',
+    alerte: 'bg-negative-soft text-negative-ink',
+    attente: 'bg-warning-soft text-warning-ink',
+    info: 'bg-accent-soft text-accent-ink',
   }
   return (
     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${tons[ton]}`}>
@@ -96,12 +96,12 @@ export function Champ({
   return (
     <div>
       {libelle && (
-        <label htmlFor={id} className="block text-xs font-semibold text-slate-500 mb-1">
+        <label htmlFor={id} className="block text-xs font-semibold text-muted mb-1">
           {libelle}
         </label>
       )}
       <input id={id} name={nom} type={type} className={CHAMP} {...reste} />
-      {erreur && <p className="text-xs text-red-600 mt-1">{erreur}</p>}
+      {erreur && <p className="text-xs text-negative-ink mt-1">{erreur}</p>}
     </div>
   )
 }
@@ -122,12 +122,12 @@ export function ZoneTexte({
   return (
     <div>
       {libelle && (
-        <label htmlFor={id} className="block text-xs font-semibold text-slate-500 mb-1">
+        <label htmlFor={id} className="block text-xs font-semibold text-muted mb-1">
           {libelle}
         </label>
       )}
       <textarea id={id} name={nom} rows={3} className={`${CHAMP} resize-y`} {...reste} />
-      {erreur && <p className="text-xs text-red-600 mt-1">{erreur}</p>}
+      {erreur && <p className="text-xs text-negative-ink mt-1">{erreur}</p>}
     </div>
   )
 }
@@ -147,7 +147,7 @@ export function Liste({
   return (
     <div>
       {libelle && (
-        <label htmlFor={nom} className="block text-xs font-semibold text-slate-500 mb-1">
+        <label htmlFor={nom} className="block text-xs font-semibold text-muted mb-1">
           {libelle}
         </label>
       )}
@@ -158,7 +158,7 @@ export function Liste({
           </option>
         ))}
       </select>
-      {erreur && <p className="text-xs text-red-600 mt-1">{erreur}</p>}
+      {erreur && <p className="text-xs text-negative-ink mt-1">{erreur}</p>}
     </div>
   )
 }
@@ -180,9 +180,9 @@ export function BoutonSoumettre({
 }) {
   const { pending } = useFormStatus()
   const variantes = {
-    primaire: 'bg-indigo-500 hover:bg-indigo-600 text-white',
-    discret: 'bg-slate-100 hover:bg-slate-200 text-slate-700',
-    danger: 'bg-red-500 hover:bg-red-600 text-white',
+    primaire: 'bg-accent hover:bg-accent-strong text-on-accent',
+    discret: 'bg-surface-muted hover:bg-surface-muted text-ink-soft',
+    danger: 'bg-negative hover:bg-negative text-on-accent',
   }
   return (
     <button
@@ -213,7 +213,7 @@ export function BoutonSuppression({
         title={intitule}
         aria-label={intitule}
         className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
-                   text-slate-300 hover:text-red-500 text-sm px-1"
+                   text-disabled hover:text-negative text-sm px-1"
       >
         ✕
       </button>
@@ -228,8 +228,8 @@ export function Retour({ etat }: { etat: EtatAction }) {
       role="status"
       className={`text-xs rounded-lg px-3 py-2 ${
         etat.ok
-          ? 'text-teal-700 bg-teal-50 border border-teal-200'
-          : 'text-red-700 bg-red-50 border border-red-200'
+          ? 'text-positive-ink bg-positive-soft border border-positive'
+          : 'text-negative-ink bg-negative-soft border border-negative'
       }`}
     >
       {etat.message}
@@ -266,8 +266,8 @@ export function PanneauAjout({
     return (
       <button
         onClick={() => setOuvert(true)}
-        className="w-full rounded-xl border border-dashed border-slate-300 py-3 text-sm
-                   text-slate-500 hover:border-indigo-400 hover:text-indigo-600 transition-colors"
+        className="w-full rounded-xl border border-dashed border-firm py-3 text-sm
+                   text-muted hover:border-accent hover:text-accent-ink transition-colors"
       >
         + {intitule}
       </button>
@@ -275,12 +275,12 @@ export function PanneauAjout({
   }
 
   return (
-    <div className="rounded-xl border border-indigo-200 bg-indigo-50/30 p-4">
+    <div className="rounded-xl border border-accent bg-accent-soft p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-bold text-slate-700">{intitule}</h3>
+        <h3 className="text-sm font-bold text-ink-soft">{intitule}</h3>
         <button
           onClick={() => setOuvert(false)}
-          className="text-xs text-slate-500 hover:text-slate-700"
+          className="text-xs text-muted hover:text-ink-soft"
         >
           Annuler
         </button>

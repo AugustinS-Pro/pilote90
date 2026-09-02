@@ -70,8 +70,8 @@ export function ArbitrageIdee({ id, issue }: { id: string; issue: string }) {
         name="outcome" defaultValue={issue}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
         aria-label="Arbitrage de l'idee"
-        className="text-[11px] px-1.5 py-1 rounded border border-slate-200 bg-white
-                   focus:outline-none focus:border-indigo-400"
+        className="text-[11px] px-1.5 py-1 rounded border border-subtle bg-surface
+                   focus:outline-none focus:border-accent"
       >
         <option value="PARKED">En attente</option>
         {ISSUES.map((i) => <option key={i.valeur} value={i.valeur}>{i.libelle}</option>)}
