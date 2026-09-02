@@ -1,8 +1,10 @@
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import { redirect } from 'next/navigation'
 import { FormulairesTransaction } from './FormulairesTransaction'
 import { supprimerTransaction } from './actions'
+import { BoutonSuppression } from '@/components/ui'
 import {
   SectionStructure, SectionTaux, SectionObjectifRevenu, SectionEcheances, SectionSuiviMensuel,
   type StructureVue, type TauxVue, type ObjectifVue, type EcheanceVue,
@@ -16,9 +18,9 @@ export default async function Axe2Page() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
 
-  const { id: userId, role } = utilisateur
+  const { id: userId } = utilisateur
 
-  const client = role === 'CLIENT'
+  const client = peut(utilisateur, 'AXE_CHIFFRES')
     ? await prisma.client.findUnique({
         where: { userId },
         include: {
@@ -119,7 +121,7 @@ export default async function Axe2Page() {
     })
 
   return (
-    <div className="p-8 w-full">
+    <div className="p-4 sm:p-6 lg:p-8 w-full">
 
       {/* En-tête */}
       <div className="mb-6">
@@ -132,7 +134,7 @@ export default async function Axe2Page() {
       </div>
 
       {/* 4 KPIs Bento */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
           <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">
             CA ce mois
@@ -226,18 +228,11 @@ export default async function Axe2Page() {
                     }`}>
                       {t.type === 'REVENUE' ? '+' : '-'}{(t.amountHt / 100).toLocaleString('fr-FR')}€
                     </span>
-                    <form action={supprimerTransaction}>
-                      <input type="hidden" name="id" value={t.id} />
-                      <button
-                        type="submit"
-                        aria-label={`Supprimer la transaction ${t.label ?? ''}`}
-                        title="Supprimer"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity
-                                   text-disabled hover:text-negative text-sm px-1"
-                      >
-                        ✕
-                      </button>
-                    </form>
+                    <BoutonSuppression
+                      action={supprimerTransaction}
+                      id={t.id}
+                      intitule={`Supprimer ${t.label ?? 'cette transaction'}`}
+                    />
                   </div>
                 </div>
               ))}

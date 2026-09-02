@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -11,7 +12,7 @@ import { calculerIndicateurs } from '@/lib/finance'
 export default async function DashboardPage() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
-  if (utilisateur.role === 'ADMIN') redirect('/clients')
+  if (!peut(utilisateur, 'TABLEAU_DE_BORD')) redirect('/clients')
 
   const client = await prisma.client.findUnique({
     where: { userId: utilisateur.id },
@@ -31,7 +32,7 @@ export default async function DashboardPage() {
 
   if (!client) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Tableau de bord</h1>
         <p className="text-sm text-muted">Aucun dossier client rattache a ce compte.</p>
       </div>
@@ -58,7 +59,7 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">
           Bonjour {utilisateur.name?.split(' ')[0] ?? ''}
@@ -102,7 +103,7 @@ export default async function DashboardPage() {
         </Carte>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {axes.map((a) => (
           <Link
             key={a.href} href={a.href}
@@ -170,7 +171,7 @@ export default async function DashboardPage() {
         </Carte>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
           { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-positive' },

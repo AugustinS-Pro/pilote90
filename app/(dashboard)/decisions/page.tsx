@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import { Carte, Vide, Etiquette } from '@/components/ui'
 import { FormulaireDecision, SuppressionDecision } from '@/components/FormulairesSysteme'
 import { CATEGORIES_DECISION, libelleDe } from '@/lib/listes'
@@ -21,13 +22,13 @@ export default async function DecisionsPage({
   const { q, categorie } = await searchParams
 
   const client =
-    utilisateur.role === 'CLIENT'
+    peut(utilisateur, 'DOSSIER_PERSONNEL')
       ? await prisma.client.findUnique({ where: { userId: utilisateur.id }, select: { id: true } })
       : null
 
   if (!client) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Centre de decisions</h1>
         <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
       </div>
@@ -56,7 +57,7 @@ export default async function DecisionsPage({
   const libelle = (v: string) => libelleDe(CATEGORIES_DECISION, v)
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Centre de decisions</h1>
         <p className="text-muted text-sm mt-1">

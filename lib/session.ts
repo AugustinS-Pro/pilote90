@@ -26,6 +26,11 @@ export async function getCurrentUser(): Promise<UtilisateurSession | null> {
  * Fiche client du compte connecte.
  * Cloisonnement multi-tenant : la recherche part TOUJOURS du userId de la session,
  * jamais d'un identifiant fourni par le client HTTP.
+ *
+ * Le test sur le role est le dernier du projet : l'autorisation vit desormais
+ * dans `lib/habilitations.ts`. Il tombera a l'etape 2 des habilitations, ou
+ * posseder un dossier d'entrepreneur cessera d'etre une affaire de role pour
+ * devenir une simple question de fait : ce compte a-t-il une fiche client.
  */
 export async function getCurrentClient() {
   const user = await getCurrentUser()

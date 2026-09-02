@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -17,7 +18,7 @@ export default async function Axe1Page() {
   if (!utilisateur) redirect('/login')
 
   const client =
-    utilisateur.role === 'CLIENT'
+    peut(utilisateur, 'AXE_VISION')
       ? await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
@@ -35,7 +36,7 @@ export default async function Axe1Page() {
 
   if (!client) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Vision CEO</h1>
         <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
       </div>
@@ -70,7 +71,7 @@ export default async function Axe1Page() {
   const vision = valeursParPilier.get('VISION')?.synthesis
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
 
       <div className="bg-gradient-to-br from-accent to-accent-alt rounded-3xl p-8 text-on-accent">
         <p className="text-xs uppercase tracking-wider text-on-inverse font-semibold mb-2">
@@ -83,7 +84,7 @@ export default async function Axe1Page() {
           {cycle ? `Cycle ${cycle.cycleNumber} · ${joursRestants} jours restants` : 'Aucun cycle en cours'}
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{euros(cycle?.caTargetMonthly ?? 0)}</p>
             <p className="text-xs text-on-inverse mt-1">Objectif de CA mensuel</p>
@@ -117,7 +118,7 @@ export default async function Axe1Page() {
         titre="Les priorites de ce cycle"
         sousTitre="Trois au maximum : c'est ce qui distingue un cap d'une liste de souhaits"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {objectives.map((obj, i) => (
             <CartePriorite
               key={obj.id}

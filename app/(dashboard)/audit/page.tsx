@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import {
   calculerIndicateurs, serieDouzeMois, calculerPrevisionnel,
   auditerFinances, messageDeSituation,
@@ -22,7 +23,7 @@ export default async function AuditPage() {
   if (!utilisateur) redirect('/login')
 
   const client =
-    utilisateur.role === 'CLIENT'
+    peut(utilisateur, 'AUDIT_PERSONNEL')
       ? await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
@@ -34,7 +35,7 @@ export default async function AuditPage() {
 
   if (!client) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Audit &amp; Previsionnel</h1>
         <p className="text-sm text-muted">
           Cet espace est celui des entrepreneurs accompagnes. Depuis un compte administrateur,
@@ -68,7 +69,7 @@ export default async function AuditPage() {
   ]
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
 
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -103,7 +104,7 @@ export default async function AuditPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
           <div key={k.titre} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
             <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.titre}</p>

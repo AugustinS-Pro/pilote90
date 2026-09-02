@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -19,7 +20,7 @@ export default async function HistoriquePage() {
   if (!utilisateur) redirect('/login')
 
   const client =
-    utilisateur.role === 'CLIENT'
+    peut(utilisateur, 'DOSSIER_PERSONNEL')
       ? await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
@@ -39,7 +40,7 @@ export default async function HistoriquePage() {
 
   if (!client) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Historique des cycles</h1>
         <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
       </div>
@@ -50,7 +51,7 @@ export default async function HistoriquePage() {
   const arbitrees = client.ideas.filter((i) => i.outcome !== 'PARKED')
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Historique des cycles</h1>
         <p className="text-muted text-sm mt-1">
