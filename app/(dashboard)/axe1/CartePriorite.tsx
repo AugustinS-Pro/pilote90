@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { majPriorite, supprimerPriorite, type EtatAction } from './actions'
+import { BoutonSuppression } from '@/components/ui'
 
 const ETAT_INITIAL: EtatAction = { ok: false }
 
@@ -52,18 +53,11 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${badge.classe}`}>
             {badge.libelle}
           </span>
-          <form action={supprimerPriorite}>
-            <input type="hidden" name="id" value={priorite.id} />
-            <button
-              type="submit"
-              title="Supprimer cette priorite"
-              aria-label={`Supprimer la priorite ${priorite.title}`}
-              className="opacity-0 group-hover:opacity-100 transition-opacity
-                         text-disabled hover:text-negative text-sm px-1"
-            >
-              ✕
-            </button>
-          </form>
+          <BoutonSuppression
+            action={supprimerPriorite}
+            id={priorite.id}
+            intitule={`Supprimer la priorite ${priorite.title}`}
+          />
         </div>
       </div>
 

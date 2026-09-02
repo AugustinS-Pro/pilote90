@@ -367,3 +367,24 @@ export async function supprimerRetour(formData: FormData): Promise<void> {
   await prisma.feedback.deleteMany({ where: { id, clientId: client.id } })
   rafraichir()
 }
+
+/**
+ * Modification en place de l intitule.
+ *
+ * Meme cloisonnement que la suppression : le `clientId` de la session entre
+ * dans le WHERE, donc un identifiant qui ne serait pas du client connecte ne
+ * met simplement rien a jour. La valeur vide est refusee plutot que d effacer
+ * l intitule.
+ */
+export async function modifierOffre(formData: FormData): Promise<void> {
+  const client = await getCurrentClient()
+  const id = String(formData.get('id') ?? '')
+  const valeur = String(formData.get('valeur') ?? '').trim()
+  if (!client || !id || valeur.length === 0 || valeur.length > 300) return
+  await prisma.offer.updateMany({
+    where: { id, clientId: client.id },
+    data: { name: valeur },
+  })
+  rafraichir()
+}
+

@@ -3,13 +3,13 @@
 import { useActionState } from 'react'
 import {
   Carte, Vide, Etiquette, Champ, Liste,
-  BoutonSoumettre, BoutonSuppression, Retour, PanneauAjout, ETAT_INITIAL,
+  BoutonSoumettre, BoutonSuppression, TexteEditable, Retour, PanneauAjout, ETAT_INITIAL,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import {
   enregistrerStructure, enregistrerTaux,
   enregistrerObjectifRevenu, supprimerObjectifRevenu,
-  creerEcheance, basculerEcheance, supprimerEcheance,
+  creerEcheance, basculerEcheance, supprimerEcheance, modifierEcheance,
 } from './actions'
 
 export type StructureVue = {
@@ -296,9 +296,14 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
               </form>
 
               <div className="flex-1 min-w-0">
-                <p className={`text-sm ${e.done ? 'text-ghost line-through' : 'text-ink-soft font-medium'}`}>
-                  {e.label}
-                </p>
+                <div className={`text-sm ${e.done ? 'text-ghost line-through' : 'text-ink-soft font-medium'}`}>
+                  <TexteEditable
+                    action={modifierEcheance}
+                    id={e.id}
+                    valeur={e.label}
+                    intitule="Modifier le libelle de l echeance"
+                  />
+                </div>
                 <p className="text-[11px] text-ghost">
                   {e.echeance}{e.recurrence && ` · ${e.recurrence}`}
                 </p>

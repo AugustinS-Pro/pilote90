@@ -13,7 +13,8 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-canvas">
       <Sidebar role={utilisateur.role} />
-      <main className="flex-1 ml-16 min-w-0">{children}</main>
+      {/* Marge a gauche sur grand ecran, sous la barre du haut sur mobile. */}
+      <main className="flex-1 min-w-0 pt-14 md:pt-0 md:ml-16">{children}</main>
     </div>
   )
 }

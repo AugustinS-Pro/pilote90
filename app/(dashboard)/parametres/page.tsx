@@ -13,7 +13,7 @@ export default async function ParametresPage() {
   const actif = await themeActif()
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Paramètres</h1>
         <p className="text-muted text-sm mt-1">Votre compte et l&apos;apparence de l&apos;application</p>

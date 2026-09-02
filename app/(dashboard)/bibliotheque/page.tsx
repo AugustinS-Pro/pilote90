@@ -28,7 +28,7 @@ export default async function BibliothequePage() {
   })).filter((g) => g.items.length > 0)
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Bibliotheque strategique</h1>
         <p className="text-muted text-sm mt-1">

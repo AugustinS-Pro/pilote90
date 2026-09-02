@@ -2,13 +2,13 @@
 
 import { useActionState } from 'react'
 import {
-  Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, Retour, PanneauAjout, ETAT_INITIAL,
+  Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, TexteEditable, Retour, PanneauAjout, ETAT_INITIAL,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import {
   creerCycle, cloturerCycle, enregistrerPlanMensuel,
   enregistrerFocusSemaine, enregistrerRevue,
-  creerTache, basculerTache, supprimerTache,
+  creerTache, basculerTache, supprimerTache, modifierTache,
 } from './actions'
 
 export const ETIQUETTES_TACHE = [
@@ -140,7 +140,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
         <span>Demarrage</span><span>Mois 1</span><span>Mois 2</span><span>Fin</span>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-5">
         <div className="bg-surface/5 rounded-xl p-3.5">
           <p className="text-xl font-extrabold">{euros(cycle.caTargetMonthly)}</p>
           <p className="text-xs text-ghost mt-0.5">Objectif mensuel</p>
@@ -310,9 +310,14 @@ export function SectionTaches({
       </form>
 
       <div className="flex-1 min-w-0">
-        <p className={`text-sm ${t.done ? 'text-ghost line-through' : 'text-ink-soft font-medium'}`}>
-          {t.label}
-        </p>
+        <div className={`text-sm ${t.done ? 'text-ghost line-through' : 'text-ink-soft font-medium'}`}>
+          <TexteEditable
+            action={modifierTache}
+            id={t.id}
+            valeur={t.label}
+            intitule="Modifier le libelle de la tache"
+          />
+        </div>
         {t.prioriteTitre && (
           <p className="text-xs text-accent mt-0.5">↳ {t.prioriteTitre}</p>
         )}

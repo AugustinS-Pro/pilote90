@@ -2,12 +2,12 @@
 
 import { useActionState } from 'react'
 import {
-  Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, Retour, PanneauAjout, ETAT_INITIAL,
+  Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, TexteEditable, Retour, PanneauAjout, ETAT_INITIAL,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import {
   enregistrerPersona, supprimerPersona,
-  creerOffre, changerStatutOffre, supprimerOffre,
+  creerOffre, changerStatutOffre, supprimerOffre, modifierOffre,
   creerNiveauOffre, supprimerNiveauOffre,
   enregistrerFicheClient, supprimerFicheClient,
   enregistrerAchat, enregistrerRetour, supprimerRetour,
@@ -181,7 +181,14 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
             <div key={o.id} className="group rounded-xl border border-subtle p-4 hover:shadow-sm transition-shadow">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-ink-soft">{o.name}</p>
+                  <div className="text-sm font-semibold text-ink-soft">
+                    <TexteEditable
+                      action={modifierOffre}
+                      id={o.id}
+                      valeur={o.name}
+                      intitule="Modifier le nom de l offre"
+                    />
+                  </div>
                   <p className="text-xs text-ghost mt-0.5">
                     {libelleDe(FORMATS, o.format)}
                     {o.personaNom && ` · pour ${o.personaNom}`}

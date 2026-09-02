@@ -2,13 +2,14 @@
 
 import { useActionState } from 'react'
 import {
-  Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, Retour, PanneauAjout, ETAT_INITIAL,
+  Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, TexteEditable, Retour, PanneauAjout, ETAT_INITIAL,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import {
-  creerProbleme, supprimerProbleme,
-  creerThematique, supprimerThematique,
-  creerIdeeContenu, changerStatutContenu, supprimerIdeeContenu,
+  creerProbleme, supprimerProbleme, modifierProbleme,
+  creerThematique, supprimerThematique, modifierThematique,
+  creerIdeeContenu, changerStatutContenu, supprimerIdeeContenu, modifierIdeeContenu,
+  modifierProspect,
   creerProspect, deplacerProspect, supprimerProspect,
 } from './actions'
 
@@ -126,7 +127,14 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
             <tbody>
               {problemes.map((p) => (
                 <tr key={p.id} className="group border-b border-faint last:border-0 align-top">
-                  <td className="py-2.5 pr-3 text-ink-soft font-medium">{p.problem}</td>
+                  <td className="py-2.5 pr-3 text-ink-soft font-medium">
+                    <TexteEditable
+                      action={modifierProbleme}
+                      id={p.id}
+                      valeur={p.problem}
+                      intitule="Modifier ce probleme client"
+                    />
+                  </td>
                   <td className="py-2.5 pr-3 text-muted">{p.question ?? '—'}</td>
                   <td className="py-2.5 pr-3 text-muted">{p.understanding ?? '—'}</td>
                   <td className="py-2.5 pr-3 text-muted">{p.topic ?? '—'}</td>
@@ -179,7 +187,14 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
             <div key={t.id} className="group rounded-xl border border-subtle px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-ink-soft">{t.label}</p>
+                  <div className="text-sm font-semibold text-ink-soft">
+                    <TexteEditable
+                      action={modifierThematique}
+                      id={t.id}
+                      valeur={t.label}
+                      intitule="Modifier le nom de la thematique"
+                    />
+                  </div>
                   {t.whyImportant && (
                     <p className="text-xs text-muted mt-1">
                       <span className="text-ghost">Pourquoi c&apos;est important : </span>
@@ -240,7 +255,14 @@ function CarteIdee({ idee }: { idee: IdeeVue }) {
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm font-medium text-ink-soft leading-snug">{idee.subject}</p>
+        <div className="text-sm font-medium text-ink-soft leading-snug min-w-0">
+          <TexteEditable
+            action={modifierIdeeContenu}
+            id={idee.id}
+            valeur={idee.subject}
+            intitule="Modifier le sujet du contenu"
+          />
+        </div>
         <BoutonSuppression action={supprimerIdeeContenu} id={idee.id} intitule="Supprimer ce contenu" />
       </div>
 
@@ -376,7 +398,14 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
                     <div key={p.id} className="group rounded-lg bg-surface border border-subtle px-3 py-2.5">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-ink-soft truncate">{p.companyName}</p>
+                          <div className="text-sm font-semibold text-ink-soft">
+                            <TexteEditable
+                              action={modifierProspect}
+                              id={p.id}
+                              valeur={p.companyName}
+                              intitule="Modifier le nom du prospect"
+                            />
+                          </div>
                           {p.contactName && <p className="text-xs text-muted">{p.contactName}</p>}
                         </div>
                         <BoutonSuppression action={supprimerProspect} id={p.id} intitule={`Supprimer ${p.companyName}`} />

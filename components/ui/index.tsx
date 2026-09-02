@@ -196,6 +196,17 @@ export function BoutonSoumettre({
   )
 }
 
+/**
+ * Suppression en deux temps.
+ *
+ * La croix ne supprime plus rien : elle demande confirmation, en rappelant
+ * l'intitule de l'element vise. Le point est concentre ici, donc les quatorze
+ * suppressions de l'application sont protegees d'un seul coup, et le jour ou
+ * la formulation change elle change partout.
+ *
+ * Pas de `window.confirm` : une boite de dialogue native bloque le fil, ne se
+ * met pas au theme, et n'est pas la meme d'un navigateur a l'autre.
+ */
 export function BoutonSuppression({
   action,
   id,
@@ -203,19 +214,44 @@ export function BoutonSuppression({
 }: {
   action: (formData: FormData) => Promise<void>
   id: string
+  /** Formule complete, du type « Supprimer la fiche Durand ». */
   intitule: string
 }) {
-  return (
-    <form action={action}>
-      <input type="hidden" name="id" value={id} />
+  const [confirmation, setConfirmation] = useState(false)
+
+  if (!confirmation) {
+    return (
       <button
-        type="submit"
+        type="button"
+        onClick={() => setConfirmation(true)}
         title={intitule}
         aria-label={intitule}
         className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
                    text-disabled hover:text-negative text-sm px-1"
       >
         ✕
+      </button>
+    )
+  }
+
+  return (
+    <form action={action} className="flex items-center gap-1.5 whitespace-nowrap">
+      <input type="hidden" name="id" value={id} />
+      <span className="text-[11px] text-muted">{intitule} ?</span>
+      <button
+        type="submit"
+        className="text-[11px] font-semibold px-2 py-1 rounded-md bg-negative text-on-accent
+                   hover:opacity-90 transition-opacity"
+      >
+        Oui
+      </button>
+      <button
+        type="button"
+        onClick={() => setConfirmation(false)}
+        className="text-[11px] font-semibold px-2 py-1 rounded-md border border-subtle
+                   text-ink-soft hover:bg-surface-muted transition-colors"
+      >
+        Non
       </button>
     </form>
   )
@@ -287,5 +323,97 @@ export function PanneauAjout({
       </div>
       {children}
     </div>
+  )
+}
+
+/**
+ * Intitule modifiable sur place.
+ *
+ * Repare le defaut le plus visible a l'usage : jusqu'ici on creait et on
+ * supprimait, on ne corrigeait pas. Une faute de frappe obligeait a effacer la
+ * ligne et a la ressaisir, ce qui, sur une offre, faisait perdre son
+ * historique d'achats.
+ *
+ * Le composant ne connait pas l'entite qu'il modifie : il recoit une action,
+ * un identifiant et une valeur. Chaque action reste responsable de son propre
+ * cloisonnement, comme les suppressions.
+ */
+export function TexteEditable({
+  action,
+  id,
+  valeur,
+  intitule,
+  multiligne = false,
+  className = '',
+}: {
+  action: (formData: FormData) => Promise<void>
+  id: string
+  valeur: string
+  /** Formule complete, du type « Modifier le libelle de la tache ». */
+  intitule: string
+  multiligne?: boolean
+  className?: string
+}) {
+  const [edition, setEdition] = useState(false)
+
+  if (!edition) {
+    return (
+      <span className="inline-flex items-baseline gap-1.5 min-w-0">
+        <span className={className}>{valeur}</span>
+        <button
+          type="button"
+          onClick={() => setEdition(true)}
+          title={intitule}
+          aria-label={intitule}
+          className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
+                     text-disabled hover:text-accent text-xs shrink-0"
+        >
+          ✎
+        </button>
+      </span>
+    )
+  }
+
+  return (
+    <form
+      action={async (formData) => {
+        await action(formData)
+        setEdition(false)
+      }}
+      className="flex items-start gap-1.5 w-full"
+    >
+      <input type="hidden" name="id" value={id} />
+      {multiligne ? (
+        <textarea
+          name="valeur"
+          defaultValue={valeur}
+          rows={2}
+          autoFocus
+          required
+          className={`${CHAMP} resize-y`}
+        />
+      ) : (
+        <input
+          name="valeur"
+          defaultValue={valeur}
+          autoFocus
+          required
+          className={CHAMP}
+          onKeyDown={(evenement) => {
+            // Echap annule : c'est le reflexe attendu d'une edition en place.
+            if (evenement.key === 'Escape') setEdition(false)
+          }}
+        />
+      )}
+      <BoutonSoumettre enCours="...">OK</BoutonSoumettre>
+      <button
+        type="button"
+        onClick={() => setEdition(false)}
+        className="text-xs font-semibold px-2.5 py-2 rounded-lg border border-subtle
+                   text-ink-soft hover:bg-surface-muted transition-colors"
+      >
+        Annuler
+      </button>
+    </form>
   )
 }
