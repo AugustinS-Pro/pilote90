@@ -190,3 +190,45 @@ export const resourceInput = z.object({
   description: z.string().trim().max(600).optional(),
   url: z.string().trim().max(500).optional(),
 })
+
+// ---------------------------------------------------------------------------
+// Axe 2 - Structure, charges et objectif de revenu
+// ---------------------------------------------------------------------------
+
+export const adminProfileInput = z.object({
+  legalStatus: z.string().trim().max(60).optional(),
+  proBankAccount: z.string().optional(),
+  invoicingTool: z.string().trim().max(60).optional(),
+  accountingTool: z.string().trim().max(60).optional(),
+  proInsurance: z.string().optional(),
+  vatRegime: z.string().trim().max(60).optional(),
+  siret: z.string().trim().max(20).optional(),
+  siren: z.string().trim().max(20).optional(),
+})
+
+export const chargeRateInput = z.object({
+  socialContributionPct: z.string().optional(),
+  incomeTaxPct: z.string().optional(),
+  trainingPct: z.string().optional(),
+  category: z.enum(['BIC', 'BNC']),
+})
+
+export const revenueGoalInput = z.object({
+  offerName: z.string().trim().min(1, "Le nom de l'offre est obligatoire").max(120),
+  netTarget: z.string().min(1, 'Le revenu net vise est obligatoire'),
+  offerPrice: z.string().min(1, "Le prix de l'offre est obligatoire"),
+})
+
+export const deadlineInput = z.object({
+  label: z.string().trim().min(1, "L'intitule est obligatoire").max(120),
+  dueDate: z.string().min(1, 'La date est obligatoire'),
+  recurrence: z.string().trim().max(40).optional(),
+})
+
+/** Convertit une saisie de pourcentage en nombre borne 0-100. */
+export function versTaux(saisie: string | undefined): number {
+  if (!saisie) return 0
+  const valeur = Number(saisie.replace(',', '.'))
+  if (!Number.isFinite(valeur)) return 0
+  return Math.min(100, Math.max(0, valeur))
+}

@@ -112,6 +112,11 @@ export default function LoginPage() {
         <p className="text-center text-xs text-slate-400 mt-6">
           Pilote et Vous — Accès réservé
         </p>
+        <p className="text-center text-xs text-slate-400 mt-2">
+          <a href="/mentions-legales" className="hover:text-slate-600 underline underline-offset-2">
+            Mentions légales et protection des données
+          </a>
+        </p>
       </div>
     </main>
   )

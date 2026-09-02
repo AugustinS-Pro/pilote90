@@ -3,6 +3,14 @@ import { getCurrentUser } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { FormulairesTransaction } from './FormulairesTransaction'
 import { supprimerTransaction } from './actions'
+import {
+  SectionStructure, SectionTaux, SectionObjectifRevenu, SectionEcheances, SectionSuiviMensuel,
+  type StructureVue, type TauxVue, type ObjectifVue, type EcheanceVue,
+} from './SectionsStructure'
+import {
+  tauxTotal, caNecessaire, clientsNecessaires, chargesEstimees, revenuNet, joursAvant,
+} from '@/lib/charges'
+import { serieDouzeMois } from '@/lib/finance'
 
 export default async function Axe2Page() {
   const utilisateur = await getCurrentUser()
@@ -21,6 +29,10 @@ export default async function Axe2Page() {
           transactions: {
             orderBy: { transactionDate: 'desc' },
           },
+          adminProfile: true,
+          chargeRate: true,
+          revenueGoals: { orderBy: { createdAt: 'asc' } },
+          deadlines: { orderBy: { dueDate: 'asc' } },
         },
       })
     : null
@@ -50,6 +62,61 @@ export default async function Axe2Page() {
   const caProgress = caTarget > 0 ? Math.round((revenue / caTarget) * 100) : 0
 
   const recentTransactions = allTransactions.slice(0, 8)
+
+  // --- Axe 2 : structure, taux et projections. Tout ce qui suit est calcule.
+  const structure: StructureVue | null = client?.adminProfile
+    ? {
+        legalStatus: client.adminProfile.legalStatus,
+        proBankAccount: client.adminProfile.proBankAccount,
+        invoicingTool: client.adminProfile.invoicingTool,
+        accountingTool: client.adminProfile.accountingTool,
+        proInsurance: client.adminProfile.proInsurance,
+        vatRegime: client.adminProfile.vatRegime,
+        siret: client.adminProfile.siret,
+        siren: client.adminProfile.siren,
+      }
+    : null
+
+  const tauxBruts = {
+    socialContributionPct: client?.chargeRate?.socialContributionPct ?? 0,
+    incomeTaxPct: client?.chargeRate?.incomeTaxPct ?? 0,
+    trainingPct: client?.chargeRate?.trainingPct ?? 0,
+  }
+  const total = tauxTotal(tauxBruts)
+
+  const taux: TauxVue = {
+    ...tauxBruts,
+    category: client?.chargeRate?.category ?? 'BIC',
+    total,
+  }
+
+  const objectifs: ObjectifVue[] = (client?.revenueGoals ?? []).map((g) => {
+    const ca = caNecessaire(g.netTargetHt, total)
+    return {
+      id: g.id,
+      offerName: g.offerName,
+      netTargetHt: g.netTargetHt,
+      offerPriceHt: g.offerPriceHt,
+      caNecessaire: ca,
+      clientsNecessaires: clientsNecessaires(ca, g.offerPriceHt),
+    }
+  })
+
+  const echeances: EcheanceVue[] = (client?.deadlines ?? []).map((d) => ({
+    id: d.id,
+    label: d.label,
+    echeance: new Date(d.dueDate).toLocaleDateString('fr-FR'),
+    jours: joursAvant(new Date(d.dueDate)),
+    done: d.done,
+    recurrence: d.recurrence,
+  }))
+
+  const suiviMensuel = serieDouzeMois(allTransactions)
+    .slice(-6)
+    .map((p) => {
+      const ca = p.ca * 100
+      return { mois: p.mois, ca, charges: chargesEstimees(ca, total), net: revenuNet(ca, total) }
+    })
 
   return (
     <div className="p-8 w-full">
@@ -181,6 +248,20 @@ export default async function Axe2Page() {
             </p>
           )}
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start mt-6">
+        <SectionStructure structure={structure} />
+        <SectionTaux taux={taux} />
+      </div>
+
+      <div className="mt-6">
+        <SectionObjectifRevenu objectifs={objectifs} total={total} />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start mt-6">
+        <SectionSuiviMensuel lignes={suiviMensuel} total={total} />
+        <SectionEcheances echeances={echeances} />
       </div>
     </div>
   )
