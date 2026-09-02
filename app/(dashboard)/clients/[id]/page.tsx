@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -12,6 +13,7 @@ import {
 } from '@/lib/finance'
 import { GrapheCaCharges, GraphePrevisionnel } from '../../audit/Graphes'
 import { estConfidentiel, masquer } from '@/lib/confidentialite'
+import { evaluerFraicheur, TON_FRAICHEUR } from '@/lib/fraicheur'
 
 const STYLE = {
   ALERTE: { fond: 'bg-negative-soft border-negative', texte: 'text-negative-ink', libelle: 'Alerte' },
@@ -22,7 +24,7 @@ const STYLE = {
 export default async function FicheClientPage({ params }: { params: Promise<{ id: string }> }) {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
-  if (utilisateur.role !== 'ADMIN') redirect('/dashboard')
+  if (!peut(utilisateur, 'PORTEFEUILLE_CONSULTER')) redirect('/dashboard')
 
   const { id } = await params
   const confidentiel = await estConfidentiel()
@@ -46,6 +48,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
   const situation = messageDeSituation(constats)
 
   const nom = masquer(client.companyName, confidentiel)
+  const fraicheur = evaluerFraicheur(client.transactions)
 
   const bandeau =
     situation.ton === 'ALERTE' ? 'bg-negative-soft border-negative text-negative-ink'
@@ -53,8 +56,9 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
     : 'bg-positive-soft border-positive text-positive-ink'
 
   return (
-    <div className="p-8 w-full space-y-6">
-      <div>
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
         <Link href="/clients" className="text-xs text-muted hover:text-ink-soft">
           ← Retour au portefeuille
         </Link>
@@ -63,13 +67,25 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
           {[client.sector, client.status].filter(Boolean).join(' · ') || 'Fiche client'}
           {cycle && ` · Cycle ${cycle.cycleNumber}, ${cycle.mainObjective}`}
         </p>
+        </div>
+
+        <a
+          href={`/clients/${client.id}/rapport`}
+          className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-transparent
+                     bg-inverse text-on-inverse hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
+        >
+          Rapport comptable (PDF)
+        </a>
       </div>
 
       <div className={`rounded-2xl border px-5 py-4 ${bandeau}`}>
-        <p className="font-semibold text-sm">{situation.texte}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-semibold text-sm">{situation.texte}</p>
+          <Etiquette texte={fraicheur.libelle} ton={TON_FRAICHEUR[fraicheur.niveau]} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
           { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-positive' },

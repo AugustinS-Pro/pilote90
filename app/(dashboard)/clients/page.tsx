@@ -2,20 +2,38 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import { calculerIndicateurs, calculerPrevisionnel, auditerFinances } from '@/lib/finance'
 import { estConfidentiel, basculerConfidentialite, masquer } from '@/lib/confidentialite'
+import { NouveauClient } from './NouveauClient'
+import { evaluerFraicheur, TON_FRAICHEUR } from '@/lib/fraicheur'
 
-export default async function PortefeuillePage() {
+const TRIS = [
+  { cle: 'urgence', libelle: 'Par urgence' },
+  { cle: 'nom', libelle: 'Par nom' },
+  { cle: 'ca', libelle: 'Par chiffre d\u2019affaires' },
+] as const
+
+type CleTri = (typeof TRIS)[number]['cle']
+
+export default async function PortefeuillePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tri?: string }>
+}) {
+  const demande = (await searchParams).tri
+  const tri: CleTri = TRIS.some((t) => t.cle === demande) ? (demande as CleTri) : 'urgence'
+
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
 
-  if (utilisateur.role !== 'ADMIN') {
+  if (!peut(utilisateur, 'PORTEFEUILLE_CONSULTER')) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Portefeuille</h1>
         <p className="text-sm text-muted">
           Cette page est reservee au compte consultant.
@@ -55,14 +73,37 @@ export default async function PortefeuillePage() {
       resultatNet: indicateurs.resultatNet,
       progression: indicateurs.progressionObjectif,
       alerte: alertes[0]?.titre ?? null,
+      // La fraicheur se lit sur la date de SAISIE, pas sur la date de
+      // l'operation : on peut saisir aujourd'hui une facture du mois dernier.
+      fraicheur: evaluerFraicheur(c.transactions),
     }
+  })
+
+  /**
+   * Tri par urgence : ce qui demande une action passe devant. Une alerte
+   * financiere d'abord, un dossier qui decroche ensuite, et le reste apres.
+   * Un portefeuille se lit par ce qui ne va pas, pas par ordre alphabetique.
+   */
+  const GRAVITE_FRAICHEUR = { DECROCHE: 0, JAMAIS: 1, A_RELANCER: 2, ACTIF: 3 } as const
+  const triees = [...fiches].sort((a, b) => {
+    if (tri === 'nom') return a.nom.localeCompare(b.nom, 'fr')
+    if (tri === 'ca') return b.caDuMois - a.caDuMois
+    const alerte = Number(Boolean(b.alerte)) - Number(Boolean(a.alerte))
+    if (alerte !== 0) return alerte
+    const veille =
+      GRAVITE_FRAICHEUR[a.fraicheur.niveau] - GRAVITE_FRAICHEUR[b.fraicheur.niveau]
+    if (veille !== 0) return veille
+    return a.nom.localeCompare(b.nom, 'fr')
   })
 
   const caTotal = fiches.reduce((s, f) => s + f.caDuMois, 0)
   const enAlerte = fiches.filter((f) => f.alerte).length
+  const aRelancer = fiches.filter(
+    (f) => f.fraicheur.niveau === 'A_RELANCER' || f.fraicheur.niveau === 'DECROCHE',
+  ).length
 
   return (
-    <div className="p-8 w-full space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-ink">Mon portefeuille</h1>
@@ -93,7 +134,7 @@ export default async function PortefeuillePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
           <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">Clients suivis</p>
           <p className="text-2xl font-extrabold text-accent-ink">{fiches.length}</p>
@@ -106,12 +147,39 @@ export default async function PortefeuillePage() {
           <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">Clients en alerte</p>
           <p className={`text-2xl font-extrabold ${enAlerte > 0 ? 'text-negative' : 'text-ghost'}`}>{enAlerte}</p>
         </div>
+        <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">A relancer</p>
+          <p className={`text-2xl font-extrabold ${aRelancer > 0 ? 'text-warning-ink' : 'text-ghost'}`}>{aRelancer}</p>
+          <p className="text-[11px] text-ghost mt-2 leading-snug">Sans saisie depuis plus de trois semaines</p>
+        </div>
       </div>
 
-      <Carte titre="Les entreprises accompagnees">
-        {fiches.length > 0 ? (
+      {peut(utilisateur, 'COMPTES_ADMINISTRER') && <NouveauClient />}
+
+      <Carte
+        titre="Les entreprises accompagnees"
+        action={
+          <div className="flex items-center gap-1">
+            {TRIS.map((t) => (
+              <Link
+                key={t.cle}
+                href={`/clients?tri=${t.cle}`}
+                aria-current={tri === t.cle ? 'true' : undefined}
+                className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${
+                  tri === t.cle
+                    ? 'bg-inverse text-on-inverse border-inverse'
+                    : 'bg-surface text-muted border-subtle hover:bg-surface-muted'
+                }`}
+              >
+                {t.libelle}
+              </Link>
+            ))}
+          </div>
+        }
+      >
+        {triees.length > 0 ? (
           <div className="space-y-2">
-            {fiches.map((f) => (
+            {triees.map((f) => (
               <Link
                 key={f.id}
                 href={`/clients/${f.id}`}
@@ -124,6 +192,12 @@ export default async function PortefeuillePage() {
                       {f.secteur && <Etiquette texte={f.secteur} ton="neutre" />}
                       {f.cycle && <Etiquette texte={f.cycle} ton="info" />}
                       {f.alerte && <Etiquette texte={f.alerte} ton="alerte" />}
+                      {f.fraicheur.niveau !== 'ACTIF' && (
+                        <Etiquette
+                          texte={f.fraicheur.libelle}
+                          ton={TON_FRAICHEUR[f.fraicheur.niveau]}
+                        />
+                      )}
                     </div>
                     <p className="text-xs text-muted mt-0.5">{f.contact}</p>
                     {f.objectif && <p className="text-xs text-ghost mt-1">{f.objectif}</p>}
