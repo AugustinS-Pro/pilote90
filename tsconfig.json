@@ -24,5 +24,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "//": "tests-e2e et playwright.config.ts sont ecartes tant que @playwright/test n'est pas installe. Les retirer de cette liste apres 'npm i -D @playwright/test && npx playwright install chromium'.",
+  "exclude": ["node_modules", "tests-e2e", "playwright.config.ts"]
 }
