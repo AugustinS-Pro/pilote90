@@ -1,0 +1,57 @@
+# Pilote90 — orchestration de production.
+# La base de donnees reste sur Supabase : ce fichier ne fait tourner que
+# l'application et le reverse proxy.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pilote90-app
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    expose:
+      - "3000"
+    networks:
+      - pilote90
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: pilote90-nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/pilote90.conf:/etc/nginx/conf.d/default.conf:ro
+      - certbot-conf:/etc/letsencrypt:ro
+      - certbot-www:/var/www/certbot:ro
+    networks:
+      - pilote90
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: pilote90-certbot
+    restart: unless-stopped
+    volumes:
+      - certbot-conf:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    # Tentative de renouvellement toutes les douze heures ; Let's Encrypt
+    # ne renouvelle reellement qu'a moins de trente jours de l'expiration.
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'
+
+networks:
+  pilote90:
+    driver: bridge
+
+volumes:
+  certbot-conf:
+  certbot-www:

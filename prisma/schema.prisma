@@ -1,6 +1,13 @@
+// =============================================================================
+// Pilote90 - Schema de donnees
+// Conventions : modeles en anglais au singulier, champs camelCase, id cuid(),
+// montants stockes en CENTIMES (Float), libelles d'interface en francais.
+// Cloisonnement multi-tenant : hors User, chaque enregistrement porte clientId.
+// =============================================================================
+
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/app/generated/prisma"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -9,6 +16,10 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// -----------------------------------------------------------------------------
+// Comptes et cloisonnement
+// -----------------------------------------------------------------------------
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -16,59 +27,243 @@ model User {
   name      String?
   role      Role     @default(CLIENT)
   createdAt DateTime @default(now())
-  client    Client?  @relation("ClientUser")
-  managed   Client[] @relation("AdminClients")
+
+  /// Preference d'affichage, rattachee au compte et non au navigateur :
+  /// deux utilisateurs du meme poste gardent chacun son theme.
+  theme     Theme    @default(CLAIR)
+
+  /// Confort de lecture, en pourcentage de la taille de police de la racine.
+  echelleTexte Int   @default(100)
+
+  /// Ce que le compte fait POUR LUI-MEME : la formule vendue.
+  formule   Formule    @default(AUTONOMIE)
+
+  /// Ce que le compte fait POUR LES AUTRES : les delegations.
+  /// Vide par defaut, parce que l'autorisation refuse par defaut.
+  capacites Capacite[] @default([])
+
+  client  Client?  @relation("ClientUser")
+  managed Client[] @relation("AdminClients")
 }
 
 model Client {
-  id           String        @id @default(cuid())
-  userId       String        @unique
-  user         User          @relation("ClientUser", fields: [userId], references: [id])
-  adminId      String?
-  admin        User?         @relation("AdminClients", fields: [adminId], references: [id])
-  companyName  String
-  sector       String?
-  status       String?
-  cycles       Cycle[]
-  transactions Transaction[]
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation("ClientUser", fields: [userId], references: [id])
+  adminId     String?
+  admin       User?    @relation("AdminClients", fields: [adminId], references: [id])
+  companyName String
+  sector      String?
+  /// Forme juridique telle que le client la declare : SASU, EURL, micro-entreprise.
+  status      String?
+  /// Etat de la relation d'accompagnement, a ne pas confondre avec `status`
+  /// qui porte la forme juridique. Un client archive quitte le portefeuille
+  /// sans que rien ne soit efface.
+  etat        EtatClient @default(ACTIF)
+  archiveLe   DateTime?
+  createdAt   DateTime @default(now())
+
+  cycles          Cycle[]
+  transactions    Transaction[]
+  strategyEntries StrategyEntry[]
+  ideas           Idea[]
+  decisions       Decision[]
+  adminProfile    AdminProfile?
+  chargeRate      ChargeRate?
+  revenueGoals    RevenueGoal[]
+  deadlines       AdminDeadline[]
+  personas        Persona[]
+  offers          Offer[]
+  offerLevels     OfferLevel[]
+  crmClients      CrmClient[]
+  purchases       Purchase[]
+  feedbacks       Feedback[]
+  prospects       Prospect[]
+  clientProblems  ClientProblem[]
+  contentThemes   ContentTheme[]
+  contentIdeas    ContentIdea[]
+  tasks           Task[]
+  resources       Resource[]
+
+  @@index([adminId])
 }
 
+// -----------------------------------------------------------------------------
+// Axe 5 - Pilotage 90 jours (le socle temporel de toute l'application)
+// -----------------------------------------------------------------------------
+
 model Cycle {
-  id               String      @id @default(cuid())
-  clientId         String
-  client           Client      @relation(fields: [clientId], references: [id])
-  cycleNumber      Int
-  mainObjective    String
-  caTargetMonthly  Float       @default(0)
-  startDate        DateTime
-  endDate          DateTime
-  status           CycleStatus @default(ACTIVE)
-  weeks            Week[]
-  objectives       Objective[]
-  createdAt        DateTime    @default(now())
+  id              String      @id @default(cuid())
+  clientId        String
+  client          Client      @relation(fields: [clientId], references: [id])
+  cycleNumber     Int
+  name            String?
+  mainObjective   String
+  caTargetMonthly Float       @default(0)
+  startDate       DateTime
+  endDate         DateTime
+  status          CycleStatus @default(ACTIVE)
+  closingNote     String?
+  createdAt       DateTime    @default(now())
+
+  weeks        Week[]
+  objectives   Objective[]
+  monthlyPlans MonthlyPlan[]
+  ideas        Idea[]
+  decisions    Decision[]
+  tasks        Task[]
+
+  @@index([clientId, status])
 }
 
 model Week {
-  id          String   @id @default(cuid())
-  cycleId     String
-  cycle       Cycle    @relation(fields: [cycleId], references: [id])
-  weekNumber  Int
-  startDate   DateTime?
-  focusTitle  String?
-  actions     String[]
-  createdAt   DateTime @default(now())
+  id         String    @id @default(cuid())
+  cycleId    String
+  cycle      Cycle     @relation(fields: [cycleId], references: [id])
+  weekNumber Int
+  startDate  DateTime?
+  focusTitle String?
+  actions    String[]
+  createdAt  DateTime  @default(now())
+
+  review WeekReview?
+  tasks  Task[]
+
+  @@unique([cycleId, weekNumber])
 }
 
+/// Revue hebdomadaire : ce qui marche / ce qui bloque / mes ajustements.
+model WeekReview {
+  id          String   @id @default(cuid())
+  weekId      String   @unique
+  week        Week     @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  whatWorks   String?
+  whatBlocks  String?
+  adjustments String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/// Plan mensuel : trois mois cote a cote dans un cycle de 90 jours.
+model MonthlyPlan {
+  id          String   @id @default(cuid())
+  cycleId     String
+  cycle       Cycle    @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  monthNumber Int
+  theme       String?
+  caTargetHt  Float    @default(0)
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@unique([cycleId, monthNumber])
+}
+
+/// Priorite strategique du cycle. Trois au maximum (Priorite 1, 2, 3).
 model Objective {
   id          String          @id @default(cuid())
   cycleId     String
-  cycle       Cycle           @relation(fields: [cycleId], references: [id])
+  cycle       Cycle           @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  rank        Int             @default(1)
   title       String
   description String?
   progressPct Int             @default(0)
   status      ObjectiveStatus @default(IN_PROGRESS)
   createdAt   DateTime        @default(now())
+
+  tasks Task[]
+
+  @@index([cycleId])
 }
+
+/// Action quotidienne du cockpit. Le rattachement a une priorite CEO
+/// (objectiveId) est ce qui rend concrete l'interconnexion des axes.
+model Task {
+  id          String     @id @default(cuid())
+  clientId    String
+  client      Client     @relation(fields: [clientId], references: [id])
+  cycleId     String?
+  cycle       Cycle?     @relation(fields: [cycleId], references: [id])
+  weekId      String?
+  week        Week?      @relation(fields: [weekId], references: [id])
+  objectiveId String?
+  objective   Objective? @relation(fields: [objectiveId], references: [id])
+  label       String
+  tag         TaskTag    @default(DIVERS)
+  done        Boolean    @default(false)
+  dueDate     DateTime?
+  position    Int        @default(0)
+  createdAt   DateTime   @default(now())
+
+  @@index([clientId, done, dueDate])
+  @@index([objectiveId])
+}
+
+// -----------------------------------------------------------------------------
+// Axe 1 - Vision CEO
+// -----------------------------------------------------------------------------
+
+/// Coffre strategique : une entree par pilier (vision, mission, pourquoi, objectif).
+model StrategyEntry {
+  id        String      @id @default(cuid())
+  clientId  String
+  client    Client      @relation(fields: [clientId], references: [id])
+  key       StrategyKey
+  synthesis String?
+  fileUrl   String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  notes StrategyNote[]
+
+  @@unique([clientId, key])
+}
+
+/// Reponses aux questions guidees qui precedent la synthese.
+model StrategyNote {
+  id       String        @id @default(cuid())
+  entryId  String
+  entry    StrategyEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  question String
+  answer   String?
+  position Int           @default(0)
+
+  @@index([entryId])
+}
+
+/// Parking d'idees : relu a la cloture du cycle, pas avant.
+model Idea {
+  id         String      @id @default(cuid())
+  clientId   String
+  client     Client      @relation(fields: [clientId], references: [id])
+  cycleId    String?
+  cycle      Cycle?      @relation(fields: [cycleId], references: [id])
+  content    String
+  outcome    IdeaOutcome @default(PARKED)
+  reviewedAt DateTime?
+  createdAt  DateTime    @default(now())
+
+  @@index([clientId, outcome])
+}
+
+/// Journal des decisions strategiques (page systeme /decisions).
+model Decision {
+  id        String           @id @default(cuid())
+  clientId  String
+  client    Client           @relation(fields: [clientId], references: [id])
+  cycleId   String?
+  cycle     Cycle?           @relation(fields: [cycleId], references: [id])
+  title     String
+  category  DecisionCategory @default(AUTRE)
+  context   String?
+  decidedAt DateTime         @default(now())
+  createdAt DateTime         @default(now())
+
+  @@index([clientId, decidedAt])
+}
+
+// -----------------------------------------------------------------------------
+// Axe 2 - Chiffres & Administratif
+// -----------------------------------------------------------------------------
 
 model Transaction {
   id              String          @id @default(cuid())
@@ -81,6 +276,302 @@ model Transaction {
   category        String?
   recurrence      String?
   createdAt       DateTime        @default(now())
+
+  @@index([clientId, transactionDate])
+}
+
+/// Structure administrative de l'activite (saisie une fois).
+model AdminProfile {
+  id             String   @id @default(cuid())
+  clientId       String   @unique
+  client         Client   @relation(fields: [clientId], references: [id])
+  legalStatus    String?
+  proBankAccount Boolean  @default(false)
+  invoicingTool  String?
+  accountingTool String?
+  proInsurance   Boolean  @default(false)
+  vatRegime      String?
+  siret          String?
+  siren          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+/// Taux de charges. Le total est calcule, jamais saisi.
+model ChargeRate {
+  id                    String      @id @default(cuid())
+  clientId              String      @unique
+  client                Client      @relation(fields: [clientId], references: [id])
+  socialContributionPct Float       @default(0)
+  incomeTaxPct          Float       @default(0)
+  trainingPct           Float       @default(0)
+  category              TaxCategory @default(BIC)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+}
+
+/// "Combien dois-je generer pour vivre ?" : CA necessaire et nombre de clients
+/// sont deduits, pas saisis.
+model RevenueGoal {
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id])
+  offerName    String
+  netTargetHt  Float    @default(0)
+  offerPriceHt Float    @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([clientId])
+}
+
+/// Echeances administratives avec alerte a l'approche.
+model AdminDeadline {
+  id         String   @id @default(cuid())
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id])
+  label      String
+  dueDate    DateTime
+  done       Boolean  @default(false)
+  recurrence String?
+  createdAt  DateTime @default(now())
+
+  @@index([clientId, dueDate])
+}
+
+// -----------------------------------------------------------------------------
+// Axe 3 - Offres & Clients
+// -----------------------------------------------------------------------------
+
+model Persona {
+  id             String   @id @default(cuid())
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id])
+  name           String
+  dailyLife      String?
+  frustrations   String?
+  desires        String?
+  objections     String?
+  transformation String?
+  magicSentence  String?
+  createdAt      DateTime @default(now())
+
+  offers Offer[]
+
+  @@index([clientId])
+}
+
+model Offer {
+  id        String      @id @default(cuid())
+  clientId  String
+  client    Client      @relation(fields: [clientId], references: [id])
+  personaId String?
+  persona   Persona?    @relation(fields: [personaId], references: [id])
+  name      String
+  promise   String?
+  priceHt   Float       @default(0)
+  format    OfferFormat @default(SERVICE)
+  status    OfferStatus @default(IDEE)
+  createdAt DateTime    @default(now())
+
+  purchases Purchase[]
+  feedbacks Feedback[]
+
+  @@index([clientId, status])
+}
+
+/// Architecture de l'offre : niveau d'entree, coeur de gamme, premium.
+model OfferLevel {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
+  level     String
+  offerName String
+  price     String?
+  goal      String?
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+/// Mini-CRM : les clients de l'entrepreneur (a ne pas confondre avec Client,
+/// qui designe l'entreprise accompagnee et porte le cloisonnement).
+model CrmClient {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id])
+  companyName String
+  contactName String?
+  email       String?
+  phone       String?
+  status      CrmStatus @default(ACTIF)
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  purchases Purchase[]
+  feedbacks Feedback[]
+
+  @@index([clientId, status])
+}
+
+model Purchase {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id])
+  crmClientId String
+  crmClient   CrmClient @relation(fields: [crmClientId], references: [id], onDelete: Cascade)
+  offerId     String?
+  offer       Offer?    @relation(fields: [offerId], references: [id])
+  amountHt    Float     @default(0)
+  purchasedAt DateTime  @default(now())
+
+  @@index([clientId, purchasedAt])
+}
+
+model Feedback {
+  id          String     @id @default(cuid())
+  clientId    String
+  client      Client     @relation(fields: [clientId], references: [id])
+  crmClientId String?
+  crmClient   CrmClient? @relation(fields: [crmClientId], references: [id])
+  offerId     String?
+  offer       Offer?     @relation(fields: [offerId], references: [id])
+  rating      Int        @default(5)
+  comment     String?
+  createdAt   DateTime   @default(now())
+
+  @@index([clientId])
+}
+
+// -----------------------------------------------------------------------------
+// Axe 4 - Communication & Ventes
+// -----------------------------------------------------------------------------
+
+/// "Ce qui interesse vraiment mon client" : du probleme vecu jusqu'a l'angle.
+model ClientProblem {
+  id            String   @id @default(cuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id])
+  problem       String
+  question      String?
+  understanding String?
+  topic         String?
+  angle         String?
+  position      Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@index([clientId])
+}
+
+model ContentTheme {
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id])
+  label        String
+  whyImportant String?
+  linkToOffer  String?
+  position     Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  ideas ContentIdea[]
+
+  @@index([clientId])
+}
+
+model ContentIdea {
+  id            String        @id @default(cuid())
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id])
+  themeId       String?
+  theme         ContentTheme? @relation(fields: [themeId], references: [id])
+  subject       String
+  contentType   ContentType   @default(EDUCATION)
+  format        ContentFormat @default(POST)
+  platform      String?
+  marketingGoal MarketingGoal @default(ATTIRER)
+  weekNumber    Int?
+  status        ContentStatus @default(IDEE)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+
+  @@index([clientId, status])
+}
+
+/// Pipeline commercial a quatre etapes.
+model Prospect {
+  id                String        @id @default(cuid())
+  clientId          String
+  client            Client        @relation(fields: [clientId], references: [id])
+  companyName       String
+  contactName       String?
+  estimatedHt       Float         @default(0)
+  source            String?
+  stage             ProspectStage @default(DECOUVERTE)
+  expectedCloseDate DateTime?
+  notes             String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([clientId, stage])
+}
+
+// -----------------------------------------------------------------------------
+// Page systeme - Bibliotheque strategique
+// -----------------------------------------------------------------------------
+
+/// clientId nul = ressource commune, deposee par le consultant pour tous.
+model Resource {
+  id          String       @id @default(cuid())
+  clientId    String?
+  client      Client?      @relation(fields: [clientId], references: [id])
+  title       String
+  type        ResourceType @default(GUIDE)
+  description String?
+  url         String?
+  createdAt   DateTime     @default(now())
+
+  @@index([clientId])
+}
+
+// -----------------------------------------------------------------------------
+// Enumerations
+// -----------------------------------------------------------------------------
+
+/// Ce qui est vendu. Deux offres distinctes, servies par la meme application.
+enum Formule {
+  /// Les cinq axes, en autonomie. L'entrepreneur pilote seul.
+  AUTONOMIE
+  /// Audit et previsionnel, support des seances avec un consultant.
+  ACCOMPAGNEMENT
+  /// Les deux : l'entrepreneur pilote seul et se fait accompagner.
+  COMPLETE
+  /// Aucun espace personnel. Pour un compte purement administratif.
+  AUCUNE
+}
+
+/// Ce qui est delegue. Sans rapport avec la formule, d'ou la liste separee.
+enum Capacite {
+  PORTEFEUILLE_CONSULTER
+  COMPTES_ADMINISTRER
+  REPERES_SECTORIELS
+}
+
+enum EtatClient {
+  /// Compte cree par le consultant, le client ne s'est pas encore connecte.
+  INVITE
+  ACTIF
+  /// Accompagnement termine. Les donnees restent, la fiche sort du portefeuille.
+  ARCHIVE
+}
+
+enum Theme {
+  CLAIR
+  PILOTE90
+  SOMBRE
+  /// Contraste eleve, niveau AAA du referentiel WCAG.
+  CONTRASTE
+  /// Palette sure pour la deuteranopie et la protanopie.
+  DALTONIEN
 }
 
 enum Role {
@@ -89,9 +580,16 @@ enum Role {
 }
 
 enum CycleStatus {
+  A_VENIR
   ACTIVE
   COMPLETED
   ARCHIVED
+}
+
+enum ObjectiveStatus {
+  IN_PROGRESS
+  COMPLETED
+  LATE
 }
 
 enum TransactionType {
@@ -99,8 +597,107 @@ enum TransactionType {
   EXPENSE
 }
 
-enum ObjectiveStatus {
-  IN_PROGRESS
-  COMPLETED
-  LATE
+enum StrategyKey {
+  VISION
+  MISSION
+  GRAND_POURQUOI
+  OBJECTIF_ANNUEL
+}
+
+enum IdeaOutcome {
+  PARKED
+  KEPT
+  POSTPONED
+  DROPPED
+}
+
+enum DecisionCategory {
+  STRATEGIE
+  OFFRE
+  FINANCE
+  COMMUNICATION
+  ORGANISATION
+  AUTRE
+}
+
+enum TaxCategory {
+  BIC
+  BNC
+}
+
+enum OfferFormat {
+  SERVICE
+  ATELIER
+  PRODUIT_DIGITAL
+  COACHING
+  PROGRAMME
+}
+
+enum OfferStatus {
+  IDEE
+  EN_TEST
+  ACTIF
+  A_AMELIORER
+  ABANDONNE
+}
+
+enum CrmStatus {
+  PROSPECT
+  ACTIF
+  TERMINE
+  INACTIF
+}
+
+enum ContentType {
+  EDUCATION
+  CONNEXION
+  PREUVE
+  CONVERSION
+  VENTE
+}
+
+enum ContentFormat {
+  POST
+  CARROUSEL
+  REEL
+  STORY
+  VIDEO
+  EMAIL
+  PODCAST
+  WEBINAIRE
+}
+
+enum MarketingGoal {
+  ATTIRER
+  NOURRIR
+  VENDRE
+}
+
+enum ContentStatus {
+  IDEE
+  A_CREER
+  PUBLIE
+}
+
+enum ProspectStage {
+  DECOUVERTE
+  QUALIFICATION
+  PROPOSITION
+  SIGNE
+}
+
+enum TaskTag {
+  VENTE
+  OFFRE
+  FINANCE
+  COMMUNICATION
+  ORGANISATION
+  DIVERS
+}
+
+enum ResourceType {
+  GUIDE
+  RITUEL
+  MODELE
+  LIEN
 }
