@@ -111,7 +111,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
         <div>
           <p className="text-xs text-ghost uppercase tracking-wider mb-1">
             Cycle {cycle.cycleNumber}
-            {cycle.name && ` — ${cycle.name}`} · semaine {cycle.semaineCourante} sur 12
+            {cycle.name && ` · ${cycle.name}`} · semaine {cycle.semaineCourante} sur 12
           </p>
           <p className="font-bold text-xl">{cycle.mainObjective}</p>
           <p className="text-xs text-ghost mt-1">
@@ -332,7 +332,7 @@ export function SectionTaches({
   return (
     <Carte
       titre="Mon cockpit du jour"
-      sousTitre="Chaque tache peut se rattacher a une priorite du cycle — c'est le pont entre la strategie et le quotidien"
+      sousTitre="Chaque tache peut se rattacher a une priorite du cycle"
       action={
         taches.length > 0 ? (
           <div className="text-right">

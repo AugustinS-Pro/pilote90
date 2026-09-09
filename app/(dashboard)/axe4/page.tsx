@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import { euros } from '@/lib/format'
 import {
   SectionProblemes, SectionThematiques, SectionCalendrier, SectionPipeline,
@@ -11,10 +11,11 @@ import {
 export default async function Axe4Page() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+  // Sans l'habilitation, l'URL n'est pas la sienne : on le ramene chez lui
+  // plutot que de lui afficher une page vide.
+  if (!peut(utilisateur, 'AXE_COMMUNICATION')) redirect(pageAccueil(utilisateur))
 
-  const client =
-    peut(utilisateur, 'AXE_COMMUNICATION')
-      ? await prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
             clientProblems: { orderBy: { position: 'asc' } },
@@ -26,7 +27,6 @@ export default async function Axe4Page() {
             prospects: { orderBy: { updatedAt: 'desc' } },
           },
         })
-      : null
 
   if (!client) {
     return (

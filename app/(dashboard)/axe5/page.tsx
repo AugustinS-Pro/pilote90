@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import {
   SectionCycle, SectionPlanMensuel, SectionSemaines, SectionTaches,
   type CycleVue, type PlanMoisVue, type SemaineVue, type TacheVue, type PrioriteVue,
@@ -13,10 +13,11 @@ const dateFr = (v: Date | null) => (v ? new Date(v).toLocaleDateString('fr-FR') 
 export default async function Axe5Page() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+  // Sans l'habilitation, l'URL n'est pas la sienne : on le ramene chez lui
+  // plutot que de lui afficher une page vide.
+  if (!peut(utilisateur, 'AXE_PILOTAGE')) redirect(pageAccueil(utilisateur))
 
-  const client =
-    peut(utilisateur, 'AXE_PILOTAGE')
-      ? await prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
             cycles: {
@@ -32,7 +33,6 @@ export default async function Axe5Page() {
             tasks: { orderBy: [{ done: 'asc' }, { position: 'asc' }], include: { objective: { select: { title: true } } } },
           },
         })
-      : null
 
   if (!client) {
     return (

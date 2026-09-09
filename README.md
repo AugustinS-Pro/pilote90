@@ -1,6 +1,6 @@
 # Pilote90
 
-**Pilote90** est une application web de pilotage stratégique conçue pour les entrepreneurs indépendants et les dirigeants de petites structures. Elle centralise en un seul endroit tout ce qui permet de piloter une activité : vision, finances, clients, communication et plan d'action — organisé autour de cycles de 90 jours.
+**Pilote90** est une application web de pilotage stratégique conçue pour les entrepreneurs indépendants et les dirigeants de petites structures. Elle centralise en un seul endroit tout ce qui permet de piloter une activité : vision, finances, clients, communication et plan d'action, organisés autour de cycles de 90 jours.
 
 Développée en partenariat avec **Pilote et Vous**, cabinet de conseil en stratégie et organisation pour TPE et solopreneurs.
 
@@ -18,15 +18,15 @@ Un dirigeant doit pouvoir comprendre d'où sort un nombre pour lui accorder sa c
 
 ## Les cinq axes
 
-**Vision CEO** — Vision, mission, grand pourquoi et objectif annuel. Les trois priorités du cycle. Le parking d'idées, relu à la clôture. Le journal des décisions.
+**Vision CEO.** Vision, mission, grand pourquoi et objectif annuel. Les trois priorités du cycle. Le parking d'idées, relu à la clôture. Le journal des décisions.
 
-**Chiffres & Administratif** — Saisie des revenus et des charges. Structure administrative, taux de charges, simulateur « combien dois-je générer pour vivre », échéances avec alerte.
+**Chiffres & Administratif.** Saisie des revenus et des charges. Structure administrative, taux de charges, simulateur « combien dois-je générer pour vivre », échéances avec alerte.
 
-**Offres & Clients** — Client idéal, catalogue d'offres, architecture de gamme, mini-CRM avec historique d'achats, retours de satisfaction.
+**Offres & Clients.** Client idéal, catalogue d'offres, architecture de gamme, mini-CRM avec historique d'achats, retours de satisfaction.
 
-**Communication & Ventes** — Problèmes du persona, thématiques, calendrier éditorial, pipeline commercial à quatre étapes.
+**Communication & Ventes.** Problèmes du persona, thématiques, calendrier éditorial, pipeline commercial à quatre étapes.
 
-**Pilotage 90 jours** — Création et clôture de cycles, plan mensuel, douze semaines avec focus et revue, cockpit du jour.
+**Pilotage 90 jours.** Création et clôture de cycles, plan mensuel, douze semaines avec focus et revue, cockpit du jour.
 
 **L'interconnexion** est ce qui distingue Pilote90 d'un empilement de modules : une action quotidienne se rattache à une priorité stratégique, et cocher l'action fait progresser la priorité.
 
@@ -45,7 +45,7 @@ Le consultant accède à l'audit de chaque client de son portefeuille, avec un *
 - **Framework** : Next.js 15 (App Router) + React 19
 - **Langage** : TypeScript, sans aucun `any`
 - **Base de données** : PostgreSQL via Supabase
-- **ORM** : Prisma 6 — 28 modèles, 18 énumérations
+- **ORM** : Prisma 6, 28 modèles et 18 énumérations
 - **Authentification** : NextAuth.js, stratégie JWT, mots de passe hachés avec bcrypt
 - **Validation** : Zod, côté serveur, sur toutes les écritures
 - **Interface** : Tailwind CSS 4, Recharts
@@ -54,7 +54,7 @@ Le consultant accède à l'audit de chaque client de son portefeuille, avec un *
 
 ## Sécurité et cloisonnement
 
-L'architecture est **multi-tenant** : plusieurs entreprises coexistent sur une seule instance. Hors la table des comptes, chaque enregistrement porte l'identifiant de l'entreprise propriétaire, et **chaque requête part de l'identifiant de session** — jamais d'un paramètre transmis par le navigateur. La règle est centralisée dans `lib/session.ts`.
+L'architecture est **multi-tenant** : plusieurs entreprises coexistent sur une seule instance. Hors la table des comptes, chaque enregistrement porte l'identifiant de l'entreprise propriétaire, et **chaque requête part de l'identifiant de session**, jamais d'un paramètre transmis par le navigateur. La règle est centralisée dans `lib/session.ts`.
 
 ---
 
@@ -95,7 +95,7 @@ components/
   ui/                     Bibliothèque de composants partagés
   layout/                 Barre latérale
 lib/
-  session.ts              Cloisonnement multi-tenant — point d'entrée unique
+  session.ts              Cloisonnement multi-tenant, point d'entrée unique
   finance.ts              Calculs du module Audit, fonctions pures
   charges.ts              Formules de l'axe 2, fonctions pures
   validation.ts           Schémas Zod
@@ -115,4 +115,4 @@ Le cœur applicatif est en place : les cinq axes, le module décisionnel, l'espa
 
 ## Licence
 
-Projet privé — tous droits réservés.
+Projet privé, tous droits réservés.

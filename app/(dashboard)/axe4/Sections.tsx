@@ -109,7 +109,7 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
   return (
     <Carte
       titre="Ce qui interesse vraiment mon client"
-      sousTitre="Du probleme vecu jusqu'a l'angle de contenu — c'est la matiere premiere de tout le reste"
+      sousTitre="Du probleme vecu jusqu'a l'angle de contenu"
     >
       {problemes.length > 0 ? (
         <div className="overflow-x-auto mb-4">
@@ -179,7 +179,7 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
   return (
     <Carte
       titre="Mes grandes thematiques"
-      sousTitre="Trois a cinq, pas davantage — au-dela le message se dilue"
+      sousTitre="Trois a cinq thematiques, pas davantage"
     >
       {thematiques.length > 0 ? (
         <div className="space-y-2 mb-4">

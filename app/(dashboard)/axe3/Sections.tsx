@@ -316,7 +316,7 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
   const aujourdhui = new Date().toISOString().slice(0, 10)
 
   return (
-    <Carte titre="Mes clients" sousTitre="Fiches, historique d'achats et suivi — la partie que le Notion n'a pas">
+    <Carte titre="Mes clients" sousTitre="Fiches, historique d'achats et suivi de satisfaction">
       {fiches.length > 0 ? (
         <div className="space-y-2 mb-4">
           {fiches.map((f) => (

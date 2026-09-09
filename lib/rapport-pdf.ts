@@ -573,7 +573,7 @@ function pieds(doc: Rapport, entreprise: string, genereLe: string): void {
       start: { x: MARGE, y: MARGE + 18 }, end: { x: MARGE + UTILE, y: MARGE + 18 },
       thickness: 0.5, color: TRAIT,
     })
-    const gauche = sain(`Pilote90 — ${entreprise} — genere le ${genereLe}`)
+    const gauche = sain(`Pilote90 · ${entreprise} · genere le ${genereLe}`)
     page.drawText(gauche, {
       x: MARGE, y: MARGE + 6, size: 7, font: doc.normal, color: PALE,
     })

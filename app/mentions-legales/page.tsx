@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Mentions légales et protection des données — Pilote90',
+  title: 'Mentions légales et protection des données · Pilote90',
 }
 
 function Section({ titre, children }: { titre: string; children: React.ReactNode }) {

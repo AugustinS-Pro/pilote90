@@ -48,7 +48,7 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
     <div className="group bg-surface rounded-2xl border border-subtle shadow-sm p-5
                     hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
-        <span className="text-2xl">{icone}</span>
+        <span aria-hidden className="text-2xl">{icone}</span>
         <div className="flex items-center gap-2">
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${badge.classe}`}>
             {badge.libelle}

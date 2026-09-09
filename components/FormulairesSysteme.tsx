@@ -47,7 +47,7 @@ export function FormulaireIdee() {
     <form action={action} className="flex items-end gap-2">
       <div className="flex-1">
         <Champ nom="content" required maxLength={500}
-               placeholder="Une idee qui vous traverse — vous la relirez a la cloture du cycle"
+               placeholder="Une idee qui vous traverse, a relire a la cloture du cycle"
                erreur={etat.erreurs?.content} />
       </div>
       <BoutonSoumettre enCours="Ajout...">Garer</BoutonSoumettre>

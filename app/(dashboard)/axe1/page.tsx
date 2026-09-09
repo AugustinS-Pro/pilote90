@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -16,10 +16,11 @@ import { FormulaireIdee, ArbitrageIdee, SuppressionIdee } from '@/components/For
 export default async function Axe1Page() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+  // Sans l'habilitation, l'URL n'est pas la sienne : on le ramene chez lui
+  // plutot que de lui afficher une page vide.
+  if (!peut(utilisateur, 'AXE_VISION')) redirect(pageAccueil(utilisateur))
 
-  const client =
-    peut(utilisateur, 'AXE_VISION')
-      ? await prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
             strategyEntries: { include: { notes: true } },
@@ -32,7 +33,6 @@ export default async function Axe1Page() {
             decisions: { orderBy: { decidedAt: 'desc' }, take: 3 },
           },
         })
-      : null
 
   if (!client) {
     return (
@@ -116,7 +116,7 @@ export default async function Axe1Page() {
 
       <Carte
         titre="Les priorites de ce cycle"
-        sousTitre="Trois au maximum : c'est ce qui distingue un cap d'une liste de souhaits"
+        sousTitre="Trois priorites au maximum par cycle"
       >
         <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {objectives.map((obj, i) => (

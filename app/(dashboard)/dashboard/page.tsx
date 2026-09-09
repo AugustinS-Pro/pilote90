@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -12,7 +12,7 @@ import { calculerIndicateurs } from '@/lib/finance'
 export default async function DashboardPage() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
-  if (!peut(utilisateur, 'TABLEAU_DE_BORD')) redirect('/clients')
+  if (!peut(utilisateur, 'TABLEAU_DE_BORD')) redirect(pageAccueil(utilisateur))
 
   const client = await prisma.client.findUnique({
     where: { userId: utilisateur.id },
@@ -74,7 +74,7 @@ export default async function DashboardPage() {
           <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
             <div>
               <p className="text-xs text-ghost uppercase tracking-wider mb-1">
-                Cycle {cycle.cycleNumber} — semaine {semaine} sur 12
+                Cycle {cycle.cycleNumber} · semaine {semaine} sur 12
               </p>
               <p className="font-bold text-lg">{cycle.mainObjective}</p>
               {vision && <p className="text-xs text-ghost mt-1.5 max-w-2xl">{vision}</p>}
@@ -111,7 +111,7 @@ export default async function DashboardPage() {
                        hover:border-accent hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-lg">{a.icone}</span>
+              <span aria-hidden className="text-lg">{a.icone}</span>
               <p className="text-xs text-muted font-semibold uppercase tracking-wide">{a.titre}</p>
             </div>
             <p className="text-2xl font-extrabold text-ink-soft">{a.valeur}</p>

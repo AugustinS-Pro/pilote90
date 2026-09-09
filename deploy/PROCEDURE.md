@@ -1,4 +1,4 @@
-# Mise en production sur le VPS — procédure
+# Mise en production sur le VPS : procédure
 
 Tout ce qui suit est de **l'exécution** : les fichiers de configuration sont déjà écrits et versionnés dans le dépôt, sous `deploy/`, plus `Dockerfile` et `docker-compose.yml` à la racine.
 
@@ -6,7 +6,7 @@ Comptez une demi-journée si tout se passe bien, une journée avec les imprévus
 
 ---
 
-## Avant de commencer — trois vérifications
+## Avant de commencer : trois vérifications
 
 ```bash
 # 1. Le build de production passe
@@ -23,7 +23,7 @@ Si le premier point échoue, arrêtez-vous là : inutile de préparer un déploi
 
 ---
 
-## Étape 1 — Préparer le serveur
+## Étape 1 : Préparer le serveur
 
 Connecté en root une dernière fois :
 
@@ -55,7 +55,7 @@ PubkeyAuthentication yes
 systemctl restart ssh
 ```
 
-### Pare-feu — politique de refus par défaut
+### Pare-feu : politique de refus par défaut
 
 ```bash
 ufw default deny incoming
@@ -81,7 +81,7 @@ Il bannit automatiquement les adresses qui multiplient les tentatives de connexi
 
 ---
 
-## Étape 2 — Docker
+## Étape 2 : Docker
 
 ```bash
 curl -fsSL https://get.docker.com | sh
@@ -92,7 +92,7 @@ Reconnectez-vous en `pilote` pour que l'appartenance au groupe prenne effet.
 
 ---
 
-## Étape 3 — Récupérer le code
+## Étape 3 : Récupérer le code
 
 ```bash
 sudo mkdir -p /opt/pilote90 && sudo chown pilote:pilote /opt/pilote90
@@ -103,7 +103,7 @@ git checkout feat/axes-et-pages     # ou main, une fois la branche fusionnée
 
 ---
 
-## Étape 4 — Les variables d'environnement
+## Étape 4 : Les variables d'environnement
 
 ```bash
 cp .env.production.example .env.production
@@ -121,9 +121,9 @@ openssl rand -base64 32
 
 ---
 
-## Étape 5 — Le certificat TLS
+## Étape 5 : Le certificat TLS
 
-Adaptez d'abord le nom de domaine dans `deploy/nginx/pilote90.conf` — il y apparaît trois fois.
+Adaptez d'abord le nom de domaine dans `deploy/nginx/pilote90.conf` : il y apparaît trois fois.
 
 Premier certificat, avant de lancer Nginx :
 
@@ -148,7 +148,7 @@ docker cp deploy/nginx/proxy-commun.inc pilote90-nginx:/etc/nginx/conf.d/proxy-c
 
 ---
 
-## Étape 6 — Migrer la base, puis démarrer
+## Étape 6 : Migrer la base, puis démarrer
 
 ```bash
 # Les migrations s'appliquent avant le premier démarrage
@@ -162,7 +162,7 @@ docker compose logs -f app
 
 ---
 
-## Étape 7 — Les comptes de démonstration
+## Étape 7 : Les comptes de démonstration
 
 **Impératif, et à ne pas repousser.**
 
@@ -177,7 +177,7 @@ Si vous gardez des comptes de démonstration pour la soutenance, donnez-leur des
 
 ---
 
-## Étape 8 — Sauvegarde et supervision
+## Étape 8 : Sauvegarde et supervision
 
 ```bash
 chmod +x deploy/*.sh
@@ -204,7 +204,7 @@ crontab -e
 
 ---
 
-## Étape 9 — Vérification
+## Étape 9 : Vérification
 
 | # | À vérifier | Attendu |
 |---|---|---|
@@ -241,7 +241,7 @@ Une fois la chaîne de déploiement continu en place, ces trois commandes se dé
 
 | Élément | Compétence couverte |
 |---|---|
-| Passage de Vercel (PaaS) à un VPS administré (IaaS) | **Décision d'infrastructure argumentée** — bloc 5 |
+| Passage de Vercel (PaaS) à un VPS administré (IaaS) | **Décision d'infrastructure argumentée**, bloc 5 |
 | UFW en refus par défaut, trois ports | Moindre privilège |
 | SSH par clés, root désactivé, fail2ban | Durcissement des accès |
 | Nginx en point d'entrée unique, TLS Let's Encrypt | Défense en profondeur, chiffrement de bout en bout |
@@ -251,7 +251,7 @@ Une fois la chaîne de déploiement continu en place, ces trois commandes se dé
 | Supervision à seuils, alertes ciblées | Maintien en condition opérationnelle |
 | Hébergement européen | Conformité RGPD |
 
-**Le type de migration retenu**, que le référentiel demande de nommer : il s'agit d'un ***lift and reshape***. L'application n'est pas transportée telle quelle — elle est conteneurisée et placée derrière un reverse proxy — mais son architecture n'est pas repensée. Le *re-architecturing* aurait signifié découper en services distincts, ce qui n'a aucun sens à cette échelle.
+**Le type de migration retenu**, que le référentiel demande de nommer : il s'agit d'un ***lift and reshape***. L'application n'est pas transportée telle quelle, puisqu'elle est conteneurisée et placée derrière un reverse proxy, mais son architecture n'est pas repensée. Le *re-architecturing* aurait signifié découper en services distincts, ce qui n'a aucun sens à cette échelle.
 
 ---
 

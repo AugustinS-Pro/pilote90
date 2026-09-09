@@ -7,7 +7,7 @@ import type { MetadataRoute } from 'next'
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Pilote90 — Pilotage stratégique',
+    name: 'Pilote90 · Pilotage stratégique',
     short_name: 'Pilote90',
     description:
       "Pilotez votre activité par cycles de 90 jours : vision, chiffres, offres, communication et plan d'action.",

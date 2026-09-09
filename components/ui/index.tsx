@@ -417,3 +417,57 @@ export function TexteEditable({
     </form>
   )
 }
+
+/**
+ * Champ de recherche, en formulaire GET.
+ *
+ * Aucun etat, aucun effet, aucune dependance a JavaScript : la soumission
+ * navigue vers la meme page avec un parametre d'URL, et le rendu serveur filtre.
+ * La recherche devient donc partageable par lien et memorisable par le
+ * navigateur, ce qu'un filtre garde en memoire dans le composant ne permet pas.
+ */
+export function Recherche({
+  action,
+  valeur,
+  placeholder = 'Rechercher...',
+  children,
+}: {
+  /** Chemin de la page, vers lequel le formulaire soumet. */
+  action: string
+  valeur?: string
+  placeholder?: string
+  /** Filtres additionnels, a conserver dans l'URL lors d'une recherche. */
+  children?: ReactNode
+}) {
+  return (
+    <form action={action} className="flex items-center gap-2">
+      {children}
+      <input
+        type="search"
+        name="q"
+        defaultValue={valeur ?? ''}
+        placeholder={placeholder}
+        aria-label={placeholder}
+        className="px-3 py-1.5 rounded-lg border border-subtle bg-canvas text-xs text-ink-soft
+                   placeholder:text-ghost focus:outline-none focus:border-accent focus:bg-surface
+                   transition-colors w-44 sm:w-56"
+      />
+      <button
+        type="submit"
+        className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border border-subtle
+                   bg-surface text-ink-soft hover:bg-surface-muted transition-colors"
+      >
+        Chercher
+      </button>
+      {valeur ? (
+        <a
+          href={action}
+          className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg text-muted
+                     hover:text-ink-soft transition-colors"
+        >
+          Effacer
+        </a>
+      ) : null}
+    </form>
+  )
+}

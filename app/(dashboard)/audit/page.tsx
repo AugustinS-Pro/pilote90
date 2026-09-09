@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import {
   calculerIndicateurs, serieDouzeMois, calculerPrevisionnel,
   auditerFinances, messageDeSituation,
@@ -21,17 +21,17 @@ const STYLE_NIVEAU = {
 export default async function AuditPage() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+  // Sans l'habilitation, l'URL n'est pas la sienne : on le ramene chez lui
+  // plutot que de lui afficher une page vide.
+  if (!peut(utilisateur, 'AUDIT_PERSONNEL')) redirect(pageAccueil(utilisateur))
 
-  const client =
-    peut(utilisateur, 'AUDIT_PERSONNEL')
-      ? await prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
           where: { userId: utilisateur.id },
           include: {
             transactions: { orderBy: { transactionDate: 'desc' } },
             cycles: { where: { status: 'ACTIVE' }, take: 1 },
           },
         })
-      : null
 
   if (!client) {
     return (
@@ -64,7 +64,7 @@ export default async function AuditPage() {
   const kpis = [
     { titre: 'Tresorerie', valeur: euros(indicateurs.tresorerie), formule: 'Encaissements moins decaissements depuis le debut', couleur: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
     { titre: 'CA du mois', valeur: euros(indicateurs.caDuMois), formule: 'Somme des revenus rattaches au mois en cours', couleur: 'text-positive' },
-    { titre: 'Charges du mois', valeur: euros(indicateurs.chargesDuMois), formule: `Somme des charges du mois — ratio ${indicateurs.ratioCharges} % du CA`, couleur: 'text-negative' },
+    { titre: 'Charges du mois', valeur: euros(indicateurs.chargesDuMois), formule: `Somme des charges du mois, ratio ${indicateurs.ratioCharges} % du CA`, couleur: 'text-negative' },
     { titre: 'Resultat net', valeur: euros(indicateurs.resultatNet), formule: 'CA du mois moins charges du mois', couleur: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
   ]
 
@@ -75,7 +75,7 @@ export default async function AuditPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-ink">Audit &amp; Previsionnel</h1>
           <p className="text-muted text-sm mt-1">
-            {client.companyName} — support de travail des seances d&apos;accompagnement
+            {client.companyName} · Support des seances d&apos;accompagnement
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
