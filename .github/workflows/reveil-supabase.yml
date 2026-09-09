@@ -1,0 +1,53 @@
+name: Réveil de la base
+
+# Le plan gratuit de Supabase met un projet en pause après sept jours sans
+# activité, et le réveil est manuel. Cette tâche exécute une requête triviale
+# tous les trois jours pour que le compteur ne parte jamais.
+#
+# Elle sert aussi de sonde : si la base devient injoignable pour une autre
+# raison, la tâche échoue et GitHub envoie une alerte. C'est de la supervision
+# à moindre frais, sur l'élément le plus fragile de l'infrastructure.
+on:
+  schedule:
+    # 6 h 17 UTC, un jour sur trois. L'heure décalée évite la minute pleine,
+    # où GitHub concentre des millions de tâches et retarde les exécutions.
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  reveiller:
+    name: Requête de maintien en activité
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Générer le client Prisma
+        run: npx prisma generate
+
+      - name: Interroger la base
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: |
+          node --input-type=module -e "
+            const { PrismaClient } = await import('./app/generated/prisma/index.js')
+            const prisma = new PrismaClient()
+            try {
+              const comptes = await prisma.user.count()
+              const clients = await prisma.client.count()
+              console.log(\`Base joignable : \${comptes} compte(s), \${clients} fiche(s) client.\`)
+            } finally {
+              await prisma.\$disconnect()
+            }
+          "
