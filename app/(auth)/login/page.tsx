@@ -27,7 +27,9 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/dashboard')
+    // La racine aiguille selon les habilitations : un consultant va a son
+    // portefeuille, un entrepreneur a son espace.
+    router.push('/')
   }
 
   return (
@@ -110,7 +112,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-ghost mt-6">
-          Pilote et Vous — Accès réservé
+          Pilote et Vous · Accès réservé
         </p>
         <p className="text-center text-xs text-ghost mt-2">
           <a href="/mentions-legales" className="hover:text-muted underline underline-offset-2">

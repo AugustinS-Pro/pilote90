@@ -17,30 +17,39 @@ async function main() {
 
   // === Comptes ==============================================================
 
+  // Les formules disent ce que chacun a ACHETE, les capacites ce qui lui est
+  // DELEGUE. Alexis vend de l'accompagnement adosse au module d'audit, Sandrine
+  // vend l'autonomie sur les cinq axes. Les deux consultent leur portefeuille,
+  // sans jamais voir celui de l'autre.
+  const CONSULTANT = ['PORTEFEUILLE_CONSULTER', 'COMPTES_ADMINISTRER'] as const
+
   const alexis = await prisma.user.upsert({
     where: { email: 'alexis@pilote90.fr' },
-    update: {},
+    update: { formule: 'ACCOMPAGNEMENT', capacites: [...CONSULTANT] },
     create: {
       email: 'alexis@pilote90.fr', name: 'Alexis Charlet', role: 'ADMIN',
       password: await bcrypt.hash('pilote90', 10),
+      formule: 'ACCOMPAGNEMENT', capacites: [...CONSULTANT],
     },
   })
 
   const marieUser = await prisma.user.upsert({
     where: { email: 'marie@demo.fr' },
-    update: {},
+    update: { formule: 'COMPLETE' },
     create: {
       email: 'marie@demo.fr', name: 'Marie Fontaine', role: 'CLIENT',
       password: await bcrypt.hash('marie2026', 10),
+      formule: 'COMPLETE',
     },
   })
 
   const thomasUser = await prisma.user.upsert({
     where: { email: 'thomas@demo.fr' },
-    update: {},
+    update: { formule: 'ACCOMPAGNEMENT' },
     create: {
       email: 'thomas@demo.fr', name: 'Thomas Martin', role: 'CLIENT',
       password: await bcrypt.hash('thomas2026', 10),
+      formule: 'ACCOMPAGNEMENT',
     },
   })
 
@@ -88,6 +97,9 @@ async function main() {
     6: 'Boucler la refonte de l offre socle',
   }
 
+  /** Numero de semaine vers l'identifiant reellement en base. */
+  const idSemaine = new Map<number, string>()
+
   for (let i = 0; i < 12; i++) {
     const id = `week-marie-1-${i + 1}`
     const donnees = {
@@ -95,9 +107,18 @@ async function main() {
       startDate: new Date(debut.getTime() + i * 7 * JOUR),
       focusTitle: focus[i + 1] ?? null,
     }
-    await prisma.week.upsert({
-      where: { id }, update: donnees, create: { id, cycleId: cycle.id, ...donnees },
+    // On cible la contrainte d'unicite metier, pas l'identifiant technique :
+    // des semaines creees lors d'un seed precedent portent un autre `id` mais
+    // le meme couple (cycle, numero), et l'upsert par `id` tenterait alors une
+    // creation qui viole la contrainte.
+    const semaine = await prisma.week.upsert({
+      where: { cycleId_weekNumber: { cycleId: cycle.id, weekNumber: i + 1 } },
+      update: donnees,
+      create: { id, cycleId: cycle.id, ...donnees },
     })
+    // On retient l'identifiant REEL : une semaine creee par un seed anterieur
+    // porte un cuid, pas l'identifiant lisible construit ci-dessus.
+    idSemaine.set(i + 1, semaine.id)
   }
 
   const revues = [
@@ -105,7 +126,8 @@ async function main() {
     { semaine: 5, works: 'Le modele de proposition fait gagner une heure par dossier', blocks: 'Deux relances oubliees', adjust: 'Bloquer 20 minutes de relance le vendredi matin' },
   ]
   for (const r of revues) {
-    const weekId = `week-marie-1-${r.semaine}`
+    const weekId = idSemaine.get(r.semaine)
+    if (!weekId) continue
     await prisma.weekReview.upsert({
       where: { weekId },
       update: { whatWorks: r.works, whatBlocks: r.blocks, adjustments: r.adjust },
@@ -235,18 +257,18 @@ async function main() {
   }
 
   const transactions = [
-    { id: 'tr-01', type: 'REVENUE' as const, amountHt: 150000, label: 'Nathalie Roy — Accompagnement', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 84 },
+    { id: 'tr-01', type: 'REVENUE' as const, amountHt: 150000, label: 'Nathalie Roy, Accompagnement', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 84 },
     { id: 'tr-02', type: 'EXPENSE' as const, amountHt: 56700, label: 'URSSAF', category: 'CONTRIBUTION', recurrence: 'MONTHLY', jours: 80 },
-    { id: 'tr-03', type: 'REVENUE' as const, amountHt: 80000, label: 'Sophie Mercier — Mois 1', category: 'CLIENT_PAYMENT', recurrence: 'MONTHLY', jours: 66 },
+    { id: 'tr-03', type: 'REVENUE' as const, amountHt: 80000, label: 'Sophie Mercier, Mois 1', category: 'CLIENT_PAYMENT', recurrence: 'MONTHLY', jours: 66 },
     { id: 'tr-04', type: 'EXPENSE' as const, amountHt: 2800, label: 'Outils SaaS', category: 'SAAS_TOOL', recurrence: 'MONTHLY', jours: 62 },
-    { id: 'tr-05', type: 'REVENUE' as const, amountHt: 120000, label: 'Atelier collectif — printemps', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 52 },
+    { id: 'tr-05', type: 'REVENUE' as const, amountHt: 120000, label: 'Atelier collectif, printemps', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 52 },
     { id: 'tr-06', type: 'EXPENSE' as const, amountHt: 56700, label: 'URSSAF', category: 'CONTRIBUTION', recurrence: 'MONTHLY', jours: 50 },
-    { id: 'tr-07', type: 'REVENUE' as const, amountHt: 80000, label: 'Sophie Mercier — Mois 2', category: 'CLIENT_PAYMENT', recurrence: 'MONTHLY', jours: 36 },
+    { id: 'tr-07', type: 'REVENUE' as const, amountHt: 80000, label: 'Sophie Mercier, Mois 2', category: 'CLIENT_PAYMENT', recurrence: 'MONTHLY', jours: 36 },
     { id: 'tr-08', type: 'EXPENSE' as const, amountHt: 2800, label: 'Outils SaaS', category: 'SAAS_TOOL', recurrence: 'MONTHLY', jours: 32 },
-    { id: 'tr-09', type: 'REVENUE' as const, amountHt: 35000, label: 'Session flash — Carole', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 20 },
-    { id: 'tr-10', type: 'REVENUE' as const, amountHt: 150000, label: 'Claire Besson — Accompagnement', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 12 },
+    { id: 'tr-09', type: 'REVENUE' as const, amountHt: 35000, label: 'Session flash, Carole', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 20 },
+    { id: 'tr-10', type: 'REVENUE' as const, amountHt: 150000, label: 'Claire Besson, Accompagnement', category: 'CLIENT_PAYMENT', recurrence: 'ONE_TIME', jours: 12 },
     { id: 'tr-11', type: 'EXPENSE' as const, amountHt: 8900, label: 'Hebergement et outils', category: 'SAAS_TOOL', recurrence: 'MONTHLY', jours: 6 },
-    { id: 'tr-12', type: 'REVENUE' as const, amountHt: 80000, label: 'Sophie Mercier — Mois 3', category: 'CLIENT_PAYMENT', recurrence: 'MONTHLY', jours: 3 },
+    { id: 'tr-12', type: 'REVENUE' as const, amountHt: 80000, label: 'Sophie Mercier, Mois 3', category: 'CLIENT_PAYMENT', recurrence: 'MONTHLY', jours: 3 },
   ]
   for (const t of transactions) {
     const { id, jours, ...donnees } = t
@@ -258,7 +280,7 @@ async function main() {
 
   // Quelques mouvements chez Thomas, pour que le portefeuille d'Alexis vive.
   const trThomas = [
-    { id: 'tr-th-1', type: 'REVENUE' as const, amountHt: 240000, label: 'Refonte site — Acme', jours: 40 },
+    { id: 'tr-th-1', type: 'REVENUE' as const, amountHt: 240000, label: 'Refonte site, Acme', jours: 40 },
     { id: 'tr-th-2', type: 'EXPENSE' as const, amountHt: 180000, label: 'Sous-traitance design', jours: 38 },
     { id: 'tr-th-3', type: 'EXPENSE' as const, amountHt: 92000, label: 'URSSAF', jours: 10 },
     { id: 'tr-th-4', type: 'REVENUE' as const, amountHt: 60000, label: 'Maintenance mensuelle', jours: 5 },
@@ -395,17 +417,167 @@ async function main() {
   const ressources = [
     { id: 'res-1', title: 'Bien demarrer son premier cycle de 90 jours', type: 'GUIDE' as const, description: 'Les six etapes de la mise en route, a lire avant la premiere seance.' },
     { id: 'res-2', title: 'Le point du lundi matin', type: 'RITUEL' as const, description: 'Quinze minutes chaque lundi : trois chiffres, trois priorites, une decision.' },
-    { id: 'res-3', title: 'Modele de cycle — lancement d une nouvelle offre', type: 'MODELE' as const, description: 'Un decoupage en douze semaines deja rempli, a adapter.' },
+    { id: 'res-3', title: 'Modele de cycle, lancement d une nouvelle offre', type: 'MODELE' as const, description: 'Un decoupage en douze semaines deja rempli, a adapter.' },
   ]
   for (const r of ressources) {
     const { id, ...donnees } = r
     await prisma.resource.upsert({ where: { id }, update: donnees, create: { id, clientId: null, ...donnees } })
   }
 
+  // === Les trois portefeuilles ==============================================
+  //
+  // Sandrine et Alexis n'accompagnent pas les memes entreprises, et c'est deja
+  // vrai dans le schema : chaque fiche porte son `adminId`, et le portefeuille
+  // ne remonte que les clients du consultant connecte. Ce jeu de donnees rend
+  // ce cloisonnement DEMONTRABLE : on se connecte avec l'un, puis avec l'autre,
+  // et les listes n'ont aucune entreprise en commun.
+  //
+  // Les adresses sont volontairement en @pilote90.fr : ce fichier est commite
+  // dans un depot public, aucune adresse personnelle n'y a sa place. Les vrais
+  // comptes se creent depuis l'interface ou avec scripts/comptes.mjs.
+
+  const sandrine = await prisma.user.upsert({
+    where: { email: 'sandrine@pilote90.fr' },
+    update: { formule: 'AUTONOMIE', capacites: [...CONSULTANT] },
+    create: {
+      email: 'sandrine@pilote90.fr', name: 'Sandrine Seiter', role: 'ADMIN',
+      password: await bcrypt.hash('sandrine2026', 10),
+      formule: 'AUTONOMIE', capacites: [...CONSULTANT],
+    },
+  })
+
+  const augustin = await prisma.user.upsert({
+    where: { email: 'augustin@pilote90.fr' },
+    update: { formule: 'COMPLETE', capacites: [...CONSULTANT] },
+    create: {
+      email: 'augustin@pilote90.fr', name: 'Augustin Seiter', role: 'ADMIN',
+      password: await bcrypt.hash('augustin2026', 10),
+      formule: 'COMPLETE', capacites: [...CONSULTANT],
+    },
+  })
+
+  /**
+   * Profils de situation financiere.
+   *
+   * Chacun declenche volontairement un constat different de `auditerFinances`,
+   * pour que le portefeuille montre les trois niveaux d'un seul coup d'oeil et
+   * que le tri par urgence ait quelque chose a trier.
+   *
+   * `joursDepuisDerniereSaisie` agit sur `createdAt`, la date de la SAISIE, pas
+   * sur `transactionDate` : c'est elle que lit l'indicateur de fraicheur.
+   */
+  const PROFILS = {
+    sain: { caMensuel: 620000, ratioCharges: 0.28, joursDepuisDerniereSaisie: 2 },
+    tendu: { caMensuel: 310000, ratioCharges: 0.68, joursDepuisDerniereSaisie: 5 },
+    decroche: { caMensuel: 450000, ratioCharges: 0.34, joursDepuisDerniereSaisie: 52 },
+  } as const
+
+  type CleProfil = keyof typeof PROFILS
+
+  async function portefeuille(
+    adminId: string,
+    fiches: {
+      email: string; nom: string; entreprise: string; secteur: string; statut: string
+      profil: CleProfil; formule: 'AUTONOMIE' | 'ACCOMPAGNEMENT' | 'COMPLETE'
+    }[],
+  ) {
+    for (const fiche of fiches) {
+      const compte = await prisma.user.upsert({
+        where: { email: fiche.email },
+        update: { formule: fiche.formule },
+        create: {
+          email: fiche.email, name: fiche.nom, role: 'CLIENT',
+          password: await bcrypt.hash('demo2026', 10),
+          formule: fiche.formule,
+        },
+      })
+
+      const dossier = await prisma.client.upsert({
+        where: { userId: compte.id },
+        update: { adminId },
+        create: {
+          userId: compte.id, adminId,
+          companyName: fiche.entreprise, sector: fiche.secteur, status: fiche.statut,
+        },
+      })
+
+      const p = PROFILS[fiche.profil]
+
+      await prisma.cycle.upsert({
+        where: { id: `cycle-${dossier.id}` },
+        update: {},
+        create: {
+          id: `cycle-${dossier.id}`,
+          clientId: dossier.id,
+          cycleNumber: 1,
+          name: 'Structurer et vendre',
+          mainObjective: 'Structurer et vendre',
+          startDate: ilYA(35),
+          endDate: dans(55),
+          status: 'ACTIVE',
+          caTargetMonthly: Math.round(p.caMensuel * 1.2),
+        },
+      })
+
+      // Six mois d'historique, un revenu et une charge par mois.
+      for (let recul = 5; recul >= 0; recul--) {
+        const mois = ilYA(recul * 30 + 6)
+        const variation = 1 + ((recul % 3) - 1) * 0.12
+        const saisiLe = recul === 0 ? ilYA(p.joursDepuisDerniereSaisie) : ilYA(recul * 30 + 4)
+
+        await prisma.transaction.upsert({
+          where: { id: `tr-${dossier.id}-r${recul}` },
+          update: {},
+          create: {
+            id: `tr-${dossier.id}-r${recul}`,
+            clientId: dossier.id,
+            type: 'REVENUE',
+            amountHt: Math.round(p.caMensuel * variation),
+            transactionDate: mois,
+            label: 'Prestation d accompagnement',
+            category: 'Prestation',
+            createdAt: saisiLe,
+          },
+        })
+
+        await prisma.transaction.upsert({
+          where: { id: `tr-${dossier.id}-c${recul}` },
+          update: {},
+          create: {
+            id: `tr-${dossier.id}-c${recul}`,
+            clientId: dossier.id,
+            type: 'EXPENSE',
+            amountHt: Math.round(p.caMensuel * variation * p.ratioCharges),
+            transactionDate: mois,
+            label: 'Charges du mois',
+            category: 'Frais generaux',
+            createdAt: saisiLe,
+          },
+        })
+      }
+    }
+  }
+
+  await portefeuille(sandrine.id, [
+    { email: 'lea@demo.fr', nom: 'Lea Mercier', entreprise: 'Atelier Lumiere', secteur: 'Artisanat d art', statut: 'EURL', profil: 'sain', formule: 'AUTONOMIE' },
+    { email: 'karim@demo.fr', nom: 'Karim Benali', entreprise: 'Studio Bergamote', secteur: 'Design graphique', statut: 'SASU', profil: 'tendu', formule: 'AUTONOMIE' },
+    { email: 'julie@demo.fr', nom: 'Julie Nguyen', entreprise: 'La Fabrique Verte', secteur: 'Cosmetique', statut: 'Micro-entreprise', profil: 'decroche', formule: 'AUTONOMIE' },
+  ])
+
+  await portefeuille(augustin.id, [
+    { email: 'paul@demo.fr', nom: 'Paul Ferrand', entreprise: 'Ferrand Menuiserie', secteur: 'Artisanat', statut: 'EURL', profil: 'sain', formule: 'COMPLETE' },
+  ])
+
   console.log('Seed termine.')
-  console.log('  Admin   : alexis@pilote90.fr / pilote90')
-  console.log('  Cliente : marie@demo.fr / marie2026')
-  console.log('  Client  : thomas@demo.fr / thomas2026')
+  console.log('')
+  console.log('  Consultants')
+  console.log('    alexis@pilote90.fr   / pilote90       -> Marie & Co, Thomas Consulting')
+  console.log('    sandrine@pilote90.fr / sandrine2026   -> Atelier Lumiere, Studio Bergamote, La Fabrique Verte')
+  console.log('    augustin@pilote90.fr / augustin2026   -> Ferrand Menuiserie')
+  console.log('')
+  console.log('  Entrepreneurs')
+  console.log('    marie@demo.fr / marie2026, thomas@demo.fr / thomas2026')
+  console.log('    lea@demo.fr, karim@demo.fr, julie@demo.fr, paul@demo.fr  -> tous en demo2026')
   console.log(`  Cycle 1 : ${debut.toLocaleDateString('fr-FR')} -> ${fin.toLocaleDateString('fr-FR')} (semaine 6 sur 12)`)
 }
 

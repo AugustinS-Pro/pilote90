@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { peut, type Acces } from '@/lib/habilitations'
+import type { Acces } from '@/lib/habilitations'
 
 type Entree = { href: string; icone: string; libelle: string; acces: Acces }
 
@@ -28,11 +28,17 @@ const ENTREES: Entree[] = [
   { href: '/parametres', icone: '⚙️', libelle: 'Paramètres', acces: 'PARAMETRES' },
 ]
 
-export function Sidebar({ role }: { role: 'ADMIN' | 'CLIENT' }) {
+/**
+ * Les acces sont calcules cote serveur et passes en propriete plutot que
+ * recalcules ici. Le navigateur ne recoit donc jamais la formule ni les
+ * capacites du compte : seulement la liste des entrees qu'il a le droit de
+ * voir. Une barre de navigation n'a pas a connaitre les regles d'autorisation.
+ */
+export function Sidebar({ acces }: { acces: readonly Acces[] }) {
   const pathname = usePathname()
   const [ouvertMobile, setOuvertMobile] = useState(false)
 
-  const entrees = ENTREES.filter((entree) => peut({ role }, entree.acces))
+  const entrees = ENTREES.filter((entree) => acces.includes(entree.acces))
 
   /**
    * Deux comportements pour une seule barre.
@@ -85,7 +91,7 @@ export function Sidebar({ role }: { role: 'ADMIN' | 'CLIENT' }) {
                     md:w-16 md:hover:w-56 md:translate-x-0`}
       >
         <div className="flex items-center gap-3 px-3.5 py-5 w-full">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-accent-alt
+          <div aria-hidden className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-accent-alt
                           flex items-center justify-center text-on-accent font-bold text-base flex-shrink-0">
             P
           </div>
@@ -120,6 +126,14 @@ export function Sidebar({ role }: { role: 'ADMIN' | 'CLIENT' }) {
                 href={item.href}
                 onClick={() => setOuvertMobile(false)}
                 aria-current={actif ? 'page' : undefined}
+                /*
+                  Le libelle visible reste dans le flux meme quand la barre est
+                  repliee : il n'est qu'en opacite zero. Un lecteur d'ecran
+                  l'annoncerait donc alors qu'il est invisible, en plus de lire
+                  l'emoji. On donne au lien son nom une bonne fois, et on retire
+                  les deux enfants de l'arbre d'accessibilite.
+                */
+                aria-label={item.libelle}
                 className={`flex items-center gap-3 px-2.5 py-2.5 rounded-lg text-sm font-medium
                             transition-all duration-150 ${
                               actif
@@ -127,8 +141,8 @@ export function Sidebar({ role }: { role: 'ADMIN' | 'CLIENT' }) {
                                 : 'text-ghost hover:text-on-inverse hover:bg-surface/5'
                             }`}
               >
-                <span className="text-base flex-shrink-0 w-5 text-center">{item.icone}</span>
-                <span className="whitespace-nowrap transition-opacity duration-200
+                <span aria-hidden className="text-base flex-shrink-0 w-5 text-center">{item.icone}</span>
+                <span aria-hidden className="whitespace-nowrap transition-opacity duration-200
                                  md:opacity-0 md:group-hover:opacity-100">
                   {item.libelle}
                 </span>
@@ -140,11 +154,12 @@ export function Sidebar({ role }: { role: 'ADMIN' | 'CLIENT' }) {
         <div className="w-full px-2 pb-4">
           <button
             onClick={() => signOut({ callbackUrl: '/login' })}
+            aria-label="Deconnexion"
             className="flex items-center gap-3 px-2.5 py-2.5 rounded-lg w-full text-ghost
                        hover:text-on-inverse hover:bg-surface/5 text-sm font-medium transition-all duration-150"
           >
-            <span className="text-base flex-shrink-0 w-5 text-center">🚪</span>
-            <span className="whitespace-nowrap transition-opacity duration-200
+            <span aria-hidden className="text-base flex-shrink-0 w-5 text-center">🚪</span>
+            <span aria-hidden className="whitespace-nowrap transition-opacity duration-200
                              md:opacity-0 md:group-hover:opacity-100">
               Déconnexion
             </span>

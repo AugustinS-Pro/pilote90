@@ -32,6 +32,16 @@ model User {
   /// deux utilisateurs du meme poste gardent chacun son theme.
   theme     Theme    @default(CLAIR)
 
+  /// Confort de lecture, en pourcentage de la taille de police de la racine.
+  echelleTexte Int   @default(100)
+
+  /// Ce que le compte fait POUR LUI-MEME : la formule vendue.
+  formule   Formule    @default(AUTONOMIE)
+
+  /// Ce que le compte fait POUR LES AUTRES : les delegations.
+  /// Vide par defaut, parce que l'autorisation refuse par defaut.
+  capacites Capacite[] @default([])
+
   client  Client?  @relation("ClientUser")
   managed Client[] @relation("AdminClients")
 }
@@ -44,7 +54,13 @@ model Client {
   admin       User?    @relation("AdminClients", fields: [adminId], references: [id])
   companyName String
   sector      String?
+  /// Forme juridique telle que le client la declare : SASU, EURL, micro-entreprise.
   status      String?
+  /// Etat de la relation d'accompagnement, a ne pas confondre avec `status`
+  /// qui porte la forme juridique. Un client archive quitte le portefeuille
+  /// sans que rien ne soit efface.
+  etat        EtatClient @default(ACTIF)
+  archiveLe   DateTime?
   createdAt   DateTime @default(now())
 
   cycles          Cycle[]
@@ -521,9 +537,41 @@ model Resource {
 // Enumerations
 // -----------------------------------------------------------------------------
 
+/// Ce qui est vendu. Deux offres distinctes, servies par la meme application.
+enum Formule {
+  /// Les cinq axes, en autonomie. L'entrepreneur pilote seul.
+  AUTONOMIE
+  /// Audit et previsionnel, support des seances avec un consultant.
+  ACCOMPAGNEMENT
+  /// Les deux : l'entrepreneur pilote seul et se fait accompagner.
+  COMPLETE
+  /// Aucun espace personnel. Pour un compte purement administratif.
+  AUCUNE
+}
+
+/// Ce qui est delegue. Sans rapport avec la formule, d'ou la liste separee.
+enum Capacite {
+  PORTEFEUILLE_CONSULTER
+  COMPTES_ADMINISTRER
+  REPERES_SECTORIELS
+}
+
+enum EtatClient {
+  /// Compte cree par le consultant, le client ne s'est pas encore connecte.
+  INVITE
+  ACTIF
+  /// Accompagnement termine. Les donnees restent, la fiche sort du portefeuille.
+  ARCHIVE
+}
+
 enum Theme {
   CLAIR
   PILOTE90
+  SOMBRE
+  /// Contraste eleve, niveau AAA du referentiel WCAG.
+  CONTRASTE
+  /// Palette sure pour la deuteranopie et la protanopie.
+  DALTONIEN
 }
 
 enum Role {

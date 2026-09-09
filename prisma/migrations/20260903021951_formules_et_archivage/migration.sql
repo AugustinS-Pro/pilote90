@@ -1,0 +1,9 @@
+-- CreateEnum
+CREATE TYPE "Formule" AS ENUM ('AUTONOMIE', 'ACCOMPAGNEMENT', 'COMPLETE', 'AUCUNE');
+
+-- CreateEnum
+CREATE TYPE "Capacite" AS ENUM ('PORTEFEUILLE_CONSULTER', 'COMPTES_ADMINISTRER', 'REPERES_SECTORIELS');
+
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "capacites" "Capacite"[] DEFAULT ARRAY[]::"Capacite"[],
+ADD COLUMN     "formule" "Formule" NOT NULL DEFAULT 'AUTONOMIE';
