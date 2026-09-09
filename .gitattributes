@@ -1,0 +1,26 @@
+# Fins de ligne normalisees.
+#
+# Sans ce fichier, Git pour Windows convertit en CRLF a la recuperation alors
+# que le depot stocke du LF. Le depot signale alors en permanence une centaine
+# de fichiers modifies dont le contenu est pourtant identique : autant
+# d'insertions que de suppressions, chaque ligne remplacee par elle-meme.
+#
+# `text=auto eol=lf` impose le LF partout, dans le depot comme sur le disque.
+# Le projet n'a aucun fichier qui exige du CRLF.
+* text=auto eol=lf
+
+# Les scripts de deploiement s'executent sur le serveur Linux. Un CRLF y
+# produit « bad interpreter: /bin/bash^M », panne classique et deroutante
+# parce que le fichier parait parfaitement normal a la lecture.
+*.sh text eol=lf
+
+# Binaires : aucune conversion, sous peine de corruption.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.node binary
+*.wasm binary
