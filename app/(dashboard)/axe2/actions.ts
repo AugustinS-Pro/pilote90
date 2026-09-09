@@ -290,3 +290,73 @@ export async function modifierEcheance(formData: FormData): Promise<void> {
   })
   revalidatePath('/axe2')
 }
+
+/**
+ * Modification d'une transaction deja enregistree.
+ *
+ * Une transaction porte un montant, une date et une categorie : contrairement
+ * aux entites dont on ne corrige que l'intitule, elle demande un vrai
+ * formulaire. C'est aussi le cas de correction le plus frequent, un montant
+ * mal saisi se remarquant plus vite qu'un titre approximatif.
+ *
+ * Le cloisonnement passe par le WHERE, comme la suppression : un identifiant
+ * qui n'appartient pas au client connecte ne met simplement rien a jour, et la
+ * fonction repond la meme chose que si la transaction n'existait pas.
+ */
+export async function modifierTransaction(
+  _precedent: EtatAction,
+  formData: FormData,
+): Promise<EtatAction> {
+  const client = await getCurrentClient()
+  if (!client) return { ok: false, message: 'Session expiree ou compte non client.' }
+
+  const id = String(formData.get('id') ?? '')
+  if (!id) return { ok: false, message: 'Transaction introuvable.' }
+
+  const parsed = transactionInput.safeParse({
+    type: formData.get('type'),
+    transactionDate: formData.get('transactionDate'),
+    label: formData.get('label'),
+    amount: formData.get('amount'),
+    category: formData.get('category') ?? undefined,
+  })
+
+  if (!parsed.success) {
+    const erreurs: Record<string, string> = {}
+    for (const issue of parsed.error.issues) {
+      const champ = String(issue.path[0] ?? 'global')
+      if (!erreurs[champ]) erreurs[champ] = issue.message
+    }
+    return { ok: false, message: 'Saisie incomplete.', erreurs }
+  }
+
+  const centimes = eurosVersCentimes(parsed.data.amount)
+  if (centimes === null) {
+    return { ok: false, message: 'Montant invalide.', erreurs: { amount: 'Montant invalide' } }
+  }
+
+  const date = new Date(parsed.data.transactionDate)
+  if (Number.isNaN(date.getTime())) {
+    return { ok: false, message: 'Date invalide.', erreurs: { transactionDate: 'Date invalide' } }
+  }
+
+  const { count } = await prisma.transaction.updateMany({
+    where: { id, clientId: client.id },
+    data: {
+      type: parsed.data.type,
+      amountHt: centimes,
+      transactionDate: date,
+      label: parsed.data.label,
+      category: parsed.data.category || null,
+    },
+  })
+
+  if (count === 0) return { ok: false, message: 'Transaction introuvable.' }
+
+  revalidatePath('/axe2')
+  revalidatePath('/audit')
+  revalidatePath('/dashboard')
+  revalidatePath('/historique')
+
+  return { ok: true, message: 'Transaction modifiee.' }
+}

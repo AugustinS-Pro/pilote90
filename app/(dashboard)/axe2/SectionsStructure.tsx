@@ -129,7 +129,7 @@ export function SectionTaux({ taux }: { taux: TauxVue }) {
   return (
     <Carte
       titre="Mes taux de charges"
-      sousTitre="Le total ne se saisit pas : il s'additionne"
+      sousTitre="Le total se calcule automatiquement"
       action={
         <div className="text-right">
           <p className="text-2xl font-extrabold text-negative">{taux.total} %</p>

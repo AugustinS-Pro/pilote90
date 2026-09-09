@@ -50,7 +50,7 @@ function Formulaire({
   return (
     <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
       <h2 className="text-sm font-bold text-ink-soft mb-4 flex items-center gap-2">
-        <span className={`w-2 h-2 ${pastille} rounded-full`} />
+        <span aria-hidden className={`w-2 h-2 ${pastille} rounded-full`} />
         {titre}
       </h2>
 
@@ -58,14 +58,16 @@ function Formulaire({
         <input type="hidden" name="type" value={type} />
 
         <div>
-          <input type="date" name="transactionDate" defaultValue={aujourdhui} required className={champ} />
+          <input type="date" name="transactionDate" defaultValue={aujourdhui} required className={champ}
+                 aria-label="Date de l'operation" />
           {etat.erreurs?.transactionDate && (
             <p className="text-xs text-negative-ink mt-1">{etat.erreurs.transactionDate}</p>
           )}
         </div>
 
         <div>
-          <input type="text" name="label" placeholder={placeholderTiers} required maxLength={120} className={champ} />
+          <input type="text" name="label" placeholder={placeholderTiers} required maxLength={120} className={champ}
+                 aria-label={placeholderTiers} />
           {etat.erreurs?.label && <p className="text-xs text-negative-ink mt-1">{etat.erreurs.label}</p>}
         </div>
 
@@ -77,6 +79,7 @@ function Formulaire({
             placeholder="Montant HT (€)"
             required
             className={champ}
+            aria-label="Montant hors taxes en euros"
           />
           {etat.erreurs?.amount && <p className="text-xs text-negative-ink mt-1">{etat.erreurs.amount}</p>}
         </div>

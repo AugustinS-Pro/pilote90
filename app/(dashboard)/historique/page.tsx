@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 import { peut } from '@/lib/habilitations'
+import { Recherche } from '@/components/ui'
+import { correspond } from '@/lib/recherche'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -15,7 +17,13 @@ const LIBELLE_ISSUE: Record<string, { texte: string; ton: 'succes' | 'attente' |
   DROPPED: { texte: 'Abandonnee', ton: 'neutre' },
 }
 
-export default async function HistoriquePage() {
+export default async function HistoriquePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
+  const recherche = ((await searchParams).q ?? '').trim()
+
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
 
@@ -47,16 +55,29 @@ export default async function HistoriquePage() {
     )
   }
 
+  // La recherche porte sur le nom du cycle, son objectif principal et les
+  // intitules de ses objectifs : c'est ainsi qu'on se souvient d'un cycle
+  // passe, par ce qu'on y visait et non par son numero.
+  const cycles = client.cycles.filter((c) =>
+    correspond(
+      [c.name, c.mainObjective, ...c.objectives.map((o) => o.title)],
+      recherche,
+    ),
+  )
+
   const enAttente = client.ideas.filter((i) => i.outcome === 'PARKED')
   const arbitrees = client.ideas.filter((i) => i.outcome !== 'PARKED')
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-ink">Historique des cycles</h1>
-        <p className="text-muted text-sm mt-1">
-          Ce que vous avez vise, ce que vous avez obtenu, et ce que vous en avez appris
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink">Historique des cycles</h1>
+          <p className="text-muted text-sm mt-1">
+            Ce que vous avez vise, ce que vous avez obtenu, et ce que vous en avez appris
+          </p>
+        </div>
+        <Recherche action="/historique" valeur={recherche} placeholder="Objectif ou nom de cycle" />
       </div>
 
       <Carte
@@ -98,8 +119,8 @@ export default async function HistoriquePage() {
         )}
       </Carte>
 
-      {client.cycles.length > 0 ? (
-        client.cycles.map((cycle) => {
+      {cycles.length > 0 ? (
+        cycles.map((cycle) => {
           const debut = new Date(cycle.startDate)
           const fin = new Date(cycle.endDate)
           const caRealise = client.transactions
@@ -116,7 +137,7 @@ export default async function HistoriquePage() {
           return (
             <Carte
               key={cycle.id}
-              titre={`Cycle ${cycle.cycleNumber}${cycle.name ? ` — ${cycle.name}` : ''}`}
+              titre={`Cycle ${cycle.cycleNumber}${cycle.name ? ` · ${cycle.name}` : ''}`}
               sousTitre={`Du ${debut.toLocaleDateString('fr-FR')} au ${fin.toLocaleDateString('fr-FR')}`}
               action={<Etiquette texte={`${atteinte} % de l'objectif`} ton={atteinte >= 80 ? 'succes' : atteinte >= 50 ? 'attente' : 'alerte'} />}
             >
@@ -199,7 +220,13 @@ export default async function HistoriquePage() {
         })
       ) : (
         <Carte titre="Aucun cycle cloture">
-          <Vide texte="Vos cycles termines apparaitront ici, avec leurs resultats et leurs apprentissages." />
+          <Vide
+            texte={
+              recherche
+                ? `Aucun cycle ne correspond a « ${recherche} ».`
+                : 'Vos cycles termines apparaitront ici, avec leurs resultats et leurs apprentissages.'
+            }
+          />
         </Carte>
       )}
     </div>

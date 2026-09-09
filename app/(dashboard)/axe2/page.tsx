@@ -1,10 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import { redirect } from 'next/navigation'
 import { FormulairesTransaction } from './FormulairesTransaction'
-import { supprimerTransaction } from './actions'
-import { BoutonSuppression } from '@/components/ui'
+import { LigneTransaction } from './LigneTransaction'
+import { Recherche } from '@/components/ui'
+import { correspond } from '@/lib/recherche'
 import {
   SectionStructure, SectionTaux, SectionObjectifRevenu, SectionEcheances, SectionSuiviMensuel,
   type StructureVue, type TauxVue, type ObjectifVue, type EcheanceVue,
@@ -14,14 +15,21 @@ import {
 } from '@/lib/charges'
 import { serieDouzeMois } from '@/lib/finance'
 
-export default async function Axe2Page() {
+export default async function Axe2Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
+  const recherche = ((await searchParams).q ?? '').trim()
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+  // Sans l'habilitation, l'URL n'est pas la sienne : on le ramene chez lui
+  // plutot que de lui afficher une page vide.
+  if (!peut(utilisateur, 'AXE_CHIFFRES')) redirect(pageAccueil(utilisateur))
 
   const { id: userId } = utilisateur
 
-  const client = peut(utilisateur, 'AXE_CHIFFRES')
-    ? await prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
         where: { userId },
         include: {
           cycles: {
@@ -37,7 +45,6 @@ export default async function Axe2Page() {
           deadlines: { orderBy: { dueDate: 'asc' } },
         },
       })
-    : null
 
   const cycle = client?.cycles[0]
   const allTransactions = client?.transactions ?? []
@@ -63,7 +70,13 @@ export default async function Axe2Page() {
   const caTarget = cycle?.caTargetMonthly ?? 0
   const caProgress = caTarget > 0 ? Math.round((revenue / caTarget) * 100) : 0
 
-  const recentTransactions = allTransactions.slice(0, 8)
+  // Recherche sur le libelle et la categorie. Sans recherche, on montre les
+  // huit dernieres ; avec, on cherche dans tout l'historique, sinon le filtre
+  // ne servirait qu'a filtrer ce qui est deja a l'ecran.
+  const transactionsFiltrees = recherche
+    ? allTransactions.filter((t) => correspond([t.label, t.category], recherche))
+    : allTransactions
+  const recentTransactions = transactionsFiltrees.slice(0, recherche ? 40 : 8)
 
   // --- Axe 2 : structure, taux et projections. Tout ce qui suit est calcule.
   const structure: StructureVue | null = client?.adminProfile
@@ -204,42 +217,33 @@ export default async function Axe2Page() {
 
         {/* Liste des transactions récentes */}
         <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
-          <h2 className="text-sm font-bold text-ink-soft mb-4">
-            Transactions récentes
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 className="text-sm font-bold text-ink-soft">
+              {recherche ? `Transactions · « ${recherche} »` : 'Transactions récentes'}
+            </h2>
+            <Recherche action="/axe2" valeur={recherche} placeholder="Libellé ou catégorie" />
+          </div>
           {recentTransactions.length > 0 ? (
             <div className="space-y-2">
-              {recentTransactions.map(t => (
-                <div
+              {recentTransactions.map((t) => (
+                <LigneTransaction
                   key={t.id}
-                  className="group flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-surface-muted"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-ink-soft">
-                      {t.label ?? (t.type === 'REVENUE' ? 'Revenu' : 'Charge')}
-                    </p>
-                    <p className="text-xs text-ghost">
-                      {new Date(t.transactionDate).toLocaleDateString('fr-FR')}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-sm font-bold ${
-                      t.type === 'REVENUE' ? 'text-positive' : 'text-negative'
-                    }`}>
-                      {t.type === 'REVENUE' ? '+' : '-'}{(t.amountHt / 100).toLocaleString('fr-FR')}€
-                    </span>
-                    <BoutonSuppression
-                      action={supprimerTransaction}
-                      id={t.id}
-                      intitule={`Supprimer ${t.label ?? 'cette transaction'}`}
-                    />
-                  </div>
-                </div>
+                  transaction={{
+                    id: t.id,
+                    type: t.type,
+                    amountHt: t.amountHt,
+                    transactionDate: new Date(t.transactionDate).toISOString(),
+                    label: t.label,
+                    category: t.category,
+                  }}
+                />
               ))}
             </div>
           ) : (
             <p className="text-sm text-ghost text-center py-8">
-              Aucune transaction enregistrée pour l&apos;instant.
+              {recherche
+                ? `Aucune transaction ne correspond à « ${recherche} ».`
+                : 'Aucune transaction enregistrée pour l\u2019instant.'}
             </p>
           )}
         </div>
