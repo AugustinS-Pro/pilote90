@@ -141,10 +141,181 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
+
+/* ---------------------------------------------------------------------------
+   Theme SOMBRE
+   Les roles sont inverses, pas les couleurs : `canvas` reste le fond general et
+   `inverse` reste la barre laterale, qui devient donc plus CLAIRE que le fond.
+   C'est la propriete d'une couche semantique : on redefinit des roles, jamais
+   des valeurs eparpillees dans les composants.
+   --------------------------------------------------------------------------- */
+[data-theme='sombre'] {
+  --p90-canvas:         #0b1120;
+  --p90-surface:        #151d2e;
+  --p90-surface-muted:  #1c2537;
+  --p90-inverse:        #060a13;
+  --p90-inverse-soft:   #131c2c;
+
+  --p90-border:         #2a3446;
+  --p90-border-faint:   #1e2637;
+  --p90-border-strong:  #3d4a61;
+
+  --p90-ink:            #f1f5f9;
+  --p90-ink-soft:       #dbe3ed;
+  --p90-ink-muted:      #97a5ba;
+  --p90-ink-faint:      #6f7f96;
+  --p90-ink-ghost:      #4a5670;
+  --p90-on-inverse:     #f1f5f9;
+  --p90-on-accent:      #0b1120;
+
+  --p90-accent:         #818cf8;
+  --p90-accent-strong:  #a5b4fc;
+  --p90-accent-soft:    #1e2547;
+  --p90-accent-ink:     #b4bcfc;
+  --p90-accent-alt:     #c084fc;
+
+  --p90-positive:       #2dd4bf;
+  --p90-positive-soft:  #10312f;
+  --p90-positive-ink:   #5eead4;
+  --p90-negative:       #f87171;
+  --p90-negative-soft:  #3a1618;
+  --p90-negative-ink:   #fca5a5;
+  --p90-warning:        #fbbf24;
+  --p90-warning-soft:   #3a2a08;
+  --p90-warning-ink:    #fcd34d;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme CONTRASTE ELEVE
+   Noir sur blanc, bordures franches, aucune teinte pale. Destine aux basses
+   visions et aux ecrans lus en plein soleil. Les rapports de contraste des
+   textes sur leur fond depassent 7 pour 1, soit le niveau AAA du referentiel
+   WCAG, la ou le niveau AA se contente de 4,5.
+   --------------------------------------------------------------------------- */
+[data-theme='contraste'] {
+  --p90-canvas:         #ffffff;
+  --p90-surface:        #ffffff;
+  --p90-surface-muted:  #f2f2f2;
+  --p90-inverse:        #000000;
+  --p90-inverse-soft:   #1a1a1a;
+
+  --p90-border:         #767676;
+  --p90-border-faint:   #a6a6a6;
+  --p90-border-strong:  #000000;
+
+  --p90-ink:            #000000;
+  --p90-ink-soft:       #000000;
+  --p90-ink-muted:      #3d3d3d;
+  --p90-ink-faint:      #575757;
+  --p90-ink-ghost:      #6b6b6b;
+  --p90-on-inverse:     #ffffff;
+  --p90-on-accent:      #ffffff;
+
+  --p90-accent:         #0b3fb0;
+  --p90-accent-strong:  #082e80;
+  --p90-accent-soft:    #e6ecfa;
+  --p90-accent-ink:     #082e80;
+  --p90-accent-alt:     #5b21b6;
+
+  --p90-positive:       #045c4a;
+  --p90-positive-soft:  #e3f3ef;
+  --p90-positive-ink:   #033b30;
+  --p90-negative:       #a4123a;
+  --p90-negative-soft:  #fbe7ec;
+  --p90-negative-ink:   #7a0d2b;
+  --p90-warning:        #8a5000;
+  --p90-warning-soft:   #fbf1e0;
+  --p90-warning-ink:    #6b3d00;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme DALTONISME — palette sure pour la deuteranopie et la protanopie
+   ---------------------------------------------------------------------------
+   Le rouge et le vert qui portent le sens metier, revenus contre charges, sont
+   precisement la paire que ces deux formes de daltonisme confondent, et elles
+   touchent pres d'un homme sur douze.
+
+   La substitution repose sur la paire bleu et orange d'Okabe et Ito, qui reste
+   distinguable pour toutes les formes courantes. On ne joue pas seulement sur
+   la teinte : les deux couleurs different aussi nettement en LUMINOSITE, ce qui
+   les separe meme en niveaux de gris.
+
+   Ce theme reste un filet de securite, pas la solution : dans l'application, un
+   constat d'audit ecrit toujours « Alerte », « Attention » ou « Analyse » en
+   toutes lettres a cote de sa pastille. La couleur n'est jamais seule porteuse
+   de sens, et c'est cela qui rend l'interface lisible par tous.
+   --------------------------------------------------------------------------- */
+[data-theme='daltonien'] {
+  --p90-canvas:         #fbfbfa;
+  --p90-surface:        #ffffff;
+  --p90-surface-muted:  #f4f5f7;
+  --p90-inverse:        #14213d;
+  --p90-inverse-soft:   #22304f;
+
+  --p90-border:         #d9dde4;
+  --p90-border-faint:   #eceef2;
+  --p90-border-strong:  #b6bdc9;
+
+  --p90-ink:            #14213d;
+  --p90-ink-soft:       #22304f;
+  --p90-ink-muted:      #5b6880;
+  --p90-ink-faint:      #8a94a6;
+  --p90-ink-ghost:      #bfc6d2;
+  --p90-on-inverse:     #ffffff;
+  --p90-on-accent:      #ffffff;
+
+  --p90-accent:         #0072b2;  /* bleu Okabe-Ito */
+  --p90-accent-strong:  #005a8d;
+  --p90-accent-soft:    #e3f0f8;
+  --p90-accent-ink:     #005a8d;
+  --p90-accent-alt:     #56b4e9;
+
+  /* Bleu contre orange, au lieu de vert contre rouge. */
+  --p90-positive:       #0072b2;
+  --p90-positive-soft:  #e3f0f8;
+  --p90-positive-ink:   #005a8d;
+  --p90-negative:       #d55e00;
+  --p90-negative-soft:  #fdeee3;
+  --p90-negative-ink:   #a34700;
+  --p90-warning:        #e69f00;
+  --p90-warning-soft:   #fdf4e3;
+  --p90-warning-ink:    #8f6400;
+}
+
+/* ---------------------------------------------------------------------------
+   Confort de lecture
+   ---------------------------------------------------------------------------
+   Toutes les tailles de l'interface sont exprimees en rem, donc relatives a la
+   taille de police de la racine. Une seule declaration suffit a agrandir
+   l'ensemble sans toucher a une seule regle de mise en page, et sans risquer
+   les debordements d'un zoom navigateur, qui agrandit aussi les images et les
+   marges fixes.
+   --------------------------------------------------------------------------- */
+html { font-size: 16px; }
+html[data-echelle='112'] { font-size: 18px; }
+html[data-echelle='125'] { font-size: 20px; }
+
 /* Le basculement de theme ne doit pas donner l'impression d'un rechargement. */
 body,
 body * {
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+/*
+  Certaines personnes reglent leur systeme pour supprimer les animations, par
+  confort ou parce que le mouvement leur donne le vertige. On respecte ce
+  reglage plutot que de l'ignorer : c'est le critere 2.3.3 du WCAG.
+*/
+@media (prefers-reduced-motion: reduce) {
+  body,
+  body *,
+  body *::before,
+  body *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /*
@@ -177,4 +348,35 @@ body * {
 
 .barre-discrete:hover::-webkit-scrollbar-thumb {
   background-color: var(--p90-ink-faint);
+}
+
+/*
+  Anneau de focus visible, uniquement au clavier.
+  `:focus-visible` ne se declenche pas au clic de souris, donc l'anneau ne
+  vient pas polluer l'usage courant tout en restant indispensable a qui
+  navigue au clavier. Sans lui, le parcours des formulaires se fait a l'aveugle.
+*/
+/*
+  `!important` est ici delibere et non une facilite : les champs du projet
+  portent tous `focus:outline-none`, une classe utilitaire dont la specificite
+  depasse celle d'un selecteur d'element. Sans cette declaration, l'anneau ne
+  s'appliquerait qu'aux liens et aux boutons, c'est-a-dire pas la ou la
+  navigation au clavier en a le plus besoin. Une regle d'accessibilite qui ne
+  s'applique pas est pire qu'une regle absente, parce qu'on la croit en place.
+*/
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--p90-accent) !important;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Le conteneur principal ne montre pas d'anneau : il n'est cible que par le
+   lien d'evitement, qui deplace le focus sans que l'utilisateur l'ait demande. */
+main:focus-visible {
+  outline: none !important;
 }

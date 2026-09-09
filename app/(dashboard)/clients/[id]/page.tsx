@@ -2,7 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -14,6 +14,8 @@ import {
 import { GrapheCaCharges, GraphePrevisionnel } from '../../audit/Graphes'
 import { estConfidentiel, masquer } from '@/lib/confidentialite'
 import { evaluerFraicheur, TON_FRAICHEUR } from '@/lib/fraicheur'
+import { archiverClient, reactiverClient } from '../actions'
+import { BoutonSoumettre } from '@/components/ui'
 
 const STYLE = {
   ALERTE: { fond: 'bg-negative-soft border-negative', texte: 'text-negative-ink', libelle: 'Alerte' },
@@ -24,7 +26,7 @@ const STYLE = {
 export default async function FicheClientPage({ params }: { params: Promise<{ id: string }> }) {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
-  if (!peut(utilisateur, 'PORTEFEUILLE_CONSULTER')) redirect('/dashboard')
+  if (!peut(utilisateur, 'PORTEFEUILLE_CONSULTER')) redirect(pageAccueil(utilisateur))
 
   const { id } = await params
   const confidentiel = await estConfidentiel()
@@ -49,6 +51,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
 
   const nom = masquer(client.companyName, confidentiel)
   const fraicheur = evaluerFraicheur(client.transactions)
+  const archive = client.etat === 'ARCHIVE'
 
   const bandeau =
     situation.ton === 'ALERTE' ? 'bg-negative-soft border-negative text-negative-ink'
@@ -69,14 +72,40 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
         </p>
         </div>
 
-        <a
-          href={`/clients/${client.id}/rapport`}
-          className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-transparent
-                     bg-inverse text-on-inverse hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
-        >
-          Rapport comptable (PDF)
-        </a>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <a
+            href={`/clients/${client.id}/rapport`}
+            className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-transparent
+                       bg-inverse text-on-inverse hover:opacity-90 transition-opacity whitespace-nowrap"
+          >
+            Rapport comptable (PDF)
+          </a>
+
+          {/*
+            Aucune suppression n'est proposee, et ce n'est pas un oubli :
+            effacer une fiche detruirait des annees de transactions et de
+            decisions. Un accompagnement qui se termine s'archive.
+          */}
+          {peut(utilisateur, 'COMPTES_ADMINISTRER') && (
+            <form action={archive ? reactiverClient : archiverClient}>
+              <input type="hidden" name="id" value={client.id} />
+              <BoutonSoumettre variante="discret" enCours="...">
+                {archive ? 'Reprendre l accompagnement' : 'Archiver'}
+              </BoutonSoumettre>
+            </form>
+          )}
+        </div>
       </div>
+
+      {archive && (
+        <div className="rounded-2xl border border-firm bg-surface-muted px-5 py-4">
+          <p className="text-sm font-semibold text-ink-soft">Accompagnement archive</p>
+          <p className="text-xs text-muted mt-0.5">
+            Cette fiche ne figure plus dans le portefeuille. Rien n&apos;a ete supprime,
+            et l&apos;accompagnement peut reprendre a tout moment.
+          </p>
+        </div>
+      )}
 
       <div className={`rounded-2xl border px-5 py-4 ${bandeau}`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -110,7 +139,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
                 return (
                   <div key={i} className={`rounded-xl border ${s.fond} px-4 py-3`}>
                     <p className={`text-[11px] font-bold uppercase tracking-wide ${s.texte}`}>{s.libelle}</p>
-                    <p className={`text-sm font-semibold ${s.texte} mt-0.5`}>{c.titre} — {c.valeur}</p>
+                    <p className={`text-sm font-semibold ${s.texte} mt-0.5`}>{c.titre} · {c.valeur}</p>
                     <p className="text-[11px] text-muted mt-1.5">{c.regle}</p>
                   </div>
                 )

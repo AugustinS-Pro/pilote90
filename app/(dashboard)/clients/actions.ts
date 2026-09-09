@@ -102,7 +102,9 @@ export async function creerClient(
         adminId: utilisateur!.id,
         companyName,
         sector: sector || null,
-        status: 'INVITE',
+        // `status` porte la forme juridique, que le client renseignera
+        // lui-meme. L'etat de la relation vit dans son propre champ.
+        etat: 'INVITE',
       },
     })
   })
@@ -114,4 +116,43 @@ export async function creerClient(
     message: `${companyName} rejoint votre portefeuille.`,
     motDePasseProvisoire: provisoire,
   }
+}
+
+/**
+ * Archive un client, ou le remet en activite.
+ *
+ * **Il n'existe volontairement aucune suppression de client.** Effacer une
+ * fiche detruirait des annees de transactions, de cycles et de decisions, et un
+ * accompagnement qui se termine n'est pas une erreur de saisie : c'est un fait
+ * qu'on veut pouvoir retrouver. L'archivage sort la fiche du portefeuille sans
+ * rien perdre, et il se defait.
+ *
+ * Cloisonnement identique au reste : `adminId` vient de la session, donc un
+ * `updateMany` sur un client qui n'est pas au demandeur ne met a jour aucune
+ * ligne, sans erreur ni fuite d'information.
+ */
+async function changerEtat(formData: FormData, archive: boolean): Promise<void> {
+  const utilisateur = await getCurrentUser()
+  if (!peut(utilisateur, 'COMPTES_ADMINISTRER')) return
+
+  const id = String(formData.get('id') ?? '')
+  if (!id) return
+
+  await prisma.client.updateMany({
+    where: { id, adminId: utilisateur!.id },
+    data: archive
+      ? { etat: 'ARCHIVE', archiveLe: new Date() }
+      : { etat: 'ACTIF', archiveLe: null },
+  })
+
+  revalidatePath('/clients')
+  revalidatePath(`/clients/${id}`)
+}
+
+export async function archiverClient(formData: FormData): Promise<void> {
+  await changerEtat(formData, true)
+}
+
+export async function reactiverClient(formData: FormData): Promise<void> {
+  await changerEtat(formData, false)
 }

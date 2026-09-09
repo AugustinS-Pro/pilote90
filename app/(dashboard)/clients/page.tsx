@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
@@ -23,29 +23,30 @@ type CleTri = (typeof TRIS)[number]['cle']
 export default async function PortefeuillePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tri?: string }>
+  searchParams: Promise<{ tri?: string; archives?: string }>
 }) {
-  const demande = (await searchParams).tri
-  const tri: CleTri = TRIS.some((t) => t.cle === demande) ? (demande as CleTri) : 'urgence'
+  const parametres = await searchParams
+  const tri: CleTri = TRIS.some((t) => t.cle === parametres.tri) ? (parametres.tri as CleTri) : 'urgence'
+  const voirArchives = parametres.archives === '1'
 
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
 
-  if (!peut(utilisateur, 'PORTEFEUILLE_CONSULTER')) {
-    return (
-      <div className="p-4 sm:p-6 lg:p-8">
-        <h1 className="text-2xl font-extrabold text-ink mb-2">Portefeuille</h1>
-        <p className="text-sm text-muted">
-          Cette page est reservee au compte consultant.
-        </p>
-      </div>
-    )
-  }
+  if (!peut(utilisateur, 'PORTEFEUILLE_CONSULTER')) redirect(pageAccueil(utilisateur))
 
   const confidentiel = await estConfidentiel()
 
+  // Un client archive quitte le portefeuille sans rien perdre : ses donnees
+  // restent, seule la vue par defaut cesse de le montrer.
+  const nombreArchives = await prisma.client.count({
+    where: { adminId: utilisateur.id, etat: 'ARCHIVE' },
+  })
+
   const clients = await prisma.client.findMany({
-    where: { adminId: utilisateur.id },
+    where: {
+      adminId: utilisateur.id,
+      etat: voirArchives ? 'ARCHIVE' : { not: 'ARCHIVE' },
+    },
     orderBy: { companyName: 'asc' },
     include: {
       user: { select: { name: true, email: true } },
@@ -67,6 +68,7 @@ export default async function PortefeuillePage({
       contact: masquer(c.user.name ?? c.user.email ?? '', confidentiel),
       secteur: c.sector,
       statut: c.status,
+      etat: c.etat,
       cycle: cycle ? `Cycle ${cycle.cycleNumber}` : null,
       objectif: cycle?.mainObjective ?? null,
       caDuMois: indicateurs.caDuMois,
@@ -129,7 +131,7 @@ export default async function PortefeuillePage({
       {confidentiel && (
         <div className="rounded-2xl border border-firm bg-surface-muted px-5 py-3">
           <p className="text-sm text-ink-soft">
-            Les noms des entreprises sont masques. Les chiffres restent visibles pour la demonstration.
+            Les noms des entreprises sont masques. Les chiffres restent visibles.
           </p>
         </div>
       )}
@@ -154,12 +156,24 @@ export default async function PortefeuillePage({
         </div>
       </div>
 
-      {peut(utilisateur, 'COMPTES_ADMINISTRER') && <NouveauClient />}
+      {!voirArchives && peut(utilisateur, 'COMPTES_ADMINISTRER') && <NouveauClient />}
 
       <Carte
-        titre="Les entreprises accompagnees"
+        titre={voirArchives ? 'Accompagnements termines' : 'Les entreprises accompagnees'}
         action={
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
+            {nombreArchives > 0 && (
+              <Link
+                href={voirArchives ? '/clients' : '/clients?archives=1'}
+                className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors mr-2 ${
+                  voirArchives
+                    ? 'bg-inverse text-on-inverse border-inverse'
+                    : 'bg-surface text-muted border-subtle hover:bg-surface-muted'
+                }`}
+              >
+                {voirArchives ? 'Revenir au portefeuille' : `Archives (${nombreArchives})`}
+              </Link>
+            )}
             {TRIS.map((t) => (
               <Link
                 key={t.cle}
@@ -191,6 +205,8 @@ export default async function PortefeuillePage({
                       <p className="text-sm font-semibold text-ink-soft">{f.nom}</p>
                       {f.secteur && <Etiquette texte={f.secteur} ton="neutre" />}
                       {f.cycle && <Etiquette texte={f.cycle} ton="info" />}
+                      {f.etat === 'ARCHIVE' && <Etiquette texte="Archive" ton="neutre" />}
+                      {f.etat === 'INVITE' && <Etiquette texte="Invite, pas encore connecte" ton="attente" />}
                       {f.alerte && <Etiquette texte={f.alerte} ton="alerte" />}
                       {f.fraicheur.niveau !== 'ACTIF' && (
                         <Etiquette
@@ -224,7 +240,7 @@ export default async function PortefeuillePage({
             ))}
           </div>
         ) : (
-          <Vide texte="Aucune entreprise rattachee a votre compte." />
+          <Vide texte={voirArchives ? 'Aucun accompagnement archive.' : 'Aucune entreprise rattachee a votre compte.'} />
         )}
       </Carte>
     </div>

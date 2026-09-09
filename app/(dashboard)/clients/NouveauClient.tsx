@@ -56,8 +56,7 @@ export function NouveauClient() {
         <div className="rounded-xl border border-warning bg-warning-soft px-4 py-3 space-y-2">
           <p className="text-sm font-semibold text-warning-ink">{etat.message}</p>
           <p className="text-xs text-warning-ink opacity-90">
-            Transmettez ce mot de passe provisoire au client. Il ne sera plus jamais
-            affiche : seule son empreinte est conservee.
+            Transmettez ce mot de passe au client. Il ne sera plus affiche ensuite.
           </p>
           <p className="font-mono text-base font-bold text-ink bg-surface rounded-lg px-3 py-2
                         border border-subtle select-all tracking-wide">
