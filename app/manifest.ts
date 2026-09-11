@@ -15,8 +15,13 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: '/',
     display: 'standalone',
     orientation: 'portrait-primary',
-    background_color: '#FAF9F6',
-    theme_color: '#6366f1',
+    // Les deux seules couleurs ecrites en dur du projet, et elles n'ont pas le
+    // choix : le manifeste est lu par le systeme d'exploitation avant que la
+    // moindre feuille de style ne soit chargee, donc `var(--p90-canvas)` n'y
+    // veut rien dire. Ce sont les valeurs du theme par defaut, a tenir a jour
+    // avec `--p90-canvas` et `--p90-accent` dans `app/globals.css`.
+    background_color: '#faf9f6',  // = --p90-canvas (theme clair)
+    theme_color: '#6366f1',       // = --p90-accent (theme clair)
     lang: 'fr',
     categories: ['business', 'productivity', 'finance'],
     icons: [

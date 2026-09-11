@@ -22,12 +22,18 @@
   --p90-border-faint:   #f1f5f9;
   --p90-border-strong:  #cbd5e1;
 
-  /* --- Texte ------------------------------------------------------------ */
+  /* --- Texte ------------------------------------------------------------
+     Les trois niveaux secondaires descendent de 7, 5,6 et 4,6 pour 1 sur le
+     fond le plus clair du theme. Le critere WCAG 1.4.3 demande 4,5 pour du
+     texte courant : le niveau le plus pale du degrade reste donc au-dessus du
+     seuil AA. La hierarchie visuelle se joue dans l'ecart entre 7 et 4,6, pas
+     dans une paleur qui devient illisible.
+     ---------------------------------------------------------------------- */
   --p90-ink:            #0f172a;  /* titres */
   --p90-ink-soft:       #1e293b;  /* corps de texte */
-  --p90-ink-muted:      #64748b;  /* libelles secondaires */
-  --p90-ink-faint:      #94a3b8;  /* mentions discretes */
-  --p90-ink-ghost:      #cbd5e1;  /* texte desactive, vides */
+  --p90-ink-muted:      #4d5a6c;  /* libelles secondaires  — 7,0:1 */
+  --p90-ink-faint:      #5a697d;  /* mentions discretes    — 5,6:1 */
+  --p90-ink-ghost:      #66768e;  /* texte desactive, vides — 4,6:1 */
   --p90-on-inverse:     #ffffff;
   --p90-on-accent:      #ffffff;  /* texte pose sur un aplat de couleur */
 
@@ -68,9 +74,9 @@
 
   --p90-ink:            #1b2a4a;
   --p90-ink-soft:       #2c3d61;
-  --p90-ink-muted:      #6b7a94;
-  --p90-ink-faint:      #9aa5b8;
-  --p90-ink-ghost:      #c8cdd8;
+  --p90-ink-muted:      #4e596b;  /* 7,0:1 */
+  --p90-ink-faint:      #5b677d;  /* 5,6:1 */
+  --p90-ink-ghost:      #66758d;  /* 4,6:1 */
   --p90-on-inverse:     #f6f2ea;
   /* L'or ne supporte pas le texte blanc : on pose du marine dessus. */
   --p90-on-accent:      #1b2a4a;
@@ -162,9 +168,11 @@ body {
 
   --p90-ink:            #f1f5f9;
   --p90-ink-soft:       #dbe3ed;
-  --p90-ink-muted:      #97a5ba;
-  --p90-ink-faint:      #6f7f96;
-  --p90-ink-ghost:      #4a5670;
+  /* Mesures prises sur --p90-surface-muted (#1c2537), le fond le plus clair
+     du theme sombre : c'est lui qui fixe le pire cas, pas le canvas. */
+  --p90-ink-muted:      #a4b0c3;  /* 7,0:1 */
+  --p90-ink-faint:      #8e9eb4;  /* 5,6:1 */
+  --p90-ink-ghost:      #7c8ea8;  /* 4,6:1 */
   --p90-on-inverse:     #f1f5f9;
   --p90-on-accent:      #0b1120;
 
@@ -258,9 +266,9 @@ body {
 
   --p90-ink:            #14213d;
   --p90-ink-soft:       #22304f;
-  --p90-ink-muted:      #5b6880;
-  --p90-ink-faint:      #8a94a6;
-  --p90-ink-ghost:      #bfc6d2;
+  --p90-ink-muted:      #4e596e;  /* 7,0:1 */
+  --p90-ink-faint:      #5b6880;  /* 5,6:1 */
+  --p90-ink-ghost:      #677691;  /* 4,6:1 */
   --p90-on-inverse:     #ffffff;
   --p90-on-accent:      #ffffff;
 

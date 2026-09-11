@@ -53,8 +53,11 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Prisma : schema, migrations et moteurs, necessaires pour appliquer les
-# migrations au demarrage et pour executer les requetes.
+# Prisma : schema, migrations et moteurs. Le conteneur n'applique PAS les
+# migrations au demarrage — `CMD` ne lance que le serveur. Les migrations se
+# jouent depuis l'hote, avant la bascule, comme decrit dans deploy/PROCEDURE.md :
+# une image qui migre toute seule migre aussi quand on la redemarre par erreur.
+# Le schema et les moteurs restent necessaires a l'execution des requetes.
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma

@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import {
   Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, TexteEditable, Retour, PanneauAjout, ETAT_INITIAL,
+  type EtatAction,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import {
@@ -102,26 +103,44 @@ export type RetourVue = {
 // 1. Mon client ideal
 // ===========================================================================
 
-function FormulairePersona({ persona, onFini }: { persona?: PersonaVue; onFini?: () => void }) {
-  const [etat, action] = useActionState(enregistrerPersona, ETAT_INITIAL)
-  if (etat.ok && onFini) onFini()
+/**
+ * Les champs seuls, sans etat propre.
+ *
+ * Le panneau de creation et les formulaires de modification ne peuvent pas
+ * partager le meme `useActionState`, et un composant ne peut pas appeler un
+ * hook conditionnellement : d'ou cette separation. L'etat vient de l'appelant.
+ */
+function ChampsPersona({
+  persona,
+  etat,
+  action,
+}: {
+  persona?: PersonaVue
+  etat: EtatAction
+  action: (donnees: FormData) => void
+}) {
+  // Cette section affiche un formulaire par persona enregistre, plus celui du
+  // panneau d'ajout. Sans prefixe, les sept champs porteraient le meme `id`
+  // dans chacun d'eux : le `htmlFor` du libelle designerait toujours le premier
+  // formulaire de la page, et un lecteur d'ecran annoncerait le mauvais champ.
+  const p = `persona-${persona?.id ?? 'nouveau'}`
 
   return (
     <form action={action} className="space-y-3">
       {persona && <input type="hidden" name="id" value={persona.id} />}
-      <Champ nom="name" libelle="Nom du persona" defaultValue={persona?.name} required maxLength={80}
+      <Champ nom="name" idUnique={`${p}-name`} libelle="Nom du persona" defaultValue={persona?.name} required maxLength={80}
              placeholder="Marie, dirigeante de TPE" erreur={etat.erreurs?.name} />
-      <ZoneTexte nom="dailyLife" libelle="Qui est-elle aujourd'hui ?" defaultValue={persona?.dailyLife ?? ''}
+      <ZoneTexte nom="dailyLife" idUnique={`${p}-dailyLife`} libelle="Qui est-elle aujourd'hui ?" defaultValue={persona?.dailyLife ?? ''}
                  placeholder="Que fait-elle, quelle est sa situation, a quoi ressemble son quotidien ?" />
-      <ZoneTexte nom="frustrations" libelle="Ses frustrations" defaultValue={persona?.frustrations ?? ''}
+      <ZoneTexte nom="frustrations" idUnique={`${p}-frustrations`} libelle="Ses frustrations" defaultValue={persona?.frustrations ?? ''}
                  placeholder="Qu'est-ce qui la bloque, la fatigue, ne fonctionne pas ?" />
-      <ZoneTexte nom="desires" libelle="Ses desirs" defaultValue={persona?.desires ?? ''}
+      <ZoneTexte nom="desires" idUnique={`${p}-desires`} libelle="Ses desirs" defaultValue={persona?.desires ?? ''}
                  placeholder="Qu'est-ce qu'elle veut vraiment ? A quoi ressemblerait sa reussite ?" />
-      <ZoneTexte nom="objections" libelle="Ses objections" defaultValue={persona?.objections ?? ''}
+      <ZoneTexte nom="objections" idUnique={`${p}-objections`} libelle="Ses objections" defaultValue={persona?.objections ?? ''}
                  placeholder="Pourquoi ne passe-t-elle pas a l'action ? Qu'est-ce qui la freine ?" />
-      <ZoneTexte nom="transformation" libelle="La transformation" defaultValue={persona?.transformation ?? ''}
+      <ZoneTexte nom="transformation" idUnique={`${p}-transformation`} libelle="La transformation" defaultValue={persona?.transformation ?? ''}
                  placeholder="Ou est-elle aujourd'hui, ou sera-t-elle apres votre aide ?" />
-      <Champ nom="magicSentence" libelle="Ma phrase magique" defaultValue={persona?.magicSentence ?? ''}
+      <Champ nom="magicSentence" idUnique={`${p}-magicSentence`} libelle="Ma phrase magique" defaultValue={persona?.magicSentence ?? ''}
              placeholder="J'aide ................ a ................" maxLength={240} />
       <div className="flex items-center gap-2">
         <BoutonSoumettre>{persona ? 'Mettre a jour' : 'Enregistrer le persona'}</BoutonSoumettre>
@@ -131,8 +150,18 @@ function FormulairePersona({ persona, onFini }: { persona?: PersonaVue; onFini?:
   )
 }
 
+/** Formulaire autonome, pour modifier un persona deja enregistre. */
+function FormulairePersona({ persona }: { persona?: PersonaVue }) {
+  const [etat, action] = useActionState(enregistrerPersona, ETAT_INITIAL)
+  return <ChampsPersona persona={persona} etat={etat} action={action} />
+}
+
 export function SectionPersona({ personas }: { personas: PersonaVue[] }) {
-  const [etat] = useActionState(enregistrerPersona, ETAT_INITIAL)
+  // L'etat du panneau doit etre celui du formulaire qu'il contient, sinon il
+  // ne se referme jamais apres une creation reussie. C'etait le cas ici : la
+  // section et le formulaire avaient chacun le leur, et celui de la section
+  // n'etait jamais mis a jour.
+  const [etat, action] = useActionState(enregistrerPersona, ETAT_INITIAL)
 
   return (
     <Carte titre="Mon client ideal" sousTitre="Le persona guide toutes les decisions d'offre et de contenu">
@@ -160,7 +189,7 @@ export function SectionPersona({ personas }: { personas: PersonaVue[] }) {
       )}
 
       <PanneauAjout intitule="Ajouter un persona" etat={etat}>
-        <FormulairePersona />
+        <ChampsPersona etat={etat} action={action} />
       </PanneauAjout>
     </Carte>
   )
@@ -233,18 +262,20 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
 
       <PanneauAjout intitule="Ajouter une offre" etat={etat}>
         <form action={action} className="space-y-3">
-          <Champ nom="name" libelle="Offre" required maxLength={120} placeholder="Accompagnement Pilotage 90 jours"
+          {/* Prefixe `offre-` : `name`, `price` et `status` existent aussi
+              dans les sections escalier et CRM de la meme page. */}
+          <Champ nom="name" idUnique="offre-name" libelle="Offre" required maxLength={120} placeholder="Accompagnement Pilotage 90 jours"
                  erreur={etat.erreurs?.name} />
-          <Champ nom="promise" libelle="Promesse" maxLength={300} placeholder="Ce que le client obtient concretement" />
+          <Champ nom="promise" idUnique="offre-promise" libelle="Promesse" maxLength={300} placeholder="Ce que le client obtient concretement" />
           <div className="grid grid-cols-2 gap-3">
-            <Champ nom="price" libelle="Prix HT (€)" inputMode="decimal" required placeholder="1500"
+            <Champ nom="price" idUnique="offre-price" libelle="Prix HT (€)" inputMode="decimal" required placeholder="1500"
                    erreur={etat.erreurs?.price} />
-            <Liste nom="format" libelle="Format" options={FORMATS} defaultValue="SERVICE" />
+            <Liste nom="format" idUnique="offre-format" libelle="Format" options={FORMATS} defaultValue="SERVICE" />
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Liste nom="status" libelle="Statut" options={STATUTS_OFFRE} defaultValue="IDEE" />
+            <Liste nom="status" idUnique="offre-status" libelle="Statut" options={STATUTS_OFFRE} defaultValue="IDEE" />
             <Liste
-              nom="personaId" libelle="Pour quel persona ?"
+              nom="personaId" idUnique="offre-personaId" libelle="Pour quel persona ?"
               options={[{ valeur: '', libelle: '— aucun —' },
                         ...personas.map((p) => ({ valeur: p.id, libelle: p.name }))]}
             />
@@ -291,12 +322,12 @@ export function SectionArchitecture({ niveaux }: { niveaux: NiveauVue[] }) {
       <PanneauAjout intitule="Ajouter un niveau" etat={etat}>
         <form action={action} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <Champ nom="level" libelle="Niveau" required maxLength={40} placeholder="Entree de gamme"
+            <Champ nom="level" idUnique="escalier-level" libelle="Niveau" required maxLength={40} placeholder="Entree de gamme"
                    erreur={etat.erreurs?.level} />
-            <Champ nom="price" libelle="Prix affiche" maxLength={40} placeholder="490 € ou 49 €/mois" />
+            <Champ nom="price" idUnique="escalier-price" libelle="Prix affiche" maxLength={40} placeholder="490 € ou 49 €/mois" />
           </div>
-          <Champ nom="offerName" libelle="Nom de l'offre" required maxLength={120} erreur={etat.erreurs?.offerName} />
-          <Champ nom="goal" libelle="Objectif de cette offre" maxLength={240}
+          <Champ nom="offerName" idUnique="escalier-offerName" libelle="Nom de l'offre" required maxLength={120} erreur={etat.erreurs?.offerName} />
+          <Champ nom="goal" idUnique="escalier-goal" libelle="Objectif de cette offre" maxLength={240}
                  placeholder="Faire entrer un nouveau client dans l'univers" />
           <BoutonSoumettre>Ajouter</BoutonSoumettre>
           <Retour etat={etat} />
@@ -356,17 +387,17 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
       <div className="space-y-3">
         <PanneauAjout intitule="Ajouter un client" etat={etatFiche}>
           <form action={actionFiche} className="space-y-3">
-            <Champ nom="companyName" libelle="Nom / entreprise" required maxLength={120}
+            <Champ nom="companyName" idUnique="fiche-companyName" libelle="Nom / entreprise" required maxLength={120}
                    erreur={etatFiche.erreurs?.companyName} />
             <div className="grid grid-cols-2 gap-3">
-              <Champ nom="contactName" libelle="Contact" maxLength={80} />
-              <Liste nom="status" libelle="Statut" options={STATUTS_CLIENT} defaultValue="PROSPECT" />
+              <Champ nom="contactName" idUnique="fiche-contactName" libelle="Contact" maxLength={80} />
+              <Liste nom="status" idUnique="fiche-status" libelle="Statut" options={STATUTS_CLIENT} defaultValue="PROSPECT" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Champ nom="email" libelle="Email" type="email" maxLength={160} />
-              <Champ nom="phone" libelle="Telephone" maxLength={40} />
+              <Champ nom="email" idUnique="fiche-email" libelle="Email" type="email" maxLength={160} />
+              <Champ nom="phone" idUnique="fiche-phone" libelle="Telephone" maxLength={40} />
             </div>
-            <ZoneTexte nom="notes" libelle="Notes de suivi" maxLength={1000} />
+            <ZoneTexte nom="notes" idUnique="fiche-notes" libelle="Notes de suivi" maxLength={1000} />
             <BoutonSoumettre>Enregistrer la fiche</BoutonSoumettre>
             <Retour etat={etatFiche} />
           </form>
@@ -375,15 +406,15 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
         {fiches.length > 0 && (
           <PanneauAjout intitule="Enregistrer un achat" etat={etatAchat}>
             <form action={actionAchat} className="space-y-3">
-              <Liste nom="crmClientId" libelle="Client" required
+              <Liste nom="crmClientId" idUnique="achat-crmClientId" libelle="Client" required
                      options={fiches.map((f) => ({ valeur: f.id, libelle: f.companyName }))} />
-              <Liste nom="offerId" libelle="Offre"
+              <Liste nom="offerId" idUnique="achat-offerId" libelle="Offre"
                      options={[{ valeur: '', libelle: '— non rattachee —' },
                                ...offres.map((o) => ({ valeur: o.id, libelle: o.name }))]} />
               <div className="grid grid-cols-2 gap-3">
-                <Champ nom="amount" libelle="Montant HT (€)" inputMode="decimal" required
+                <Champ nom="amount" idUnique="achat-amount" libelle="Montant HT (€)" inputMode="decimal" required
                        erreur={etatAchat.erreurs?.amount} />
-                <Champ nom="purchasedAt" libelle="Date" type="date" defaultValue={aujourdhui} required />
+                <Champ nom="purchasedAt" idUnique="achat-purchasedAt" libelle="Date" type="date" defaultValue={aujourdhui} required />
               </div>
               <BoutonSoumettre>Enregistrer l&apos;achat</BoutonSoumettre>
               <Retour etat={etatAchat} />
@@ -452,16 +483,16 @@ export function SectionRetours({
       <PanneauAjout intitule="Ajouter un retour" etat={etat}>
         <form action={action} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <Liste nom="crmClientId" libelle="Client"
+            <Liste nom="crmClientId" idUnique="retour-crmClientId" libelle="Client"
                    options={[{ valeur: '', libelle: '— anonyme —' },
                              ...fiches.map((f) => ({ valeur: f.id, libelle: f.companyName }))]} />
-            <Liste nom="offerId" libelle="Offre"
+            <Liste nom="offerId" idUnique="retour-offerId" libelle="Offre"
                    options={[{ valeur: '', libelle: '— toutes —' },
                              ...offres.map((o) => ({ valeur: o.id, libelle: o.name }))]} />
           </div>
-          <Liste nom="rating" libelle="Note" defaultValue="5"
+          <Liste nom="rating" idUnique="retour-rating" libelle="Note" defaultValue="5"
                  options={[5, 4, 3, 2, 1].map((n) => ({ valeur: String(n), libelle: `${n} / 5` }))} />
-          <ZoneTexte nom="comment" libelle="Commentaire" maxLength={600} />
+          <ZoneTexte nom="comment" idUnique="retour-comment" libelle="Commentaire" maxLength={600} />
           <BoutonSoumettre>Enregistrer le retour</BoutonSoumettre>
           <Retour etat={etat} />
         </form>

@@ -98,7 +98,7 @@ Reconnectez-vous en `pilote` pour que l'appartenance au groupe prenne effet.
 sudo mkdir -p /opt/pilote90 && sudo chown pilote:pilote /opt/pilote90
 git clone https://github.com/AugustinS-Pro/pilote90.git /opt/pilote90
 cd /opt/pilote90
-git checkout feat/axes-et-pages     # ou main, une fois la branche fusionnée
+git checkout main                   # le déploiement se fait toujours depuis main
 ```
 
 ---

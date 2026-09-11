@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import { Carte, Vide, Etiquette } from '@/components/ui'
 import { FormulaireDecision, SuppressionDecision } from '@/components/FormulairesSysteme'
 import { CATEGORIES_DECISION, libelleDe } from '@/lib/listes'
@@ -19,7 +19,22 @@ export default async function DecisionsPage({
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
 
-  const { q, categorie } = await searchParams
+  // Garde de page, alignee sur /bibliotheque. Elle porte sur l'acces a la page
+  // transverse, pas sur la possession d'un dossier : un consultant a bien le
+  // droit d'ouvrir cette page, il n'a simplement rien a y voir. C'est pourquoi
+  // le bloc explicatif plus bas est conserve au lieu d'une redirection, qui
+  // boucleraient ici puisque pageAccueil renvoie vers /historique pour un
+  // profil qui n'a que les acces communs.
+  if (!peut(utilisateur, 'PAGES_TRANSVERSES')) redirect(pageAccueil(utilisateur))
+
+  const { q, categorie: categorieBrute } = await searchParams
+
+  // Valide comme /clients et /bibliotheque valident les leurs. Sans ce filtre,
+  // /decisions?categorie=nimportequoi remontait une erreur Prisma jusqu'a la
+  // page d'erreur.
+  const categorie = CATEGORIES_DECISION.some((c) => c.valeur === categorieBrute)
+    ? categorieBrute
+    : undefined
 
   const client =
     peut(utilisateur, 'DOSSIER_PERSONNEL')

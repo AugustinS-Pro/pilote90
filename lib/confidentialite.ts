@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { getCurrentUser } from '@/lib/session'
 
 const CLE = 'pilote90_confidentiel'
 
@@ -13,6 +14,12 @@ export async function estConfidentiel(): Promise<boolean> {
 
 export async function basculerConfidentialite(): Promise<void> {
   'use server'
+  // Seule action du projet qui n'avait aucune garde. L'impact etait nul, elle
+  // ne pose qu'un cookie, mais une action serveur ouverte se remarque a la
+  // relecture.
+  const utilisateur = await getCurrentUser()
+  if (!utilisateur) return
+
   const store = await cookies()
   const actif = store.get(CLE)?.value === '1'
   store.set(CLE, actif ? '0' : '1', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', path: '/' })

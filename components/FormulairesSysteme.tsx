@@ -50,7 +50,10 @@ export function FormulaireIdee() {
                placeholder="Une idee qui vous traverse, a relire a la cloture du cycle"
                erreur={etat.erreurs?.content} />
       </div>
-      <BoutonSoumettre enCours="Ajout...">Garer</BoutonSoumettre>
+      {/* « Garer » filait la metaphore du parking, mais un bouton doit dire
+          l'action, pas le decor : on lit d'abord le verbe, et « garer » ne dit
+          pas ce qu'il advient de l'idee. */}
+      <BoutonSoumettre enCours="Ajout...">Mettre de côté</BoutonSoumettre>
       {etat.message && !etat.ok && <Retour etat={etat} />}
     </form>
   )

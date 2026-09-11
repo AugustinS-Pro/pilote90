@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import { Carte, Etiquette } from '@/components/ui'
 import { THEMES, ECHELLES, affichageActif, changerTheme, changerEchelle } from '@/lib/theme'
 
@@ -9,6 +10,13 @@ export const metadata = { title: 'Paramètres · Pilote90' }
 export default async function ParametresPage() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+
+  // PARAMETRES fait partie du socle commun, donc ce test est toujours vrai
+  // aujourd'hui. Il est ecrit quand meme : le jour ou l'acces sortirait du
+  // socle, cette page resterait ouverte en silence. On renvoie vers la
+  // connexion et non vers pageAccueil, qui retombe justement sur /parametres
+  // en dernier recours et bouclerait.
+  if (!peut(utilisateur, 'PARAMETRES')) redirect('/login')
 
   const { theme: actif, echelle: echelleActive } = await affichageActif()
 

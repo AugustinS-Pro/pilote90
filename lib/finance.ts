@@ -1,3 +1,4 @@
+import { euros } from '@/lib/format'
 /**
  * Calculs financiers du module Audit & Previsionnel.
  *
@@ -217,8 +218,6 @@ export function auditerFinances(
   nombreTransactions: number,
 ): ConstatAudit[] {
   const constats: ConstatAudit[] = []
-  const euros = (centimes: number) =>
-    `${(centimes / 100).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €`
 
   if (indicateurs.tresorerie < 0) {
     constats.push({

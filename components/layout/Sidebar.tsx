@@ -154,7 +154,7 @@ export function Sidebar({ acces }: { acces: readonly Acces[] }) {
         <div className="w-full px-2 pb-4">
           <button
             onClick={() => signOut({ callbackUrl: '/login' })}
-            aria-label="Deconnexion"
+            aria-label="Déconnexion"
             className="flex items-center gap-3 px-2.5 py-2.5 rounded-lg w-full text-ghost
                        hover:text-on-inverse hover:bg-surface/5 text-sm font-medium transition-all duration-150"
           >

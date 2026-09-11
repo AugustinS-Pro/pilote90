@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
-import { peut } from '@/lib/habilitations'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import { Recherche } from '@/components/ui'
 import { correspond } from '@/lib/recherche'
 import {
@@ -26,6 +26,14 @@ export default async function HistoriquePage({
 
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
+
+  // Garde de page, alignee sur /bibliotheque. Elle porte sur l'acces a la page
+  // transverse, pas sur la possession d'un dossier : un consultant a bien le
+  // droit d'ouvrir cette page, il n'a simplement rien a y voir. C'est pourquoi
+  // le bloc explicatif plus bas est conserve au lieu d'une redirection, qui
+  // boucleraient ici puisque pageAccueil renvoie vers /historique pour un
+  // profil qui n'a que les acces communs.
+  if (!peut(utilisateur, 'PAGES_TRANSVERSES')) redirect(pageAccueil(utilisateur))
 
   const client =
     peut(utilisateur, 'DOSSIER_PERSONNEL')

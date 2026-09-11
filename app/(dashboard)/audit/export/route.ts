@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import { serieDouzeMois } from '@/lib/finance'
 
 /**
@@ -10,6 +11,12 @@ import { serieDouzeMois } from '@/lib/finance'
 export async function GET() {
   const utilisateur = await getCurrentUser()
   if (!utilisateur) return new Response('Non autorise', { status: 401 })
+
+  // Meme donnee que le rapport PDF, donc meme habilitation. Sans ce test, un
+  // compte qui n'a pas achete le module Audit recuperait quand meme le CSV en
+  // tapant l'URL : ce sont ses donnees, mais c'est un contournement de la
+  // logique de formule.
+  if (!peut(utilisateur, 'AUDIT_PERSONNEL')) return new Response('Non autorise', { status: 403 })
 
   const client = await prisma.client.findUnique({
     where: { userId: utilisateur.id },

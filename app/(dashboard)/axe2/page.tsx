@@ -6,6 +6,8 @@ import { FormulairesTransaction } from './FormulairesTransaction'
 import { LigneTransaction } from './LigneTransaction'
 import { Recherche } from '@/components/ui'
 import { correspond } from '@/lib/recherche'
+import { calculerIndicateurs } from '@/lib/finance'
+import { euros } from '@/lib/format'
 import {
   SectionStructure, SectionTaux, SectionObjectifRevenu, SectionEcheances, SectionSuiviMensuel,
   type StructureVue, type TauxVue, type ObjectifVue, type EcheanceVue,
@@ -49,26 +51,19 @@ export default async function Axe2Page({
   const cycle = client?.cycles[0]
   const allTransactions = client?.transactions ?? []
 
-  const currentMonth = new Date().getMonth()
-  const currentYear = new Date().getFullYear()
-  const monthTransactions = allTransactions.filter(t => {
-    const d = new Date(t.transactionDate)
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear
-  })
-
-  const revenue = monthTransactions
-    .filter(t => t.type === 'REVENUE')
-    .reduce((s, t) => s + t.amountHt, 0)
-
-  const expenses = monthTransactions
-    .filter(t => t.type === 'EXPENSE')
-    .reduce((s, t) => s + t.amountHt, 0)
-
-  const netResult = revenue - expenses
-  const chargeRatio = revenue > 0 ? Math.round((expenses / revenue) * 100) : 0
-
   const caTarget = cycle?.caTargetMonthly ?? 0
-  const caProgress = caTarget > 0 ? Math.round((revenue / caTarget) * 100) : 0
+
+  // Cette page recalculait a la main ce que `calculerIndicateurs` fait deja, et
+  // qui est couvert par douze tests. Deux implementations de la meme regle,
+  // c'est une divergence programmee : le jour ou l'une change, l'ecran et le
+  // rapport comptable ne disent plus la meme chose.
+  const {
+    caDuMois: revenue,
+    chargesDuMois: expenses,
+    resultatNet: netResult,
+    ratioCharges: chargeRatio,
+    progressionObjectif: caProgress,
+  } = calculerIndicateurs(allTransactions, caTarget)
 
   // Recherche sur le libelle et la categorie. Sans recherche, on montre les
   // huit dernieres ; avec, on cherche dans tout l'historique, sinon le filtre
@@ -153,7 +148,7 @@ export default async function Axe2Page({
             CA ce mois
           </p>
           <p className="text-2xl font-extrabold text-positive">
-            {(revenue / 100).toLocaleString('fr-FR')}€
+            {euros(revenue)}
           </p>
           {caTarget > 0 && (
             <p className="text-xs text-ghost mt-1">
@@ -167,7 +162,7 @@ export default async function Axe2Page({
             Charges ce mois
           </p>
           <p className="text-2xl font-extrabold text-negative">
-            {(expenses / 100).toLocaleString('fr-FR')}€
+            {euros(expenses)}
           </p>
           <p className="text-xs text-ghost mt-1">
             Ratio {chargeRatio}%
@@ -179,7 +174,7 @@ export default async function Axe2Page({
             Résultat net
           </p>
           <p className={`text-2xl font-extrabold ${netResult >= 0 ? 'text-accent-ink' : 'text-negative'}`}>
-            {(netResult / 100).toLocaleString('fr-FR')}€
+            {euros(netResult)}
           </p>
           <p className="text-xs text-ghost mt-1">
             CA moins charges
@@ -191,7 +186,7 @@ export default async function Axe2Page({
             Objectif 90j
           </p>
           <p className="text-2xl font-extrabold text-accent-ink">
-            {((caTarget * 3) / 100).toLocaleString('fr-FR')}€
+            {euros(caTarget * 3)}
           </p>
           <p className="text-xs text-ghost mt-1">
             Cycle {cycle?.cycleNumber ?? '—'}

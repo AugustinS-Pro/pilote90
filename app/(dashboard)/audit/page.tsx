@@ -6,11 +6,9 @@ import {
   calculerIndicateurs, serieDouzeMois, calculerPrevisionnel,
   auditerFinances, messageDeSituation,
 } from '@/lib/finance'
+import { euros } from '@/lib/format'
 import { GrapheCaCharges, GraphePrevisionnel } from './Graphes'
 import { FormulairesTransaction } from '../axe2/FormulairesTransaction'
-
-const euros = (centimes: number) =>
-  `${(centimes / 100).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €`
 
 const STYLE_NIVEAU = {
   ALERTE: { pastille: 'bg-negative', fond: 'bg-negative-soft border-negative', texte: 'text-negative-ink', libelle: 'Alerte' },

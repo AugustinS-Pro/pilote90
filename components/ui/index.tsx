@@ -137,21 +137,32 @@ export function Liste({
   libelle,
   options,
   erreur,
+  idUnique,
   ...reste
 }: {
   nom: string
   libelle?: string
   options: { valeur: string; libelle: string }[]
   erreur?: string
+  /**
+   * Le `name` sert de `id` par defaut, ce qui suffit tant qu'un champ donne
+   * n'apparait qu'une fois dans la page. Des qu'un formulaire est repete —
+   * un par persona, un par client — le meme `id` se retrouve sur plusieurs
+   * balises : le `htmlFor` du libelle designe alors la premiere occurrence,
+   * et un lecteur d'ecran annonce le mauvais champ. `idUnique` permet a
+   * l'appelant de lever l'ambiguite, comme le fait deja `Champ`.
+   */
+  idUnique?: string
 } & React.SelectHTMLAttributes<HTMLSelectElement>) {
+  const id = idUnique ?? nom
   return (
     <div>
       {libelle && (
-        <label htmlFor={nom} className="block text-xs font-semibold text-muted mb-1">
+        <label htmlFor={id} className="block text-xs font-semibold text-muted mb-1">
           {libelle}
         </label>
       )}
-      <select id={nom} name={nom} className={CHAMP} {...reste}>
+      <select id={id} name={nom} className={CHAMP} {...reste}>
         {options.map((o) => (
           <option key={o.valeur} value={o.valeur}>
             {o.libelle}

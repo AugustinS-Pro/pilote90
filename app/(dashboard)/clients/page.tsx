@@ -219,7 +219,11 @@ export default async function PortefeuillePage({
                     {f.objectif && <p className="text-xs text-ghost mt-1">{f.objectif}</p>}
                   </div>
 
-                  <div className="flex items-center gap-6 shrink-0">
+                  {/* flex-wrap et pleine largeur sous 640 px : cette ligne
+                      porte deja le nom, le secteur, le cycle, l'etat et
+                      jusqu'a trois etiquettes. Sans repli, elle deborde sur
+                      un telephone, et c'est la page d'accueil du consultant. */}
+                  <div className="flex items-center gap-6 w-full sm:w-auto sm:shrink-0">
                     <div className="text-right">
                       <p className="text-sm font-bold text-positive">{euros(f.caDuMois)}</p>
                       <p className="text-[11px] text-ghost">CA du mois</p>
