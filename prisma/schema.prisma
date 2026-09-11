@@ -44,6 +44,9 @@ model User {
 
   client  Client?  @relation("ClientUser")
   managed Client[] @relation("AdminClients")
+
+  /// Les ressources communes deposees par ce consultant.
+  ressources Resource[] @relation("AdminResources")
 }
 
 model Client {
@@ -522,8 +525,18 @@ model Prospect {
 /// clientId nul = ressource commune, deposee par le consultant pour tous.
 model Resource {
   id          String       @id @default(cuid())
+
+  /// Ressource personnelle : rattachee a un dossier client.
   clientId    String?
   client      Client?      @relation(fields: [clientId], references: [id])
+
+  /// Ressource commune : rattachee au consultant qui l'a deposee.
+  /// Sans ce champ, une ressource a clientId nul n'appartenait a personne :
+  /// elle etait lue par tous les locataires de l'instance et supprimable par
+  /// n'importe quel consultant. Exactement un des deux champs est renseigne.
+  adminId     String?
+  admin       User?        @relation("AdminResources", fields: [adminId], references: [id])
+
   title       String
   type        ResourceType @default(GUIDE)
   description String?
@@ -531,6 +544,7 @@ model Resource {
   createdAt   DateTime     @default(now())
 
   @@index([clientId])
+  @@index([adminId])
 }
 
 // -----------------------------------------------------------------------------

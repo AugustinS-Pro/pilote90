@@ -412,18 +412,6 @@ async function main() {
     await prisma.prospect.upsert({ where: { id }, update: enregistrement, create: { id, clientId: marie.id, ...enregistrement } })
   }
 
-  // === Bibliotheque commune, deposee par le consultant =====================
-
-  const ressources = [
-    { id: 'res-1', title: 'Bien demarrer son premier cycle de 90 jours', type: 'GUIDE' as const, description: 'Les six etapes de la mise en route, a lire avant la premiere seance.' },
-    { id: 'res-2', title: 'Le point du lundi matin', type: 'RITUEL' as const, description: 'Quinze minutes chaque lundi : trois chiffres, trois priorites, une decision.' },
-    { id: 'res-3', title: 'Modele de cycle, lancement d une nouvelle offre', type: 'MODELE' as const, description: 'Un decoupage en douze semaines deja rempli, a adapter.' },
-  ]
-  for (const r of ressources) {
-    const { id, ...donnees } = r
-    await prisma.resource.upsert({ where: { id }, update: donnees, create: { id, clientId: null, ...donnees } })
-  }
-
   // === Les trois portefeuilles ==============================================
   //
   // Sandrine et Alexis n'accompagnent pas les memes entreprises, et c'est deja
@@ -455,6 +443,31 @@ async function main() {
       formule: 'COMPLETE', capacites: [...CONSULTANT],
     },
   })
+
+  // === Bibliotheque commune, deposee par chaque consultant =================
+  //
+  // Une ressource commune porte desormais l'`adminId` de celui qui l'a
+  // deposee. Sans lui, elle n'appartenait a personne : elle etait lue par
+  // tous les locataires de l'instance et supprimable par n'importe quel
+  // consultant. Chaque consultant a donc sa propre bibliotheque, et le
+  // cloisonnement se montre en deux connexions.
+
+  const RESSOURCES = [
+    { cle: 'res-1', title: 'Bien demarrer son premier cycle de 90 jours', type: 'GUIDE' as const, description: 'Les six etapes de la mise en route, a lire avant la premiere seance.' },
+    { cle: 'res-2', title: 'Le point du lundi matin', type: 'RITUEL' as const, description: 'Quinze minutes chaque lundi : trois chiffres, trois priorites, une decision.' },
+    { cle: 'res-3', title: 'Modele de cycle, lancement d une nouvelle offre', type: 'MODELE' as const, description: 'Un decoupage en douze semaines deja rempli, a adapter.' },
+  ]
+
+  for (const [suffixe, consultant] of [['alexis', alexis], ['sandrine', sandrine], ['augustin', augustin]] as const) {
+    for (const r of RESSOURCES) {
+      const { cle, ...donnees } = r
+      // `res-1` reste l'identifiant d'Alexis : les lignes deja en base gardent
+      // leur identite et recoivent simplement leur proprietaire.
+      const id = suffixe === 'alexis' ? cle : `${cle}-${suffixe}`
+      const enregistrement = { ...donnees, clientId: null, adminId: consultant.id }
+      await prisma.resource.upsert({ where: { id }, update: enregistrement, create: { id, ...enregistrement } })
+    }
+  }
 
   /**
    * Profils de situation financiere.

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { getCurrentClient, getCurrentUser } from '@/lib/session'
+import { peut } from '@/lib/habilitations'
 import { decisionInput, ideaInput, resourceInput } from '@/lib/validation'
 import { PILIER_PAR_CLE, type ClePilier } from '@/lib/piliers'
 import type { ZodError } from 'zod'
@@ -160,13 +161,23 @@ export async function creerRessource(
   })
   if (!parsed.success) return { ok: false, message: 'Saisie incomplete.', erreurs: versErreurs(parsed.error) }
 
-  // Une ressource deposee par l'administrateur est commune (clientId nul)
-  // et devient visible par tous ses clients.
   const client = await getCurrentClient()
+
+  // Sans fiche client, la ressource est COMMUNE : elle sera lue par les
+  // entrepreneurs accompagnes par son auteur. C'est donc un geste de
+  // consultant, et il exige l'habilitation correspondante. Sans ce test,
+  // n'importe quel compte sans dossier publiait dans la bibliotheque de
+  // tout le monde.
+  if (!client && !peut(utilisateur, 'COMPTES_ADMINISTRER')) {
+    return { ok: false, message: 'Vous ne pouvez pas deposer de ressource commune.' }
+  }
 
   await prisma.resource.create({
     data: {
       clientId: client?.id ?? null,
+      // Exactement un des deux champs est renseigne : une ressource est soit
+      // personnelle, soit commune et alors rattachee a son consultant.
+      adminId: client ? null : utilisateur.id,
       title: parsed.data.title,
       type: parsed.data.type,
       description: parsed.data.description ?? null,
@@ -185,10 +196,12 @@ export async function supprimerRessource(formData: FormData): Promise<void> {
 
   const client = await getCurrentClient()
 
-  // Un client ne supprime que ses propres ressources ;
-  // l'administrateur ne supprime que les ressources communes.
+  // Un entrepreneur ne supprime que ses propres ressources ; un consultant
+  // ne supprime que les ressources communes QU'IL A DEPOSEES. Le filtre
+  // precedent, `{ id, clientId: null }`, laissait chacun effacer celles des
+  // autres.
   await prisma.resource.deleteMany({
-    where: client ? { id, clientId: client.id } : { id, clientId: null },
+    where: client ? { id, clientId: client.id } : { id, clientId: null, adminId: utilisateur.id },
   })
 
   revalidatePath('/bibliotheque')

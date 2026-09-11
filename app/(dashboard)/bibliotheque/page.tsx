@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
+import { peut, pageAccueil } from '@/lib/habilitations'
 import { Carte, Vide, Etiquette } from '@/components/ui'
 import { FormulaireRessource, SuppressionRessource } from '@/components/FormulairesSysteme'
 import { TYPES_RESSOURCE } from '@/lib/listes'
@@ -21,17 +22,33 @@ export default async function BibliothequePage({
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
 
-  const client = await prisma.client.findUnique({
-    where: { userId: utilisateur.id },
-    select: { id: true },
-  })
+  // Meme garde que les deux autres pages transverses : sans l'habilitation,
+  // l'URL n'est pas la sienne et on le ramene chez lui.
+  if (!peut(utilisateur, 'PAGES_TRANSVERSES')) redirect(pageAccueil(utilisateur))
 
-  // Les ressources communes (clientId nul) sont visibles par tout le monde ;
-  // s'y ajoutent les ressources propres au client connecte.
-  const ressources = await prisma.resource.findMany({
-    where: { OR: [{ clientId: null }, ...(client ? [{ clientId: client.id }] : [])] },
-    orderBy: [{ type: 'asc' }, { createdAt: 'desc' }],
-  })
+  const client = peut(utilisateur, 'DOSSIER_PERSONNEL')
+    ? await prisma.client.findUnique({
+        where: { userId: utilisateur.id },
+        select: { id: true, adminId: true },
+      })
+    : null
+
+  // Trois appartenances possibles, et aucune autre : ses propres ressources,
+  // les ressources communes de SON accompagnant, et, s'il est consultant,
+  // celles qu'il a lui-meme deposees. Une ressource commune n'est plus
+  // visible par tous les locataires.
+  const appartenances = [
+    ...(client ? [{ clientId: client.id }] : []),
+    ...(client?.adminId ? [{ clientId: null, adminId: client.adminId }] : []),
+    ...(peut(utilisateur, 'COMPTES_ADMINISTRER') ? [{ clientId: null, adminId: utilisateur.id }] : []),
+  ]
+
+  const ressources = appartenances.length
+    ? await prisma.resource.findMany({
+        where: { OR: appartenances },
+        orderBy: [{ type: 'asc' }, { createdAt: 'desc' }],
+      })
+    : []
 
   const retenues = ressources.filter(
     (r) =>
