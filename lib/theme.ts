@@ -113,7 +113,7 @@ export async function affichageActif(): Promise<Affichage> {
   }
 }
 
-const UN_AN = { httpOnly: true, sameSite: 'lax' as const, path: '/', maxAge: 60 * 60 * 24 * 365 }
+const UN_AN = { httpOnly: true, sameSite: 'lax' as const, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 60 * 60 * 24 * 365 }
 
 export async function changerTheme(formData: FormData): Promise<void> {
   'use server'

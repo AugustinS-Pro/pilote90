@@ -31,7 +31,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./deploy/nginx/pilote90.conf:/etc/nginx/conf.d/default.conf:ro
+      # Le repertoire entier, et non le seul pilote90.conf : celui-ci
+      # inclut proxy-commun.inc et depend de la zone declaree dans
+      # limites.conf. Un include introuvable empeche nginx de demarrer.
+      - ./deploy/nginx:/etc/nginx/conf.d:ro
       - certbot-conf:/etc/letsencrypt:ro
       - certbot-www:/var/www/certbot:ro
     networks:

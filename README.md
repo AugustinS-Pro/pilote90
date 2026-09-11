@@ -45,7 +45,7 @@ Le consultant accède à l'audit de chaque client de son portefeuille, avec un *
 - **Framework** : Next.js 15 (App Router) + React 19
 - **Langage** : TypeScript, sans aucun `any`
 - **Base de données** : PostgreSQL via Supabase
-- **ORM** : Prisma 6, 28 modèles et 18 énumérations
+- **ORM** : Prisma 6, 28 modèles et 22 énumérations
 - **Authentification** : NextAuth.js, stratégie JWT, mots de passe hachés avec bcrypt
 - **Validation** : Zod, côté serveur, sur toutes les écritures
 - **Interface** : Tailwind CSS 4, Recharts

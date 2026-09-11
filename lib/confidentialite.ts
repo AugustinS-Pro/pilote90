@@ -15,7 +15,7 @@ export async function basculerConfidentialite(): Promise<void> {
   'use server'
   const store = await cookies()
   const actif = store.get(CLE)?.value === '1'
-  store.set(CLE, actif ? '0' : '1', { httpOnly: true, sameSite: 'lax', path: '/' })
+  store.set(CLE, actif ? '0' : '1', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', path: '/' })
 }
 
 /** Remplace un nom par une initiale suivie de points, si le mode est actif. */

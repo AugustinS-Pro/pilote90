@@ -37,3 +37,14 @@ jobs:
 
       - name: Lancer les tests
         run: npm test
+
+      # La construction est la seule etape qui detecte un module client
+      # importe depuis un composant serveur : ni le lint ni le typage ne
+      # le voient. Le projet a paye cette erreur trois fois.
+      - name: Construire l'application
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://x:x@localhost:5432/x
+          DIRECT_URL: postgresql://x:x@localhost:5432/x
+          NEXTAUTH_SECRET: construction-uniquement
+

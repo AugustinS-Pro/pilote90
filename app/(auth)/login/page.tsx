@@ -55,11 +55,12 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
 
             <div>
-              <label className="block text-xs font-semibold text-muted
+              <label htmlFor="email" className="block text-xs font-semibold text-muted
                                 uppercase tracking-wide mb-1.5">
                 Adresse email
               </label>
               <input
+                id="email"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -73,11 +74,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-muted
+              <label htmlFor="password" className="block text-xs font-semibold text-muted
                                 uppercase tracking-wide mb-1.5">
                 Mot de passe
               </label>
               <input
+                id="password"
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}

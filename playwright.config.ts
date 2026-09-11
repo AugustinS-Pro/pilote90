@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test'
 /**
  * Tests de parcours.
  *
- * Les 71 tests unitaires verifient des CALCULS isoles. Ceux-ci verifient que
+ * Les 79 tests unitaires verifient des CALCULS isoles. Ceux-ci verifient que
  * l'application tient debout : que les pages s'affichent, que les formulaires
  * ecrivent, et que la saisie se propage. C'est ce qui attrape les pannes
  * qu'aucun test unitaire ne voit, comme l'appel d'une fonction de module
