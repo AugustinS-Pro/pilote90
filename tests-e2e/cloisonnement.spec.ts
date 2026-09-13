@@ -35,10 +35,18 @@ test("un consultant ne peut pas ouvrir la fiche d'un client qui n'est pas le sie
   await seDeconnecter(page)
   await seConnecter(page, COMPTES.sandrine)
 
-  // Meme identifiant, autre session : la page doit repondre introuvable, et non
-  // afficher la fiche ni une page d'erreur qui confirmerait son existence.
-  const reponse = await page.goto(lien!)
-  expect(reponse?.status()).toBe(404)
+  // Meme identifiant, autre session : la fiche ne doit pas s'afficher, et rien
+  // ne doit confirmer qu'elle existe ailleurs.
+  //
+  // Le statut HTTP ne peut pas servir de preuve ici, et ce n'est pas un defaut
+  // de l'application. `app/(dashboard)/loading.tsx` rend la route streamee :
+  // Next envoie l'en-tete de reponse, donc 200, avec le squelette de
+  // chargement AVANT d'executer la requete. Quand `notFound()` s'execute, la
+  // garde a bien joue, mais l'en-tete est deja parti. C'est le CONTENU rendu
+  // qui fait foi, et c'est d'ailleurs lui que voit l'utilisateur.
+  await page.goto(lien!)
+  await expect(page.getByText(/Cette page n.existe pas/i)).toBeVisible()
+  await expect(page.locator('body')).not.toContainText('Marie & Co')
 })
 
 test("un compte accompagne n'atteint pas les axes qu'il n'a pas achetes", async ({ page }) => {

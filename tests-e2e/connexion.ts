@@ -13,6 +13,9 @@ export async function seConnecter(
 }
 
 export async function seDeconnecter(page: Page): Promise<void> {
-  await page.getByRole('button', { name: /deconnexion/i }).click()
+  // Le nom accessible du bouton est accentue (« Deconnexion » avec un e
+  // accent aigu). Un motif sans accent ne le trouverait pas : la classe de
+  // caracteres couvre les deux orthographes, au cas ou le libelle rebouge.
+  await page.getByRole('button', { name: /d[eé]connexion/i }).click()
   await expect(page).toHaveURL(/\/login/)
 }
