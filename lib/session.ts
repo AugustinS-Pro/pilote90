@@ -3,7 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import type { RoleUtilisateur } from '@/types/next-auth'
-import type { Formule, Capacite, ProfilHabilitation } from '@/lib/habilitations'
+import type { Formule, Capacite, ProfilHabilitation, Acces } from '@/lib/habilitations'
+import { peutAuMoins } from '@/lib/habilitations'
 
 export type UtilisateurSession = ProfilHabilitation & {
   id: string
@@ -64,5 +65,20 @@ export const getCurrentUser = cache(async (): Promise<UtilisateurSession | null>
 export async function getCurrentClient() {
   const user = await getCurrentUser()
   if (!user) return null
+  return prisma.client.findUnique({ where: { userId: user.id } })
+}
+
+/**
+ * Fiche client du compte connecte, a condition que ce compte detienne au moins
+ * un des acces demandes.
+ *
+ * Une Server Action est un point d'entree HTTP a part entiere : on peut
+ * l'appeler sans jamais ouvrir la page qui l'utilise. La garde de la page ne
+ * suffit donc pas, l'action refait la meme verification. Sans acces, on
+ * repond comme sans session : rien ne confirme que la fonctionnalite existe.
+ */
+export async function getCurrentClientAutorise(acces: readonly Acces[]) {
+  const user = await getCurrentUser()
+  if (!user || !peutAuMoins(user, acces)) return null
   return prisma.client.findUnique({ where: { userId: user.id } })
 }

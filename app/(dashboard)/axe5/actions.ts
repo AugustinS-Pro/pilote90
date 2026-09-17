@@ -2,12 +2,19 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { getCurrentClient } from '@/lib/session'
+import { getCurrentClientAutorise } from '@/lib/session'
+import type { Acces } from '@/lib/habilitations'
 import {
   cycleInput, monthlyPlanInput, weekInput, weekReviewInput, taskInput,
   eurosVersCentimes,
 } from '@/lib/validation'
 import type { ZodError } from 'zod'
+
+/**
+ * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
+ * mais une Server Action s'appelle aussi sans passer par la page.
+ */
+const ACCES_REQUIS: readonly Acces[] = ['AXE_PILOTAGE']
 
 export type EtatAction = {
   ok: boolean
@@ -50,7 +57,7 @@ export async function creerCycle(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = cycleInput.safeParse({
@@ -116,7 +123,7 @@ export async function cloturerCycle(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const id = String(formData.get('id') ?? '')
@@ -141,7 +148,7 @@ export async function enregistrerPlanMensuel(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const cycleId = String(formData.get('cycleId') ?? '')
@@ -193,7 +200,7 @@ export async function enregistrerFocusSemaine(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = weekInput.safeParse({
@@ -218,7 +225,7 @@ export async function enregistrerRevue(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = weekReviewInput.safeParse({
@@ -260,7 +267,7 @@ export async function creerTache(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = taskInput.safeParse({
@@ -315,7 +322,7 @@ export async function creerTache(
  * la progression de cette priorite est recalculee a partir de ses taches.
  */
 export async function basculerTache(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return
 
   const id = String(formData.get('id') ?? '')
@@ -348,7 +355,7 @@ export async function basculerTache(formData: FormData): Promise<void> {
 }
 
 export async function supprimerTache(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.task.deleteMany({ where: { id, clientId: client.id } })
@@ -364,7 +371,7 @@ export async function supprimerTache(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierTache(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return

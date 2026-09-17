@@ -49,12 +49,14 @@ Le consultant accède à l'audit de chaque client de son portefeuille, avec un *
 - **Authentification** : NextAuth.js, stratégie JWT, mots de passe hachés avec bcrypt
 - **Validation** : Zod, côté serveur, sur toutes les écritures
 - **Interface** : Tailwind CSS 4, Recharts
-- **Tests** : Vitest
+- **Tests** : Vitest (79 tests unitaires) et Playwright (5 parcours de bout en bout)
 - **Intégration continue** : GitHub Actions
 
 ## Sécurité et cloisonnement
 
 L'architecture est **multi-tenant** : plusieurs entreprises coexistent sur une seule instance. Hors la table des comptes, chaque enregistrement porte l'identifiant de l'entreprise propriétaire, et **chaque requête part de l'identifiant de session**, jamais d'un paramètre transmis par le navigateur. La règle est centralisée dans `lib/session.ts`.
+
+Les accès dépendent de la formule souscrite (Autonomie, Accompagnement, Complète) et sont décidés en un seul endroit, `lib/habilitations.ts`, avec refus par défaut : ce qui n'est pas explicitement accordé est refusé.
 
 ---
 
@@ -77,6 +79,7 @@ Variables d'environnement attendues dans `.env.local` : `DATABASE_URL`, `DIRECT_
 | `npm run dev` | Serveur de développement |
 | `npm run build` | Build de production |
 | `npm test` | Tests unitaires (Vitest) |
+| `npm run test:e2e` | Parcours de bout en bout (Playwright) |
 | `npm run typecheck` | Vérification du typage |
 | `npm run lint` | Vérification du style |
 | `npm run seed` | Jeu de démonstration, en dates glissantes et idempotent |
@@ -96,13 +99,16 @@ components/
   layout/                 Barre latérale
 lib/
   session.ts              Cloisonnement multi-tenant, point d'entrée unique
+  habilitations.ts        Accès par formule, refus par défaut
   finance.ts              Calculs du module Audit, fonctions pures
   charges.ts              Formules de l'axe 2, fonctions pures
   validation.ts           Schémas Zod
 prisma/
   schema.prisma           28 modèles
   seed.ts                 Jeu de démonstration
-tests/                    Tests unitaires des calculs financiers
+tests/                    Tests unitaires : calculs, habilitations, fraîcheur, recherche
+tests-e2e/                Parcours Playwright : connexion, saisie, cloisonnement
+deploy/                   Nginx, sauvegarde, restauration, supervision
 ```
 
 Les fonctions de calcul sont isolées dans `lib/finance.ts` et `lib/charges.ts`, sans accès à la base : c'est ce qui les rend testables sans environnement.
@@ -111,7 +117,7 @@ Les fonctions de calcul sont isolées dans `lib/finance.ts` et `lib/charges.ts`,
 
 ## État du projet
 
-Le cœur applicatif est en place : les cinq axes, le module décisionnel, l'espace consultant et les pages système. Restent en chantier la mise en production sur serveur dédié, les tests de parcours automatisés, l'automatisation des imports comptables et l'audit d'accessibilité.
+Le cœur applicatif est en place : les cinq axes, le module Audit et son rapport PDF, l'espace consultant, les habilitations par formule et les pages système. Les tests unitaires tournent en intégration continue ; les parcours de bout en bout se lancent en local. Restent en chantier la mise en production sur serveur dédié (configuration prête dans `Dockerfile`, `docker-compose.yml` et `deploy/`), l'automatisation des imports comptables et l'audit d'accessibilité.
 
 ## Licence
 

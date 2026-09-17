@@ -2,8 +2,15 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { getCurrentClient } from '@/lib/session'
+import { getCurrentClientAutorise } from '@/lib/session'
+import type { Acces } from '@/lib/habilitations'
 import { prioriteInput, progressionInput, versPourcentage } from '@/lib/validation'
+
+/**
+ * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
+ * mais une Server Action s'appelle aussi sans passer par la page.
+ */
+const ACCES_REQUIS: readonly Acces[] = ['AXE_VISION']
 
 export type EtatAction = {
   ok: boolean
@@ -13,7 +20,7 @@ export type EtatAction = {
 
 /** Cycle actif du client connecte. Point d'entree unique du cloisonnement. */
 async function cycleActifDuClient() {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return null
   return prisma.cycle.findFirst({
     where: { clientId: client.id, status: 'ACTIVE' },

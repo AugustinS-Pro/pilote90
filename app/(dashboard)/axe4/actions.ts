@@ -2,12 +2,19 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { getCurrentClient } from '@/lib/session'
+import { getCurrentClientAutorise } from '@/lib/session'
+import type { Acces } from '@/lib/habilitations'
 import {
   clientProblemInput, contentThemeInput, contentIdeaInput, prospectInput,
   eurosVersCentimes,
 } from '@/lib/validation'
 import type { ZodError } from 'zod'
+
+/**
+ * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
+ * mais une Server Action s'appelle aussi sans passer par la page.
+ */
+const ACCES_REQUIS: readonly Acces[] = ['AXE_COMMUNICATION']
 
 export type EtatAction = {
   ok: boolean
@@ -42,7 +49,7 @@ export async function creerProbleme(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = clientProblemInput.safeParse({
@@ -72,7 +79,7 @@ export async function creerProbleme(
 }
 
 export async function supprimerProbleme(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.clientProblem.deleteMany({ where: { id, clientId: client.id } })
@@ -87,7 +94,7 @@ export async function creerThematique(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = contentThemeInput.safeParse({
@@ -118,7 +125,7 @@ export async function creerThematique(
 }
 
 export async function supprimerThematique(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.contentIdea.updateMany({ where: { themeId: id, clientId: client.id }, data: { themeId: null } })
@@ -134,7 +141,7 @@ export async function creerIdeeContenu(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = contentIdeaInput.safeParse({
@@ -181,7 +188,7 @@ export async function creerIdeeContenu(
 }
 
 export async function changerStatutContenu(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return
 
   const id = String(formData.get('id') ?? '')
@@ -200,7 +207,7 @@ export async function changerStatutContenu(formData: FormData): Promise<void> {
 }
 
 export async function supprimerIdeeContenu(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.contentIdea.deleteMany({ where: { id, clientId: client.id } })
@@ -215,7 +222,7 @@ export async function creerProspect(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = prospectInput.safeParse({
@@ -259,7 +266,7 @@ export async function creerProspect(
 
 /** Deplacement d'un prospect d'une etape a l'autre. */
 export async function deplacerProspect(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return
 
   const id = String(formData.get('id') ?? '')
@@ -275,7 +282,7 @@ export async function deplacerProspect(formData: FormData): Promise<void> {
 }
 
 export async function supprimerProspect(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.prospect.deleteMany({ where: { id, clientId: client.id } })
@@ -291,7 +298,7 @@ export async function supprimerProspect(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierProspect(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return
@@ -311,7 +318,7 @@ export async function modifierProspect(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierThematique(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return
@@ -331,7 +338,7 @@ export async function modifierThematique(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierProbleme(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return
@@ -351,7 +358,7 @@ export async function modifierProbleme(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierIdeeContenu(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return

@@ -2,8 +2,21 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { getCurrentClient } from '@/lib/session'
+import { getCurrentClientAutorise } from '@/lib/session'
+import type { Acces } from '@/lib/habilitations'
 import { transactionInput, eurosVersCentimes } from '@/lib/validation'
+
+/**
+ * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
+ * mais une Server Action s'appelle aussi sans passer par la page.
+ */
+const ACCES_REQUIS: readonly Acces[] = ['AXE_CHIFFRES']
+
+/**
+ * Les transactions font exception : la page d'audit reutilise leur saisie, et
+ * un compte en formule Accompagnement doit pouvoir y ecrire sans avoir l'axe 2.
+ */
+const ACCES_TRANSACTIONS: readonly Acces[] = ['AXE_CHIFFRES', 'AUDIT_PERSONNEL']
 
 export type EtatAction = {
   ok: boolean
@@ -16,7 +29,7 @@ export async function creerTransaction(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
   if (!client) return { ok: false, message: 'Session expiree ou compte non client.' }
 
   const parsed = transactionInput.safeParse({
@@ -69,7 +82,7 @@ export async function creerTransaction(
 
 /** Supprime une transaction, apres verification qu'elle appartient bien au client connecte. */
 export async function supprimerTransaction(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
   if (!client) return
 
   const id = String(formData.get('id') ?? '')
@@ -100,7 +113,7 @@ export async function enregistrerStructure(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = adminProfileInput.safeParse({
@@ -139,7 +152,7 @@ export async function enregistrerTaux(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = chargeRateInput.safeParse({
@@ -171,7 +184,7 @@ export async function enregistrerObjectifRevenu(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = revenueGoalInput.safeParse({
@@ -206,7 +219,7 @@ export async function enregistrerObjectifRevenu(
 }
 
 export async function supprimerObjectifRevenu(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.revenueGoal.deleteMany({ where: { id, clientId: client.id } })
@@ -217,7 +230,7 @@ export async function creerEcheance(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = deadlineInput.safeParse({
@@ -249,7 +262,7 @@ export async function creerEcheance(
 }
 
 export async function basculerEcheance(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return
   const id = String(formData.get('id') ?? '')
   if (!id) return
@@ -264,7 +277,7 @@ export async function basculerEcheance(formData: FormData): Promise<void> {
 }
 
 export async function supprimerEcheance(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.adminDeadline.deleteMany({ where: { id, clientId: client.id } })
@@ -280,7 +293,7 @@ export async function supprimerEcheance(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierEcheance(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return
@@ -307,7 +320,7 @@ export async function modifierTransaction(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
   if (!client) return { ok: false, message: 'Session expiree ou compte non client.' }
 
   const id = String(formData.get('id') ?? '')

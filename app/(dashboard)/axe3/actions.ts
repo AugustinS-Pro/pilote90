@@ -2,13 +2,20 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { getCurrentClient } from '@/lib/session'
+import { getCurrentClientAutorise } from '@/lib/session'
+import type { Acces } from '@/lib/habilitations'
 import {
   personaInput, offerInput, offerLevelInput,
   crmClientInput, purchaseInput, feedbackInput,
   eurosVersCentimes,
 } from '@/lib/validation'
 import type { ZodError } from 'zod'
+
+/**
+ * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
+ * mais une Server Action s'appelle aussi sans passer par la page.
+ */
+const ACCES_REQUIS: readonly Acces[] = ['AXE_OFFRES']
 
 export type EtatAction = {
   ok: boolean
@@ -43,7 +50,7 @@ export async function enregistrerPersona(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = personaInput.safeParse({
@@ -77,7 +84,7 @@ export async function enregistrerPersona(
 }
 
 export async function supprimerPersona(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.offer.updateMany({ where: { personaId: id, clientId: client.id }, data: { personaId: null } })
@@ -93,7 +100,7 @@ export async function creerOffre(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = offerInput.safeParse({
@@ -141,7 +148,7 @@ export async function creerOffre(
 }
 
 export async function changerStatutOffre(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return
 
   const id = String(formData.get('id') ?? '')
@@ -157,7 +164,7 @@ export async function changerStatutOffre(formData: FormData): Promise<void> {
 }
 
 export async function supprimerOffre(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.purchase.updateMany({ where: { offerId: id, clientId: client.id }, data: { offerId: null } })
@@ -174,7 +181,7 @@ export async function creerNiveauOffre(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = offerLevelInput.safeParse({
@@ -204,7 +211,7 @@ export async function creerNiveauOffre(
 }
 
 export async function supprimerNiveauOffre(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.offerLevel.deleteMany({ where: { id, clientId: client.id } })
@@ -219,7 +226,7 @@ export async function enregistrerFicheClient(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = crmClientInput.safeParse({
@@ -256,7 +263,7 @@ export async function enregistrerFicheClient(
 }
 
 export async function supprimerFicheClient(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.feedback.updateMany({ where: { crmClientId: id, clientId: client.id }, data: { crmClientId: null } })
@@ -272,7 +279,7 @@ export async function enregistrerAchat(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = purchaseInput.safeParse({
@@ -318,7 +325,7 @@ export async function enregistrerRetour(
   _precedent: EtatAction,
   formData: FormData,
 ): Promise<EtatAction> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   if (!client) return { ok: false, message: 'Session expiree.' }
 
   const parsed = feedbackInput.safeParse({
@@ -361,7 +368,7 @@ export async function enregistrerRetour(
 }
 
 export async function supprimerRetour(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   if (!client || !id) return
   await prisma.feedback.deleteMany({ where: { id, clientId: client.id } })
@@ -377,7 +384,7 @@ export async function supprimerRetour(formData: FormData): Promise<void> {
  * l intitule.
  */
 export async function modifierOffre(formData: FormData): Promise<void> {
-  const client = await getCurrentClient()
+  const client = await getCurrentClientAutorise(ACCES_REQUIS)
   const id = String(formData.get('id') ?? '')
   const valeur = String(formData.get('valeur') ?? '').trim()
   if (!client || !id || valeur.length === 0 || valeur.length > 300) return
