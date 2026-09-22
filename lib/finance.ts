@@ -222,34 +222,34 @@ export function auditerFinances(
   if (indicateurs.tresorerie < 0) {
     constats.push({
       niveau: 'ALERTE',
-      titre: 'Tresorerie negative',
+      titre: 'Trésorerie négative',
       valeur: euros(indicateurs.tresorerie),
-      regle: 'Se declenche des que le solde encaissements moins decaissements passe sous zero.',
+      regle: 'Se déclenche dès que le solde encaissements moins décaissements passe sous zéro.',
     })
   }
 
   if (indicateurs.ratioCharges > 40) {
     constats.push({
       niveau: indicateurs.ratioCharges > 60 ? 'ALERTE' : 'ATTENTION',
-      titre: 'Ratio charges sur chiffre d affaires eleve',
+      titre: 'Ratio charges sur chiffre d’affaires élevé',
       valeur: `${indicateurs.ratioCharges} %`,
-      regle: 'Attention au-dela de 40 %, alerte au-dela de 60 %.',
+      regle: 'Attention au-delà de 40 %, alerte au-delà de 60 %.',
     })
   }
 
   if (indicateurs.resultatNet < 0) {
     constats.push({
       niveau: 'ALERTE',
-      titre: 'Resultat net negatif sur le mois',
+      titre: 'Résultat net négatif sur le mois',
       valeur: euros(indicateurs.resultatNet),
-      regle: 'Se declenche lorsque les charges du mois depassent les revenus du mois.',
+      regle: 'Se déclenche lorsque les charges du mois dépassent les revenus du mois.',
     })
   }
 
   if (indicateurs.progressionObjectif > 0 && indicateurs.progressionObjectif < 50) {
     constats.push({
       niveau: 'ATTENTION',
-      titre: 'Objectif de chiffre d affaires mensuel loin d etre atteint',
+      titre: 'Objectif de chiffre d’affaires mensuel loin d’être atteint',
       valeur: `${indicateurs.progressionObjectif} % de l objectif`,
       regle: 'Attention en dessous de 50 % de l objectif mensuel du cycle en cours.',
     })
@@ -258,9 +258,9 @@ export function auditerFinances(
   if (previsionnel.totaux.pessimiste < 0) {
     constats.push({
       niveau: 'ATTENTION',
-      titre: 'Le scenario pessimiste passe en negatif sur six mois',
+      titre: 'Le scénario pessimiste passe en négatif sur six mois',
       valeur: `${previsionnel.totaux.pessimiste.toLocaleString('fr-FR')} €`,
-      regle: 'Projection a six mois avec encaissements en baisse de 15 % et charges en hausse de 5 % par mois.',
+      regle: 'Projection à six mois avec encaissements en baisse de 15 % et charges en hausse de 5 % par mois.',
     })
   }
 
@@ -278,7 +278,7 @@ export function auditerFinances(
       niveau: 'ANALYSE',
       titre: 'Structure de charges saine',
       valeur: `${indicateurs.ratioCharges} % du chiffre d affaires`,
-      regle: 'Un ratio de charges inferieur ou egal a 40 % est considere comme sain.',
+      regle: 'Un ratio de charges inférieur ou égal à 40 % est considéré comme sain.',
     })
   }
 
@@ -292,10 +292,10 @@ export function messageDeSituation(constats: ConstatAudit[]): {
   texte: string
 } {
   if (constats.some((c) => c.niveau === 'ALERTE')) {
-    return { ton: 'ALERTE', texte: 'Votre situation financiere demande une action rapide' }
+    return { ton: 'ALERTE', texte: 'Votre situation financière demande une action rapide' }
   }
   if (constats.some((c) => c.niveau === 'ATTENTION')) {
-    return { ton: 'ATTENTION', texte: 'Votre situation financiere est a surveiller' }
+    return { ton: 'ATTENTION', texte: 'Votre situation financière est à surveiller' }
   }
-  return { ton: 'SAIN', texte: 'Votre tresorerie est saine' }
+  return { ton: 'SAIN', texte: 'Votre trésorerie est saine' }
 }

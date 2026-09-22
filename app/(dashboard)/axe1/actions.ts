@@ -39,7 +39,7 @@ export async function creerPriorite(
   formData: FormData,
 ): Promise<EtatAction> {
   const cycle = await cycleActifDuClient()
-  if (!cycle) return { ok: false, message: 'Aucun cycle actif : creez un cycle avant d ajouter une priorite.' }
+  if (!cycle) return { ok: false, message: 'Aucun cycle actif : créez un cycle avant d’ajouter une priorité.' }
 
   const parsed = prioriteInput.safeParse({
     title: formData.get('title'),
@@ -61,7 +61,7 @@ export async function creerPriorite(
   if (nombre >= 3) {
     return {
       ok: false,
-      message: 'Trois priorites au maximum par cycle. Terminez-en une ou supprimez-la avant d en ajouter une autre.',
+      message: 'Trois priorités au maximum par cycle. Terminez-en une ou supprimez-la avant d’en ajouter une autre.',
     }
   }
 
@@ -76,7 +76,7 @@ export async function creerPriorite(
   })
 
   rafraichir()
-  return { ok: true, message: 'Priorite ajoutee.' }
+  return { ok: true, message: 'Priorité ajoutée.' }
 }
 
 /** Met a jour progression et statut d'une priorite du cycle actif. */
@@ -85,7 +85,7 @@ export async function majPriorite(
   formData: FormData,
 ): Promise<EtatAction> {
   const cycle = await cycleActifDuClient()
-  if (!cycle) return { ok: false, message: 'Session expiree.' }
+  if (!cycle) return { ok: false, message: 'Session expirée.' }
 
   const parsed = progressionInput.safeParse({
     id: formData.get('id'),
@@ -106,10 +106,10 @@ export async function majPriorite(
     },
   })
 
-  if (resultat.count === 0) return { ok: false, message: 'Priorite introuvable.' }
+  if (resultat.count === 0) return { ok: false, message: 'Priorité introuvable.' }
 
   rafraichir()
-  return { ok: true, message: 'Priorite mise a jour.' }
+  return { ok: true, message: 'Priorité mise à jour.' }
 }
 
 /** Supprime une priorite du cycle actif. */

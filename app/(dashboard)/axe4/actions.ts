@@ -50,7 +50,7 @@ export async function creerProbleme(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = clientProblemInput.safeParse({
     problem: formData.get('problem'),
@@ -75,7 +75,7 @@ export async function creerProbleme(
   })
 
   rafraichir()
-  return { ok: true, message: 'Ligne ajoutee.' }
+  return { ok: true, message: 'Ligne ajoutée.' }
 }
 
 export async function supprimerProbleme(formData: FormData): Promise<void> {
@@ -95,7 +95,7 @@ export async function creerThematique(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = contentThemeInput.safeParse({
     label: formData.get('label'),
@@ -107,7 +107,7 @@ export async function creerThematique(
   // Trois a cinq thematiques : au-dela, le message se dilue.
   const nombre = await prisma.contentTheme.count({ where: { clientId: client.id } })
   if (nombre >= 5) {
-    return { ok: false, message: 'Cinq thematiques au maximum : au-dela, le message se dilue.' }
+    return { ok: false, message: 'Cinq thématiques au maximum : au-delà, le message se dilue.' }
   }
 
   await prisma.contentTheme.create({
@@ -121,7 +121,7 @@ export async function creerThematique(
   })
 
   rafraichir()
-  return { ok: true, message: 'Thematique ajoutee.' }
+  return { ok: true, message: 'Thématique ajoutée.' }
 }
 
 export async function supprimerThematique(formData: FormData): Promise<void> {
@@ -142,7 +142,7 @@ export async function creerIdeeContenu(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = contentIdeaInput.safeParse({
     subject: formData.get('subject'),
@@ -184,7 +184,7 @@ export async function creerIdeeContenu(
   })
 
   rafraichir()
-  return { ok: true, message: 'Idee de contenu ajoutee.' }
+  return { ok: true, message: 'Idée de contenu ajoutée.' }
 }
 
 export async function changerStatutContenu(formData: FormData): Promise<void> {
@@ -223,7 +223,7 @@ export async function creerProspect(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = prospectInput.safeParse({
     companyName: formData.get('companyName'),

@@ -37,7 +37,7 @@ export function BlocPilier({
 
       <details className="group">
         <summary className="cursor-pointer text-xs font-semibold text-muted hover:text-ink-soft">
-          {valeurs.synthesis ? 'Reprendre mes reponses' : 'Repondre aux questions'}
+          {valeurs.synthesis ? 'Reprendre mes réponses' : 'Répondre aux questions'}
         </summary>
 
         <form action={action} className="mt-4 space-y-3">
@@ -58,7 +58,7 @@ export function BlocPilier({
           <ZoneTexte
             nom="synthesis"
             idUnique={`${pilier.cle}-synthese`}
-            libelle="Ma synthese"
+            libelle="Ma synthèse"
             rows={3}
             maxLength={1000}
             defaultValue={valeurs.synthesis ?? ''}

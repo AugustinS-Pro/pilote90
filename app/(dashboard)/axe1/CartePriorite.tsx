@@ -16,7 +16,7 @@ export type Priorite = {
 }
 
 const STATUTS: Record<string, { libelle: string; classe: string }> = {
-  COMPLETED: { libelle: 'Termine', classe: 'bg-positive-soft text-positive-ink' },
+  COMPLETED: { libelle: 'Terminé', classe: 'bg-positive-soft text-positive-ink' },
   LATE: { libelle: 'En retard', classe: 'bg-negative-soft text-negative-ink' },
   IN_PROGRESS: { libelle: 'En cours', classe: 'bg-warning-soft text-warning-ink' },
 }
@@ -98,12 +98,12 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
           <select
             value={statut}
             onChange={(e) => setStatut(e.target.value)}
-            aria-label="Statut de la priorite"
+            aria-label="Statut de la priorité"
             className="flex-1 text-xs px-2 py-1.5 rounded-lg border border-subtle
                        bg-canvas focus:outline-none focus:border-accent focus:bg-surface"
           >
             <option value="IN_PROGRESS">En cours</option>
-            <option value="COMPLETED">Termine</option>
+            <option value="COMPLETED">Terminé</option>
             <option value="LATE">En retard</option>
           </select>
           <BoutonMaj modifie={modifie} />

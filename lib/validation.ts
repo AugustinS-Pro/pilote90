@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const transactionInput = z.object({
   type: z.enum(['REVENUE', 'EXPENSE']),
   transactionDate: z.string().min(1, 'La date est obligatoire'),
-  label: z.string().trim().min(1, 'Le libelle est obligatoire').max(120, 'Libelle trop long'),
+  label: z.string().trim().min(1, 'Le libellé est obligatoire').max(120, 'Libellé trop long'),
   amount: z.string().min(1, 'Le montant est obligatoire'),
   category: z.string().trim().max(60).optional(),
 })
@@ -45,7 +45,7 @@ export function versPourcentage(saisie: string): number | null {
 
 /** Client ideal. Vocabulaire repris de la version Notion. */
 export const personaInput = z.object({
-  name: z.string().trim().min(1, 'Donnez un nom a ce persona').max(80),
+  name: z.string().trim().min(1, 'Donnez un nom à ce persona').max(80),
   dailyLife: z.string().trim().max(600).optional(),
   frustrations: z.string().trim().max(600).optional(),
   desires: z.string().trim().max(600).optional(),
@@ -98,7 +98,7 @@ export const feedbackInput = z.object({
 // ---------------------------------------------------------------------------
 
 export const clientProblemInput = z.object({
-  problem: z.string().trim().min(1, 'Le probleme est obligatoire').max(240),
+  problem: z.string().trim().min(1, 'Le problème est obligatoire').max(240),
   question: z.string().trim().max(240).optional(),
   understanding: z.string().trim().max(240).optional(),
   topic: z.string().trim().max(240).optional(),
@@ -106,7 +106,7 @@ export const clientProblemInput = z.object({
 })
 
 export const contentThemeInput = z.object({
-  label: z.string().trim().min(1, 'La thematique est obligatoire').max(120),
+  label: z.string().trim().min(1, 'La thématique est obligatoire').max(120),
   whyImportant: z.string().trim().max(300).optional(),
   linkToOffer: z.string().trim().max(300).optional(),
 })
@@ -140,7 +140,7 @@ export const cycleInput = z.object({
   name: z.string().trim().max(80).optional(),
   mainObjective: z.string().trim().min(1, "L'objectif principal est obligatoire").max(240),
   caTarget: z.string().min(1, 'L objectif de CA mensuel est obligatoire'),
-  startDate: z.string().min(1, 'La date de debut est obligatoire'),
+  startDate: z.string().min(1, 'La date de début est obligatoire'),
 })
 
 export const monthlyPlanInput = z.object({
@@ -174,14 +174,14 @@ export const taskInput = z.object({
 // ---------------------------------------------------------------------------
 
 export const decisionInput = z.object({
-  title: z.string().trim().min(1, 'La decision est obligatoire').max(200),
+  title: z.string().trim().min(1, 'La décision est obligatoire').max(200),
   category: z.enum(['STRATEGIE', 'OFFRE', 'FINANCE', 'COMMUNICATION', 'ORGANISATION', 'AUTRE']),
   context: z.string().trim().max(1000).optional(),
   decidedAt: z.string().optional(),
 })
 
 export const ideaInput = z.object({
-  content: z.string().trim().min(1, "L'idee est obligatoire").max(500),
+  content: z.string().trim().min(1, "L’idée est obligatoire").max(500),
 })
 
 export const resourceInput = z.object({

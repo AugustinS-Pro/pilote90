@@ -68,7 +68,7 @@ export function SectionStructure({ structure }: { structure: StructureVue | null
   ]
 
   return (
-    <Carte titre="Ma structure administrative" sousTitre="Se renseigne une fois, se relit chaque annee">
+    <Carte titre="Ma structure administrative" sousTitre="Se renseigne une fois, se relit chaque année">
       <div className="divide-y divide-faint mb-4">
         {lignes.map((l) => (
           <div key={l.libelle} className="flex justify-between items-center py-2 text-sm">
@@ -141,7 +141,7 @@ export function SectionTaux({ taux }: { taux: TauxVue }) {
         {[
           { l: 'Cotisations sociales', v: taux.socialContributionPct },
           { l: 'Impot (versement liberatoire)', v: taux.incomeTaxPct },
-          { l: 'Contribution a la formation professionnelle', v: taux.trainingPct },
+          { l: 'Contribution à la formation professionnelle', v: taux.trainingPct },
         ].map((x) => (
           <div key={x.l} className="flex justify-between items-center py-2 text-sm">
             <span className="text-muted">{x.l}</span>
@@ -149,7 +149,7 @@ export function SectionTaux({ taux }: { taux: TauxVue }) {
           </div>
         ))}
         <div className="flex justify-between items-center py-2 text-sm">
-          <span className="text-muted">Categorie</span>
+          <span className="text-muted">Catégorie</span>
           <Etiquette texte={taux.category} ton="info" />
         </div>
       </div>
@@ -166,7 +166,7 @@ export function SectionTaux({ taux }: { taux: TauxVue }) {
                    defaultValue={String(taux.incomeTaxPct)} />
             <Champ nom="trainingPct" libelle="Formation (%)" inputMode="decimal"
                    defaultValue={String(taux.trainingPct)} />
-            <Liste nom="category" libelle="Categorie" defaultValue={taux.category}
+            <Liste nom="category" libelle="Catégorie" defaultValue={taux.category}
                    options={[{ valeur: 'BIC', libelle: 'BIC' }, { valeur: 'BNC', libelle: 'BNC' }]} />
           </div>
           <BoutonSoumettre>Enregistrer</BoutonSoumettre>
@@ -192,7 +192,7 @@ export function SectionObjectifRevenu({
 
   return (
     <Carte
-      titre="Combien dois-je generer pour vivre ?"
+      titre="Combien dois-je générer pour vivre ?"
       sousTitre={`CA necessaire = revenu net vise / (1 − ${total} %) · clients = CA necessaire / prix de l'offre`}
     >
       {objectifs.length > 0 ? (
@@ -217,20 +217,20 @@ export function SectionObjectifRevenu({
                   <p className="text-lg font-extrabold text-accent-ink">
                     {o.caNecessaire !== null ? euros(o.caNecessaire) : '—'}
                   </p>
-                  <p className="text-[11px] text-accent">CA necessaire · calcule</p>
+                  <p className="text-[11px] text-accent">CA nécessaire · calculé</p>
                 </div>
                 <div>
                   <p className="text-lg font-extrabold text-positive">
                     {o.clientsNecessaires !== null ? o.clientsNecessaires : '—'}
                   </p>
-                  <p className="text-[11px] text-positive">clients necessaires · calcule</p>
+                  <p className="text-[11px] text-positive">clients nécessaires · calculé</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <Vide texte="Aucun objectif de revenu defini." />
+        <Vide texte="Aucun objectif de revenu défini." />
       )}
 
       <PanneauAjout intitule="Ajouter un objectif" etat={etat}>
@@ -275,8 +275,8 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
 
   return (
     <Carte
-      titre="Mes echeances administratives"
-      sousTitre="Alerte a quinze jours, signalement au-dela de la date"
+      titre="Mes échéances administratives"
+      sousTitre="Alerte à quinze jours, signalement au-delà de la date"
     >
       {echeances.length > 0 ? (
         <div className="space-y-2 mb-4">
@@ -301,7 +301,7 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
                     action={modifierEcheance}
                     id={e.id}
                     valeur={e.label}
-                    intitule="Modifier le libelle de l echeance"
+                    intitule="Modifier le libellé de l’échéance"
                   />
                 </div>
                 <p className="text-[11px] text-ghost">
@@ -315,16 +315,16 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
           ))}
         </div>
       ) : (
-        <Vide texte="Aucune echeance enregistree." />
+        <Vide texte="Aucune échéance enregistrée." />
       )}
 
-      <PanneauAjout intitule="Ajouter une echeance" etat={etat}>
+      <PanneauAjout intitule="Ajouter une échéance" etat={etat}>
         <form action={action} className="space-y-3">
           <Champ nom="label" libelle="Intitule" required maxLength={120}
                  placeholder="Declaration URSSAF trimestrielle" erreur={etat.erreurs?.label} />
           <div className="grid grid-cols-2 gap-3">
-            <Champ nom="dueDate" libelle="Echeance" type="date" defaultValue={aujourdhui} required />
-            <Champ nom="recurrence" libelle="Recurrence" maxLength={40} placeholder="Trimestrielle" />
+            <Champ nom="dueDate" libelle="Échéance" type="date" defaultValue={aujourdhui} required />
+            <Champ nom="recurrence" libelle="Récurrence" maxLength={40} placeholder="Trimestrielle" />
           </div>
           <BoutonSoumettre>Ajouter</BoutonSoumettre>
           <Retour etat={etat} />

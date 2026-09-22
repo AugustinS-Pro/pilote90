@@ -15,7 +15,7 @@ test('une transaction saisie remonte au tableau de bord', async ({ page }) => {
   await seConnecter(page, COMPTES.marie)
 
   await page.goto('/dashboard')
-  const carteTresorerie = page.getByText(/^tresorerie$/i).locator('..')
+  const carteTresorerie = page.getByText(/^tr[ée]sorerie$/i).locator('..')
   const avant = await carteTresorerie.innerText()
 
   const montant = 1234
@@ -33,12 +33,12 @@ test('une transaction saisie remonte au tableau de bord', async ({ page }) => {
   await formulaire.getByLabel(/montant hors taxes/i).fill(String(montant))
   await formulaire.getByRole('button', { name: /enregistrer/i }).click()
 
-  await expect(page.getByRole('status')).toContainText(/enregistre/i)
+  await expect(page.getByRole('status')).toContainText(/enregistr[eé]/i)
   await expect(page.getByText(libelle)).toBeVisible()
 
   // La propagation : le tableau de bord n'a pas ete recharge a la main.
   await page.goto('/dashboard')
-  const apres = await page.getByText(/^tresorerie$/i).locator('..').innerText()
+  const apres = await page.getByText(/^tr[ée]sorerie$/i).locator('..').innerText()
   expect(apres).not.toBe(avant)
 })
 
@@ -71,7 +71,7 @@ test('une transaction se corrige sans etre recreee', async ({ page }) => {
   await page.getByRole('button', { name: `Modifier ${libelle}`, exact: true }).click()
 
   const corrige = `${libelle} corrige`
-  await page.getByLabel(/^libelle$/i).fill(corrige)
+  await page.getByLabel(/^libell[eé]$/i).fill(corrige)
   await page.getByRole('button', { name: /^enregistrer$/i }).click()
 
   // Deux temps distincts, et c'est de les avoir confondus que venait

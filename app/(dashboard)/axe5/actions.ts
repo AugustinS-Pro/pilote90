@@ -58,7 +58,7 @@ export async function creerCycle(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = cycleInput.safeParse({
     name: texte(formData.get('name')),
@@ -115,7 +115,7 @@ export async function creerCycle(
   })
 
   rafraichir()
-  return { ok: true, message: 'Cycle cree, avec ses douze semaines et ses trois plans mensuels.' }
+  return { ok: true, message: 'Cycle créé, avec ses douze semaines et ses trois plans mensuels.' }
 }
 
 /** Cloture le cycle actif. Les idees du parking passent en relecture. */
@@ -124,7 +124,7 @@ export async function cloturerCycle(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const id = String(formData.get('id') ?? '')
   const bilan = texte(formData.get('closingNote'))
@@ -134,10 +134,10 @@ export async function cloturerCycle(
     where: { id, clientId: client.id, status: 'ACTIVE' },
     data: { status: 'COMPLETED', closingNote: bilan ?? null },
   })
-  if (maj.count === 0) return { ok: false, message: 'Aucun cycle actif a cloturer.' }
+  if (maj.count === 0) return { ok: false, message: 'Aucun cycle actif à clôturer.' }
 
   rafraichir()
-  return { ok: true, message: 'Cycle cloture. Relisez votre parking d idees avant d en ouvrir un nouveau.' }
+  return { ok: true, message: 'Cycle clôturé. Relisez votre parking d’idées avant d’en ouvrir un nouveau.' }
 }
 
 // ---------------------------------------------------------------------------
@@ -149,7 +149,7 @@ export async function enregistrerPlanMensuel(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const cycleId = String(formData.get('cycleId') ?? '')
   const parsed = monthlyPlanInput.safeParse({
@@ -201,7 +201,7 @@ export async function enregistrerFocusSemaine(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = weekInput.safeParse({
     weekId: formData.get('weekId'),
@@ -218,7 +218,7 @@ export async function enregistrerFocusSemaine(
   })
 
   rafraichir()
-  return { ok: true, message: 'Focus de la semaine enregistre.' }
+  return { ok: true, message: 'Focus de la semaine enregistré.' }
 }
 
 export async function enregistrerRevue(
@@ -226,7 +226,7 @@ export async function enregistrerRevue(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = weekReviewInput.safeParse({
     weekId: formData.get('weekId'),
@@ -252,7 +252,7 @@ export async function enregistrerRevue(
   })
 
   rafraichir()
-  return { ok: true, message: 'Revue enregistree.' }
+  return { ok: true, message: 'Revue enregistrée.' }
 }
 
 // ---------------------------------------------------------------------------
@@ -268,7 +268,7 @@ export async function creerTache(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = taskInput.safeParse({
     label: formData.get('label'),
@@ -314,7 +314,7 @@ export async function creerTache(
   })
 
   rafraichir()
-  return { ok: true, message: 'Tache ajoutee.' }
+  return { ok: true, message: 'Tâche ajoutée.' }
 }
 
 /**

@@ -39,7 +39,7 @@ export default function MentionsLegalesPage() {
         </Section>
 
         <Section titre="Données traitées">
-          <p>L&apos;application enregistre uniquement ce que vous y saisissez :</p>
+          <p>L’application enregistre uniquement ce que vous y saisissez :</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>votre compte : nom, adresse électronique, mot de passe (jamais stocké en clair) ;</li>
             <li>votre activité : cycles, priorités, décisions, idées ;</li>

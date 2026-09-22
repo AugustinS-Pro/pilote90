@@ -90,7 +90,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
             <form action={archive ? reactiverClient : archiverClient}>
               <input type="hidden" name="id" value={client.id} />
               <BoutonSoumettre variante="discret" enCours="...">
-                {archive ? 'Reprendre l accompagnement' : 'Archiver'}
+                {archive ? 'Reprendre l’accompagnement' : 'Archiver'}
               </BoutonSoumettre>
             </form>
           )}
@@ -99,7 +99,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
 
       {archive && (
         <div className="rounded-2xl border border-firm bg-surface-muted px-5 py-4">
-          <p className="text-sm font-semibold text-ink-soft">Accompagnement archive</p>
+          <p className="text-sm font-semibold text-ink-soft">Accompagnement archivé</p>
           <p className="text-xs text-muted mt-0.5">
             Cette fiche ne figure plus dans le portefeuille. Rien n&apos;a ete supprime,
             et l&apos;accompagnement peut reprendre a tout moment.
@@ -116,10 +116,10 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
+          { t: 'Trésorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
           { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-positive' },
           { t: 'Charges du mois', v: euros(indicateurs.chargesDuMois), c: 'text-negative' },
-          { t: 'Resultat net', v: euros(indicateurs.resultatNet), c: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
+          { t: 'Résultat net', v: euros(indicateurs.resultatNet), c: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
         ].map((k) => (
           <div key={k.t} className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
             <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">{k.t}</p>
@@ -131,7 +131,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
       <GrapheCaCharges points={historique} />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-        <Carte titre="Audit financier automatique" sousTitre="Support de la seance d'accompagnement">
+        <Carte titre="Audit financier automatique" sousTitre="Support de la séance d’accompagnement">
           {constats.length > 0 ? (
             <div className="space-y-2.5">
               {constats.map((c, i) => {
@@ -150,7 +150,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
           )}
         </Carte>
 
-        <Carte titre="Les priorites du cycle">
+        <Carte titre="Les priorités du cycle">
           {cycle && cycle.objectives.length > 0 ? (
             <div className="space-y-3">
               {cycle.objectives.map((o) => (
@@ -167,7 +167,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
               ))}
             </div>
           ) : (
-            <Vide texte="Aucune priorite definie sur le cycle en cours." />
+            <Vide texte="Aucune priorité définie sur le cycle en cours." />
           )}
         </Carte>
       </div>
@@ -179,7 +179,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
         baseCharges={previsionnel.baseCharges}
       />
 
-      <Carte titre="Dernieres transactions">
+      <Carte titre="Dernières transactions">
         {client.transactions.length > 0 ? (
           <div className="space-y-1.5">
             {client.transactions.slice(0, 10).map((t) => (

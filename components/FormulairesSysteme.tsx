@@ -17,16 +17,16 @@ export function FormulaireDecision() {
   const aujourdhui = new Date().toISOString().slice(0, 10)
 
   return (
-    <PanneauAjout intitule="Consigner une decision" etat={etat}>
+    <PanneauAjout intitule="Consigner une décision" etat={etat}>
       <form action={action} className="space-y-3">
-        <Champ nom="title" libelle="La decision" required maxLength={200}
-               placeholder="Arreter l'offre a 490 € pour concentrer sur l'accompagnement"
+        <Champ nom="title" libelle="La décision" required maxLength={200}
+               placeholder="Arrêter l’offre à 490 € pour concentrer sur l’accompagnement"
                erreur={etat.erreurs?.title} />
         <div className="grid grid-cols-2 gap-3">
-          <Liste nom="category" libelle="Categorie" options={CATEGORIES_DECISION} defaultValue="STRATEGIE" />
+          <Liste nom="category" libelle="Catégorie" options={CATEGORIES_DECISION} defaultValue="STRATEGIE" />
           <Champ nom="decidedAt" libelle="Date" type="date" defaultValue={aujourdhui} />
         </div>
-        <ZoneTexte nom="context" libelle="Le contexte : pourquoi cette decision, maintenant ?" maxLength={1000} />
+        <ZoneTexte nom="context" libelle="Le contexte : pourquoi cette décision, maintenant ?" maxLength={1000} />
         <BoutonSoumettre>Consigner</BoutonSoumettre>
         <Retour etat={etat} />
       </form>
@@ -47,7 +47,7 @@ export function FormulaireIdee() {
     <form action={action} className="flex items-end gap-2">
       <div className="flex-1">
         <Champ nom="content" required maxLength={500}
-               placeholder="Une idee qui vous traverse, a relire a la cloture du cycle"
+               placeholder="Une idée qui vous traverse, à relire à la clôture du cycle"
                erreur={etat.erreurs?.content} />
       </div>
       {/* « Garer » filait la metaphore du parking, mais un bouton doit dire
@@ -62,7 +62,7 @@ export function FormulaireIdee() {
 const ISSUES = [
   { valeur: 'KEPT', libelle: 'Je garde' },
   { valeur: 'POSTPONED', libelle: 'Je reporte' },
-  { valeur: 'DROPPED', libelle: "J'abandonne" },
+  { valeur: 'DROPPED', libelle: "J’abandonne" },
 ]
 
 export function ArbitrageIdee({ id, issue }: { id: string; issue: string }) {
@@ -72,7 +72,7 @@ export function ArbitrageIdee({ id, issue }: { id: string; issue: string }) {
       <select
         name="outcome" defaultValue={issue}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        aria-label="Arbitrage de l'idee"
+        aria-label="Arbitrage de l’idée"
         className="text-[11px] px-1.5 py-1 rounded border border-subtle bg-surface
                    focus:outline-none focus:border-accent"
       >
@@ -84,7 +84,7 @@ export function ArbitrageIdee({ id, issue }: { id: string; issue: string }) {
 }
 
 export function SuppressionIdee({ id }: { id: string }) {
-  return <BoutonSuppression action={supprimerIdee} id={id} intitule="Supprimer cette idee" />
+  return <BoutonSuppression action={supprimerIdee} id={id} intitule="Supprimer cette idée" />
 }
 
 // ------------------------------------------------------------- bibliotheque

@@ -26,7 +26,7 @@ export const TYPES_CONTENU = [
 export const FORMATS_CONTENU = [
   { valeur: 'POST', libelle: 'Post' },
   { valeur: 'CARROUSEL', libelle: 'Carrousel' },
-  { valeur: 'REEL', libelle: 'Reel' },
+  { valeur: 'REEL', libelle: 'Réel' },
   { valeur: 'STORY', libelle: 'Story' },
   { valeur: 'VIDEO', libelle: 'Video' },
   { valeur: 'EMAIL', libelle: 'Email' },
@@ -41,14 +41,14 @@ export const OBJECTIFS = [
 ]
 
 export const STATUTS_CONTENU = [
-  { valeur: 'IDEE', libelle: 'Idee' },
-  { valeur: 'A_CREER', libelle: 'A creer' },
-  { valeur: 'PUBLIE', libelle: 'Publie' },
+  { valeur: 'IDEE', libelle: 'Idée' },
+  { valeur: 'A_CREER', libelle: 'À créer' },
+  { valeur: 'PUBLIE', libelle: 'Publié' },
 ]
 
 /** Le pipeline compte quatre etapes, conformement au dossier professionnel. */
 export const ETAPES = [
-  { valeur: 'DECOUVERTE', libelle: 'Decouverte', teinte: 'border-firm', fond: 'bg-surface-muted' },
+  { valeur: 'DECOUVERTE', libelle: 'Découverte', teinte: 'border-firm', fond: 'bg-surface-muted' },
   { valeur: 'QUALIFICATION', libelle: 'Qualification', teinte: 'border-accent', fond: 'bg-accent-soft' },
   { valeur: 'PROPOSITION', libelle: 'Proposition', teinte: 'border-warning', fond: 'bg-warning-soft/60' },
   { valeur: 'SIGNE', libelle: 'Signe', teinte: 'border-positive', fond: 'bg-positive-soft/60' },
@@ -108,17 +108,17 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
 
   return (
     <Carte
-      titre="Ce qui interesse vraiment mon client"
-      sousTitre="Du probleme vecu jusqu'a l'angle de contenu"
+      titre="Ce qui intéresse vraiment mon client"
+      sousTitre="Du problème vécu jusqu’à l’angle de contenu"
     >
       {problemes.length > 0 ? (
         <div className="overflow-x-auto mb-4">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs font-semibold text-muted border-b border-subtle">
-                <th className="pb-2 pr-3">Probleme vecu</th>
+                <th className="pb-2 pr-3">Problème vécu</th>
                 <th className="pb-2 pr-3">Question qu&apos;il se pose</th>
-                <th className="pb-2 pr-3">Ce qu&apos;il cherche a comprendre</th>
+                <th className="pb-2 pr-3">Ce qu&apos;il cherche à comprendre</th>
                 <th className="pb-2 pr-3">Sujet</th>
                 <th className="pb-2 pr-3">Angle</th>
                 <th className="pb-2 w-8" />
@@ -132,7 +132,7 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
                       action={modifierProbleme}
                       id={p.id}
                       valeur={p.problem}
-                      intitule="Modifier ce probleme client"
+                      intitule="Modifier ce problème client"
                     />
                   </td>
                   <td className="py-2.5 pr-3 text-muted">{p.question ?? '—'}</td>
@@ -148,16 +148,16 @@ export function SectionProblemes({ problemes }: { problemes: ProblemeVue[] }) {
           </table>
         </div>
       ) : (
-        <Vide texte="Aucune ligne. Partez d'un probleme reel entendu chez un client." />
+        <Vide texte="Aucune ligne. Partez d’un problème réel entendu chez un client." />
       )}
 
       <PanneauAjout intitule="Ajouter une ligne" etat={etat}>
         <form action={action} className="space-y-3">
-          <Champ nom="problem" libelle="Probleme vecu par mon client" required maxLength={240}
+          <Champ nom="problem" libelle="Problème vécu par mon client" required maxLength={240}
                  erreur={etat.erreurs?.problem} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Champ nom="question" libelle="Question qu'il se pose" maxLength={240} />
-            <Champ nom="understanding" libelle="Ce qu'il cherche a comprendre" maxLength={240} />
+            <Champ nom="understanding" libelle="Ce qu’il cherche à comprendre" maxLength={240} />
             <Champ nom="topic" libelle="Sujet de contenu" maxLength={240} />
             <Champ nom="angle" libelle="Angle" maxLength={240} />
           </div>
@@ -178,8 +178,8 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
 
   return (
     <Carte
-      titre="Mes grandes thematiques"
-      sousTitre="Trois a cinq thematiques, pas davantage"
+      titre="Mes grandes thématiques"
+      sousTitre="Trois à cinq thématiques, pas davantage"
     >
       {thematiques.length > 0 ? (
         <div className="space-y-2 mb-4">
@@ -192,7 +192,7 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
                       action={modifierThematique}
                       id={t.id}
                       valeur={t.label}
-                      intitule="Modifier le nom de la thematique"
+                      intitule="Modifier le nom de la thématique"
                     />
                   </div>
                   {t.whyImportant && (
@@ -203,7 +203,7 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
                   )}
                   {t.linkToOffer && (
                     <p className="text-xs text-muted mt-0.5">
-                      <span className="text-ghost">Lien avec l&apos;offre : </span>
+                      <span className="text-ghost">Lien avec l’offre : </span>
                       {t.linkToOffer}
                     </p>
                   )}
@@ -217,13 +217,13 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
           ))}
         </div>
       ) : (
-        <Vide texte="Aucune thematique definie." />
+        <Vide texte="Aucune thématique définie." />
       )}
 
       {thematiques.length < 5 && (
-        <PanneauAjout intitule="Ajouter une thematique" etat={etat}>
+        <PanneauAjout intitule="Ajouter une thématique" etat={etat}>
           <form action={action} className="space-y-3">
-            <Champ nom="label" libelle="Thematique principale" required maxLength={120}
+            <Champ nom="label" libelle="Thématique principale" required maxLength={120}
                    erreur={etat.erreurs?.label} />
             <Champ nom="whyImportant" libelle="Pourquoi ce sujet est important pour mon client" maxLength={300} />
             <Champ nom="linkToOffer" libelle="Lien avec mon offre" maxLength={300} />
@@ -309,7 +309,7 @@ export function SectionCalendrier({
   return (
     <Carte
       titre="Calendrier editorial"
-      sousTitre="Les quatre semaines du mois, plus les idees en attente de creneau"
+      sousTitre="Les quatre semaines du mois, plus les idées en attente de créneau"
       action={<Etiquette texte={`${idees.filter((i) => i.status === 'PUBLIE').length} publie(s)`} ton="succes" />}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
@@ -330,14 +330,14 @@ export function SectionCalendrier({
 
       {nonPlanifiees.length > 0 && (
         <div className="mb-4">
-          <p className="text-xs font-bold text-muted mb-2">Sans creneau</p>
+          <p className="text-xs font-bold text-muted mb-2">Sans créneau</p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
             {nonPlanifiees.map((i) => <CarteIdee key={i.id} idee={i} />)}
           </div>
         </div>
       )}
 
-      <PanneauAjout intitule="Ajouter une idee de contenu" etat={etat}>
+      <PanneauAjout intitule="Ajouter une idée de contenu" etat={etat}>
         <form action={action} className="space-y-3">
           <Champ nom="subject" libelle="Sujet de contenu" required maxLength={200}
                  placeholder="Les 3 erreurs de pilotage financier en TPE" erreur={etat.erreurs?.subject} />
@@ -349,7 +349,7 @@ export function SectionCalendrier({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Champ nom="platform" libelle="Plateforme" maxLength={60} placeholder="LinkedIn" />
             <Liste
-              nom="themeId" libelle="Thematique"
+              nom="themeId" libelle="Thématique"
               options={[{ valeur: '', libelle: '— aucune —' },
                         ...thematiques.map((t) => ({ valeur: t.id, libelle: t.label }))]}
             />
@@ -378,7 +378,7 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
   return (
     <Carte
       titre="Pipeline commercial"
-      sousTitre="Quatre etapes. Deplacez une carte en changeant son etape."
+      sousTitre="Quatre étapes. Déplacez une carte en changeant son étape."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
         {ETAPES.map((etape) => {
@@ -460,11 +460,11 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
             <Champ nom="estimated" libelle="Montant estime HT (€)" inputMode="decimal" required
                    erreur={etat.erreurs?.estimated} />
             <Champ nom="source" libelle="Source" maxLength={60} placeholder="LinkedIn, recommandation..." />
-            <Liste nom="stage" libelle="Etape" options={ETAPES.map((e) => ({ valeur: e.valeur, libelle: e.libelle }))}
+            <Liste nom="stage" libelle="Étape" options={ETAPES.map((e) => ({ valeur: e.valeur, libelle: e.libelle }))}
                    defaultValue="DECOUVERTE" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Champ nom="expectedCloseDate" libelle="Echeance esperee" type="date" />
+            <Champ nom="expectedCloseDate" libelle="Échéance espérée" type="date" />
             <ZoneTexte nom="notes" libelle="Notes" maxLength={600} rows={2} />
           </div>
           <BoutonSoumettre>Ajouter au pipeline</BoutonSoumettre>

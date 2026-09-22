@@ -92,7 +92,7 @@ export function LigneTransaction({ transaction }: { transaction: TransactionVue 
           defaultValue={transaction.transactionDate.slice(0, 10)}
           required
           className={CHAMP}
-          aria-label="Date de l operation"
+          aria-label="Date de l’opération"
         />
       </div>
 
@@ -100,11 +100,11 @@ export function LigneTransaction({ transaction }: { transaction: TransactionVue 
         type="text"
         name="label"
         defaultValue={transaction.label ?? ''}
-        placeholder="Libelle"
+        placeholder="Libellé"
         required
         maxLength={120}
         className={CHAMP}
-        aria-label="Libelle"
+        aria-label="Libellé"
       />
 
       <div className="grid grid-cols-2 gap-2">
@@ -122,10 +122,10 @@ export function LigneTransaction({ transaction }: { transaction: TransactionVue 
           type="text"
           name="category"
           defaultValue={transaction.category ?? ''}
-          placeholder="Categorie"
+          placeholder="Catégorie"
           maxLength={80}
           className={CHAMP}
-          aria-label="Categorie"
+          aria-label="Catégorie"
         />
       </div>
 

@@ -30,7 +30,7 @@ export async function creerTransaction(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
-  if (!client) return { ok: false, message: 'Session expiree ou compte non client.' }
+  if (!client) return { ok: false, message: 'Session expirée ou compte non client.' }
 
   const parsed = transactionInput.safeParse({
     type: formData.get('type'),
@@ -76,7 +76,7 @@ export async function creerTransaction(
 
   return {
     ok: true,
-    message: parsed.data.type === 'REVENUE' ? 'Revenu enregistre.' : 'Charge enregistree.',
+    message: parsed.data.type === 'REVENUE' ? 'Revenu enregistré.' : 'Charge enregistrée.',
   }
 }
 
@@ -114,7 +114,7 @@ export async function enregistrerStructure(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = adminProfileInput.safeParse({
     legalStatus: optionnel(formData.get('legalStatus')),
@@ -145,7 +145,7 @@ export async function enregistrerStructure(
   })
 
   revalidatePath('/axe2')
-  return { ok: true, message: 'Structure enregistree.' }
+  return { ok: true, message: 'Structure enregistrée.' }
 }
 
 export async function enregistrerTaux(
@@ -153,7 +153,7 @@ export async function enregistrerTaux(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = chargeRateInput.safeParse({
     socialContributionPct: optionnel(formData.get('socialContributionPct')),
@@ -177,7 +177,7 @@ export async function enregistrerTaux(
 
   revalidatePath('/axe2')
   revalidatePath('/audit')
-  return { ok: true, message: 'Taux enregistres. Le total est recalcule.' }
+  return { ok: true, message: 'Taux enregistrés. Le total est recalculé.' }
 }
 
 export async function enregistrerObjectifRevenu(
@@ -185,7 +185,7 @@ export async function enregistrerObjectifRevenu(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = revenueGoalInput.safeParse({
     offerName: formData.get('offerName'),
@@ -215,7 +215,7 @@ export async function enregistrerObjectifRevenu(
   }
 
   revalidatePath('/axe2')
-  return { ok: true, message: 'Objectif enregistre.' }
+  return { ok: true, message: 'Objectif enregistré.' }
 }
 
 export async function supprimerObjectifRevenu(formData: FormData): Promise<void> {
@@ -231,7 +231,7 @@ export async function creerEcheance(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = deadlineInput.safeParse({
     label: formData.get('label'),
@@ -258,7 +258,7 @@ export async function creerEcheance(
   })
 
   revalidatePath('/axe2')
-  return { ok: true, message: 'Echeance ajoutee.' }
+  return { ok: true, message: 'Échéance ajoutée.' }
 }
 
 export async function basculerEcheance(formData: FormData): Promise<void> {
@@ -321,7 +321,7 @@ export async function modifierTransaction(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
-  if (!client) return { ok: false, message: 'Session expiree ou compte non client.' }
+  if (!client) return { ok: false, message: 'Session expirée ou compte non client.' }
 
   const id = String(formData.get('id') ?? '')
   if (!id) return { ok: false, message: 'Transaction introuvable.' }
@@ -371,5 +371,5 @@ export async function modifierTransaction(
   revalidatePath('/dashboard')
   revalidatePath('/historique')
 
-  return { ok: true, message: 'Transaction modifiee.' }
+  return { ok: true, message: 'Transaction modifiée.' }
 }

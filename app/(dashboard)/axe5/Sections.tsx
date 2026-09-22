@@ -83,12 +83,12 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
       <Carte titre="Aucun cycle en cours" sousTitre="Un cycle de 90 jours structure tout le reste de l'application">
         <form action={actionCreation} className="space-y-3">
           <Champ nom="mainObjective" libelle="Objectif principal du cycle" required maxLength={240}
-                 placeholder="Atteindre 5 000 € de CA mensuel recurrent" erreur={etatCreation.erreurs?.mainObjective} />
+                 placeholder="Atteindre 5 000 € de CA mensuel récurrent" erreur={etatCreation.erreurs?.mainObjective} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Champ nom="name" libelle="Nom (facultatif)" maxLength={80} placeholder="Lancement" />
             <Champ nom="caTarget" libelle="Objectif de CA mensuel (€)" inputMode="decimal" required
                    placeholder="5000" erreur={etatCreation.erreurs?.caTarget} />
-            <Champ nom="startDate" libelle="Date de debut" type="date" defaultValue={aujourdhui} required
+            <Champ nom="startDate" libelle="Date de début" type="date" defaultValue={aujourdhui} required
                    erreur={etatCreation.erreurs?.startDate} />
           </div>
           <BoutonSoumettre>Ouvrir un cycle de 90 jours</BoutonSoumettre>
@@ -137,7 +137,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
         ))}
       </div>
       <div className="flex justify-between text-xs text-muted mb-5">
-        <span>Demarrage</span><span>Mois 1</span><span>Mois 2</span><span>Fin</span>
+        <span>Démarrage</span><span>Mois 1</span><span>Mois 2</span><span>Fin</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-5">
@@ -147,7 +147,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
         </div>
         <div className="bg-surface/5 rounded-xl p-3.5">
           <p className="text-xl font-extrabold text-positive">{euros(cycle.caRealise)}</p>
-          <p className="text-xs text-ghost mt-0.5">Realise sur le cycle</p>
+          <p className="text-xs text-ghost mt-0.5">Réalisé sur le cycle</p>
         </div>
         <div className="bg-surface/5 rounded-xl p-3.5">
           <p className="text-xl font-extrabold">{progression} %</p>
@@ -167,7 +167,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
             className="w-full px-3 py-2 rounded-lg bg-surface/10 border border-white/20 text-sm
                        text-on-inverse placeholder:text-muted focus:outline-none focus:border-positive"
           />
-          <BoutonSoumettre variante="discret">Cloturer le cycle</BoutonSoumettre>
+          <BoutonSoumettre variante="discret">Clôturer le cycle</BoutonSoumettre>
           <Retour etat={etatCloture} />
         </form>
       </details>
@@ -201,7 +201,7 @@ function FormulaireMois({ cycleId, plan }: { cycleId: string; plan: PlanMoisVue 
 
 export function SectionPlanMensuel({ cycleId, plans }: { cycleId: string; plans: PlanMoisVue[] }) {
   return (
-    <Carte titre="Plan mensuel" sousTitre="Les trois mois du cycle, cote a cote">
+    <Carte titre="Plan mensuel" sousTitre="Les trois mois du cycle, côte à côte">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {plans.map((p) => (
           <FormulaireMois key={p.monthNumber} cycleId={cycleId} plan={p} />
@@ -227,7 +227,7 @@ function LigneSemaine({ semaine }: { semaine: SemaineVue }) {
             Sem. {semaine.weekNumber}
           </span>
           <span className="text-sm text-ink-soft truncate">
-            {semaine.focusTitle || <span className="text-disabled">Aucun focus defini</span>}
+            {semaine.focusTitle || <span className="text-disabled">Aucun focus défini</span>}
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -315,7 +315,7 @@ export function SectionTaches({
             action={modifierTache}
             id={t.id}
             valeur={t.label}
-            intitule="Modifier le libelle de la tache"
+            intitule="Modifier le libellé de la tâche"
           />
         </div>
         {t.prioriteTitre && (
@@ -332,7 +332,7 @@ export function SectionTaches({
   return (
     <Carte
       titre="Mon cockpit du jour"
-      sousTitre="Chaque tache peut se rattacher a une priorite du cycle"
+      sousTitre="Chaque tâche peut se rattacher à une priorité du cycle"
       action={
         taches.length > 0 ? (
           <div className="text-right">
@@ -347,29 +347,29 @@ export function SectionTaches({
           {aFaire.map((t) => <Ligne key={t.id} t={t} />)}
           {faites.length > 0 && (
             <>
-              <p className="text-xs font-bold text-ghost pt-2">Terminees</p>
+              <p className="text-xs font-bold text-ghost pt-2">Terminées</p>
               {faites.map((t) => <Ligne key={t.id} t={t} />)}
             </>
           )}
         </div>
       ) : (
-        <Vide texte="Aucune tache. Commencez par celle qui fait avancer une priorite du cycle." />
+        <Vide texte="Aucune tâche. Commencez par celle qui fait avancer une priorité du cycle." />
       )}
 
-      <PanneauAjout intitule="Ajouter une tache" etat={etat}>
+      <PanneauAjout intitule="Ajouter une tâche" etat={etat}>
         <form action={action} className="space-y-3">
           <Champ nom="label" libelle="Que voulez-vous accomplir ?" required maxLength={200}
                  erreur={etat.erreurs?.label} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Liste nom="tag" libelle="Categorie" options={ETIQUETTES_TACHE} defaultValue="DIVERS" />
+            <Liste nom="tag" libelle="Catégorie" options={ETIQUETTES_TACHE} defaultValue="DIVERS" />
             <Liste
-              nom="objectiveId" libelle="Rattacher a une priorite"
+              nom="objectiveId" libelle="Rattacher à une priorité"
               options={[
                 { valeur: '', libelle: '— tache libre —' },
                 ...priorites.map((p) => ({ valeur: p.id, libelle: p.title })),
               ]}
             />
-            <Champ nom="dueDate" libelle="Echeance" type="date" defaultValue={aujourdhui} />
+            <Champ nom="dueDate" libelle="Échéance" type="date" defaultValue={aujourdhui} />
           </div>
           <BoutonSoumettre>Ajouter</BoutonSoumettre>
           <Retour etat={etat} />

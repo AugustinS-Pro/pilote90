@@ -380,7 +380,7 @@ function tableauMensuel(doc: Rapport, points: PointMensuel[]): void {
   })
   let x = MARGE
   const totaux = [
-    'Total sur la periode',
+    'Total sur la période',
     eurosUnite(totalCa),
     eurosUnite(totalCharges),
     eurosUnite(totalCa - totalCharges),
@@ -399,7 +399,7 @@ function tableauMensuel(doc: Rapport, points: PointMensuel[]): void {
 
 function blocConstats(doc: Rapport, constats: ConstatAudit[]): void {
   if (constats.length === 0) {
-    ligne(doc, 'Aucun signal sur la periode.', { taille: 9, couleur: DOUX })
+    ligne(doc, 'Aucun signal sur la période.', { taille: 9, couleur: DOUX })
     return
   }
 
@@ -439,7 +439,7 @@ function blocPrevisionnel(
 ): void {
   const scenarios: Array<{ cle: keyof typeof totaux; libelle: string; hypothese: string; couleur: RGB }> = [
     { cle: 'pessimiste', libelle: 'Pessimiste', hypothese: 'Encaissements -15 % et charges +5 % par mois', couleur: NEGATIF },
-    { cle: 'realiste', libelle: 'Realiste', hypothese: 'Encaissements et charges stables', couleur: ACCENT },
+    { cle: 'realiste', libelle: 'Réaliste', hypothese: 'Encaissements et charges stables', couleur: ACCENT },
     { cle: 'optimiste', libelle: 'Optimiste', hypothese: 'Encaissements +12 % et charges +2 % par mois', couleur: POSITIF },
   ]
 
@@ -491,8 +491,8 @@ function tableauDetail(doc: Rapport, transactions: LigneDetail[]): void {
   const colonnes = [
     { titre: 'Date', largeur: 68, aDroite: false },
     { titre: 'Type', largeur: 58, aDroite: false },
-    { titre: 'Libelle', largeur: 195, aDroite: false },
-    { titre: 'Categorie', largeur: 95, aDroite: false },
+    { titre: 'Libellé', largeur: 195, aDroite: false },
+    { titre: 'Catégorie', largeur: 95, aDroite: false },
     { titre: 'Montant HT', largeur: UTILE - 416, aDroite: true },
   ]
   const hauteurLigne = 15
@@ -516,7 +516,7 @@ function tableauDetail(doc: Rapport, transactions: LigneDetail[]): void {
   enTeteTableau()
 
   if (transactions.length === 0) {
-    ligne(doc, 'Aucune transaction sur la periode.', { taille: 8.5, couleur: DOUX })
+    ligne(doc, 'Aucune transaction sur la période.', { taille: 8.5, couleur: DOUX })
     return
   }
 
@@ -656,15 +656,15 @@ export async function construireRapportComptable(
   titreSection(doc, 'Indicateurs cles')
   cartesIndicateurs(doc, [
     {
-      titre: 'Tresorerie',
+      titre: 'Trésorerie',
       valeur: euros(indicateurs.tresorerie),
-      formule: 'Encaissements moins decaissements depuis le debut',
+      formule: 'Encaissements moins décaissements depuis le début',
       couleur: indicateurs.tresorerie >= 0 ? POSITIF : NEGATIF,
     },
     {
       titre: 'CA du mois',
       valeur: euros(indicateurs.caDuMois),
-      formule: 'Somme des revenus rattaches au mois en cours',
+      formule: 'Somme des revenus rattachés au mois en cours',
       couleur: POSITIF,
     },
     {
@@ -674,7 +674,7 @@ export async function construireRapportComptable(
       couleur: NEGATIF,
     },
     {
-      titre: 'Resultat net',
+      titre: 'Résultat net',
       valeur: euros(indicateurs.resultatNet),
       formule: 'Chiffre d affaires du mois moins charges du mois',
       couleur: indicateurs.resultatNet >= 0 ? ENCRE : NEGATIF,
@@ -684,19 +684,19 @@ export async function construireRapportComptable(
   titreSection(doc, 'Chiffre d affaires et charges, six derniers mois')
   grapheBarres(doc, historique)
 
-  titreSection(doc, 'Synthese mensuelle, douze mois glissants')
+  titreSection(doc, 'Synthèse mensuelle, douze mois glissants')
   tableauMensuel(doc, historique)
 
   titreSection(doc, 'Audit financier automatique')
-  ligne(doc, 'Chaque constat indique la regle qui l a declenche.', { taille: 8, couleur: PALE })
+  ligne(doc, 'Chaque constat indique la règle qui l’a déclenché.', { taille: 8, couleur: PALE })
   doc.y -= 4
   blocConstats(doc, constats)
 
-  titreSection(doc, 'Previsionnel a six mois')
+  titreSection(doc, 'Prévisionnel à six mois')
   blocPrevisionnel(doc, previsionnel.totaux, previsionnel.baseCa, previsionnel.baseCharges)
 
   nouvellePage(doc)
-  titreSection(doc, 'Detail des ecritures sur la periode')
+  titreSection(doc, 'Détail des écritures sur la période')
   tableauDetail(doc, surLaPeriode)
 
   pieds(doc, donnees.companyName, genereLe)

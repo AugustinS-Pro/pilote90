@@ -25,11 +25,11 @@ export const FORMATS = [
 ]
 
 export const STATUTS_OFFRE = [
-  { valeur: 'IDEE', libelle: 'Idee' },
+  { valeur: 'IDEE', libelle: 'Idée' },
   { valeur: 'EN_TEST', libelle: 'En test' },
   { valeur: 'ACTIF', libelle: 'Actif' },
   { valeur: 'A_AMELIORER', libelle: 'A ameliorer' },
-  { valeur: 'ABANDONNE', libelle: 'Abandonne' },
+  { valeur: 'ABANDONNE', libelle: 'Abandonné' },
 ]
 
 const TON_STATUT: Record<string, 'succes' | 'attente' | 'alerte' | 'info' | 'neutre'> = {
@@ -43,7 +43,7 @@ const TON_STATUT: Record<string, 'succes' | 'attente' | 'alerte' | 'info' | 'neu
 export const STATUTS_CLIENT = [
   { valeur: 'PROSPECT', libelle: 'Prospect' },
   { valeur: 'ACTIF', libelle: 'Client actif' },
-  { valeur: 'TERMINE', libelle: 'Mission terminee' },
+  { valeur: 'TERMINE', libelle: 'Mission terminée' },
   { valeur: 'INACTIF', libelle: 'Inactif' },
 ]
 
@@ -131,19 +131,19 @@ function ChampsPersona({
       <Champ nom="name" idUnique={`${p}-name`} libelle="Nom du persona" defaultValue={persona?.name} required maxLength={80}
              placeholder="Marie, dirigeante de TPE" erreur={etat.erreurs?.name} />
       <ZoneTexte nom="dailyLife" idUnique={`${p}-dailyLife`} libelle="Qui est-elle aujourd'hui ?" defaultValue={persona?.dailyLife ?? ''}
-                 placeholder="Que fait-elle, quelle est sa situation, a quoi ressemble son quotidien ?" />
+                 placeholder="Que fait-elle, quelle est sa situation, à quoi ressemble son quotidien ?" />
       <ZoneTexte nom="frustrations" idUnique={`${p}-frustrations`} libelle="Ses frustrations" defaultValue={persona?.frustrations ?? ''}
                  placeholder="Qu'est-ce qui la bloque, la fatigue, ne fonctionne pas ?" />
       <ZoneTexte nom="desires" idUnique={`${p}-desires`} libelle="Ses desirs" defaultValue={persona?.desires ?? ''}
-                 placeholder="Qu'est-ce qu'elle veut vraiment ? A quoi ressemblerait sa reussite ?" />
+                 placeholder="Qu’est-ce qu’elle veut vraiment ? À quoi ressemblerait sa réussite ?" />
       <ZoneTexte nom="objections" idUnique={`${p}-objections`} libelle="Ses objections" defaultValue={persona?.objections ?? ''}
-                 placeholder="Pourquoi ne passe-t-elle pas a l'action ? Qu'est-ce qui la freine ?" />
+                 placeholder="Pourquoi ne passe-t-elle pas à l’action ? Qu’est-ce qui la freine ?" />
       <ZoneTexte nom="transformation" idUnique={`${p}-transformation`} libelle="La transformation" defaultValue={persona?.transformation ?? ''}
-                 placeholder="Ou est-elle aujourd'hui, ou sera-t-elle apres votre aide ?" />
+                 placeholder="Où est-elle aujourd’hui, où sera-t-elle après votre aide ?" />
       <Champ nom="magicSentence" idUnique={`${p}-magicSentence`} libelle="Ma phrase magique" defaultValue={persona?.magicSentence ?? ''}
-             placeholder="J'aide ................ a ................" maxLength={240} />
+             placeholder="J’aide ................ à ................" maxLength={240} />
       <div className="flex items-center gap-2">
-        <BoutonSoumettre>{persona ? 'Mettre a jour' : 'Enregistrer le persona'}</BoutonSoumettre>
+        <BoutonSoumettre>{persona ? 'Mettre à jour' : 'Enregistrer le persona'}</BoutonSoumettre>
       </div>
       <Retour etat={etat} />
     </form>
@@ -164,7 +164,7 @@ export function SectionPersona({ personas }: { personas: PersonaVue[] }) {
   const [etat, action] = useActionState(enregistrerPersona, ETAT_INITIAL)
 
   return (
-    <Carte titre="Mon client ideal" sousTitre="Le persona guide toutes les decisions d'offre et de contenu">
+    <Carte titre="Mon client idéal" sousTitre="Le persona guide toutes les décisions d’offre et de contenu">
       {personas.length > 0 ? (
         <div className="space-y-3 mb-4">
           {personas.map((p) => (
@@ -185,7 +185,7 @@ export function SectionPersona({ personas }: { personas: PersonaVue[] }) {
           ))}
         </div>
       ) : (
-        <Vide texte="Aucun persona defini. Commencez par decrire la personne que vous aidez." />
+        <Vide texte="Aucun persona défini. Commencez par décrire la personne que vous aidez." />
       )}
 
       <PanneauAjout intitule="Ajouter un persona" etat={etat}>
@@ -203,7 +203,7 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
   const [etat, action] = useActionState(creerOffre, ETAT_INITIAL)
 
   return (
-    <Carte titre="Mes offres" sousTitre="Le catalogue de ce que vous vendez, et ce que chaque offre a rapporte">
+    <Carte titre="Mes offres" sousTitre="Le catalogue de ce que vous vendez, et ce que chaque offre a rapporté">
       {offres.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           {offres.map((o) => (
@@ -215,7 +215,7 @@ export function SectionOffres({ offres, personas }: { offres: OffreVue[]; person
                       action={modifierOffre}
                       id={o.id}
                       valeur={o.name}
-                      intitule="Modifier le nom de l offre"
+                      intitule="Modifier le nom de l’offre"
                     />
                   </div>
                   <p className="text-xs text-ghost mt-0.5">
@@ -296,7 +296,7 @@ export function SectionArchitecture({ niveaux }: { niveaux: NiveauVue[] }) {
   const [etat, action] = useActionState(creerNiveauOffre, ETAT_INITIAL)
 
   return (
-    <Carte titre="Architecture de mes offres" sousTitre="Du produit d'appel a l'offre premium">
+    <Carte titre="Architecture de mes offres" sousTitre="Du produit d’appel à l’offre premium">
       {niveaux.length > 0 ? (
         <div className="space-y-2 mb-4">
           {niveaux.map((n) => (
@@ -316,13 +316,13 @@ export function SectionArchitecture({ niveaux }: { niveaux: NiveauVue[] }) {
           ))}
         </div>
       ) : (
-        <Vide texte="Aucun niveau defini." />
+        <Vide texte="Aucun niveau défini." />
       )}
 
       <PanneauAjout intitule="Ajouter un niveau" etat={etat}>
         <form action={action} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <Champ nom="level" idUnique="escalier-level" libelle="Niveau" required maxLength={40} placeholder="Entree de gamme"
+            <Champ nom="level" idUnique="escalier-level" libelle="Niveau" required maxLength={40} placeholder="Entrée de gamme"
                    erreur={etat.erreurs?.level} />
             <Champ nom="price" idUnique="escalier-price" libelle="Prix affiche" maxLength={40} placeholder="490 € ou 49 €/mois" />
           </div>
@@ -416,7 +416,7 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
                        erreur={etatAchat.erreurs?.amount} />
                 <Champ nom="purchasedAt" idUnique="achat-purchasedAt" libelle="Date" type="date" defaultValue={aujourdhui} required />
               </div>
-              <BoutonSoumettre>Enregistrer l&apos;achat</BoutonSoumettre>
+              <BoutonSoumettre>Enregistrer l’achat</BoutonSoumettre>
               <Retour etat={etatAchat} />
             </form>
           </PanneauAjout>
@@ -446,7 +446,7 @@ export function SectionRetours({
   return (
     <Carte
       titre="Retours clients"
-      sousTitre="La satisfaction apres chaque prestation"
+      sousTitre="La satisfaction après chaque prestation"
       action={
         moyenne !== null ? (
           <div className="text-right">
@@ -477,7 +477,7 @@ export function SectionRetours({
           ))}
         </div>
       ) : (
-        <Vide texte="Aucun retour enregistre." />
+        <Vide texte="Aucun retour enregistré." />
       )}
 
       <PanneauAjout intitule="Ajouter un retour" etat={etat}>

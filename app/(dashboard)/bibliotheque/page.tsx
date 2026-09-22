@@ -143,7 +143,7 @@ export default async function BibliothequePage({
           <Vide
             texte={
               recherche || typeFiltre
-                ? 'Aucune ressource ne correspond a cette recherche.'
+                ? 'Aucune ressource ne correspond à cette recherche.'
                 : "La bibliotheque est vide pour l'instant."
             }
           />

@@ -102,7 +102,7 @@ export function NouveauClient() {
           {!etat.ok && <Retour etat={etat} />}
 
           <div className="flex justify-end">
-            <BoutonSoumettre enCours="Creation...">Creer le compte</BoutonSoumettre>
+            <BoutonSoumettre enCours="Creation...">Créer le compte</BoutonSoumettre>
           </div>
         </form>
       )}

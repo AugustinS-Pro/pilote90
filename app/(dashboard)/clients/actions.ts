@@ -60,7 +60,7 @@ export async function creerClient(
 ): Promise<EtatCreation> {
   const utilisateur = await getCurrentUser()
   if (!peut(utilisateur, 'COMPTES_ADMINISTRER')) {
-    return { ok: false, message: 'Vous n avez pas l habilitation pour creer un compte.' }
+    return { ok: false, message: 'Vous n’avez pas l’habilitation pour créer un compte.' }
   }
 
   const parsed = nouveauClient.safeParse({
@@ -75,7 +75,7 @@ export async function creerClient(
     for (const issue of parsed.error.issues) {
       erreurs[String(issue.path[0] ?? 'global')] = issue.message
     }
-    return { ok: false, message: 'Verifiez les champs signales.', erreurs }
+    return { ok: false, message: 'Vérifiez les champs signalés.', erreurs }
   }
 
   const { companyName, sector, contactName, email } = parsed.data
@@ -84,8 +84,8 @@ export async function creerClient(
   if (existant) {
     return {
       ok: false,
-      message: 'Un compte existe deja avec cette adresse.',
-      erreurs: { email: 'Adresse deja utilisee' },
+      message: 'Un compte existe déjà avec cette adresse.',
+      erreurs: { email: 'Adresse déjà utilisée' },
     }
   }
 

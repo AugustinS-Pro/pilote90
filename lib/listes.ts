@@ -8,7 +8,7 @@
 export type Option = { valeur: string; libelle: string }
 
 export const CATEGORIES_DECISION: Option[] = [
-  { valeur: 'STRATEGIE', libelle: 'Strategie' },
+  { valeur: 'STRATEGIE', libelle: 'Stratégie' },
   { valeur: 'OFFRE', libelle: 'Offre' },
   { valeur: 'FINANCE', libelle: 'Finance' },
   { valeur: 'COMMUNICATION', libelle: 'Communication' },
@@ -19,7 +19,7 @@ export const CATEGORIES_DECISION: Option[] = [
 export const TYPES_RESSOURCE: Option[] = [
   { valeur: 'GUIDE', libelle: 'Guide' },
   { valeur: 'RITUEL', libelle: 'Rituel' },
-  { valeur: 'MODELE', libelle: 'Modele de cycle' },
+  { valeur: 'MODELE', libelle: 'Modèle de cycle' },
   { valeur: 'LIEN', libelle: 'Lien' },
 ]
 

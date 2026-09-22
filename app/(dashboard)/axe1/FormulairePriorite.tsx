@@ -15,7 +15,7 @@ function BoutonAjout() {
       className="text-xs bg-accent hover:bg-accent-strong disabled:opacity-60 text-on-accent
                  font-semibold px-3 py-1.5 rounded-lg transition-colors"
     >
-      {pending ? 'Ajout...' : 'Ajouter la priorite'}
+      {pending ? 'Ajout...' : 'Ajouter la priorité'}
     </button>
   )
 }
@@ -61,14 +61,14 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
 
   return (
     <div className="bg-surface rounded-2xl border border-accent shadow-sm p-5">
-      <h3 className="text-sm font-bold text-ink-soft mb-3">Nouvelle priorite du cycle</h3>
+      <h3 className="text-sm font-bold text-ink-soft mb-3">Nouvelle priorité du cycle</h3>
       <form action={action} className="space-y-3">
         <div>
           <input name="title" placeholder="Ce que je veux atteindre" required maxLength={120} className={champ} />
           {etat.erreurs?.title && <p className="text-xs text-negative-ink mt-1">{etat.erreurs.title}</p>}
         </div>
         <div>
-          <input name="description" placeholder="Precision (facultatif)" maxLength={300} className={champ} />
+          <input name="description" placeholder="Précision (facultatif)" maxLength={300} className={champ} />
           {etat.erreurs?.description && (
             <p className="text-xs text-negative-ink mt-1">{etat.erreurs.description}</p>
           )}

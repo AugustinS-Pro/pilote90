@@ -111,15 +111,15 @@ export function GraphePrevisionnel({
   baseCharges: number
 }) {
   const cartes = [
-    { cle: 'pessimiste' as const, titre: 'Scenario pessimiste', detail: 'Encaissements -15 %, charges +5 % par mois', couleur: 'text-negative-ink', bord: 'border-negative' },
-    { cle: 'realiste' as const, titre: 'Scenario realiste', detail: 'Encaissements et charges stables', couleur: 'text-positive-ink', bord: 'border-positive ring-1 ring-positive/40' },
-    { cle: 'optimiste' as const, titre: 'Scenario optimiste', detail: 'Encaissements +12 %, charges +2 % par mois', couleur: 'text-accent-ink', bord: 'border-accent' },
+    { cle: 'pessimiste' as const, titre: 'Scénario pessimiste', detail: 'Encaissements -15 %, charges +5 % par mois', couleur: 'text-negative-ink', bord: 'border-negative' },
+    { cle: 'realiste' as const, titre: 'Scénario réaliste', detail: 'Encaissements et charges stables', couleur: 'text-positive-ink', bord: 'border-positive ring-1 ring-positive/40' },
+    { cle: 'optimiste' as const, titre: 'Scénario optimiste', detail: 'Encaissements +12 %, charges +2 % par mois', couleur: 'text-accent-ink', bord: 'border-accent' },
   ]
 
   return (
     <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
       <div className="mb-4">
-        <h2 className="text-sm font-bold text-ink-soft">Previsionnel a six mois</h2>
+        <h2 className="text-sm font-bold text-ink-soft">Prévisionnel à six mois</h2>
         <p className="text-xs text-ghost mt-0.5">
           Base de calcul : {baseCa.toLocaleString('fr-FR')} € de chiffre d&apos;affaires
           et {baseCharges.toLocaleString('fr-FR')} € de charges en moyenne mensuelle observee
@@ -147,7 +147,7 @@ export function GraphePrevisionnel({
             <Tooltip formatter={EUROS_INFOBULLE} {...INFOBULLE} />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} iconType="circle" />
             <Line type="monotone" dataKey="pessimiste" name="Pessimiste" stroke="var(--p90-negative)" strokeWidth={2} dot={false} strokeDasharray="4 3" />
-            <Line type="monotone" dataKey="realiste" name="Realiste" stroke="var(--p90-positive)" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="realiste" name="Réaliste" stroke="var(--p90-positive)" strokeWidth={2.5} dot={false} />
             <Line type="monotone" dataKey="optimiste" name="Optimiste" stroke="var(--p90-accent)" strokeWidth={2} dot={false} strokeDasharray="4 3" />
           </LineChart>
         </ResponsiveContainer>

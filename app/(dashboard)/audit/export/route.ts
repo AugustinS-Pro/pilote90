@@ -33,7 +33,7 @@ export async function GET() {
   lignes.push(echapper(`Genere le ${new Date().toLocaleDateString('fr-FR')}`))
   lignes.push('')
 
-  lignes.push(['Date', 'Type', 'Libelle', 'Categorie', 'Montant HT (euros)'].map(echapper).join(';'))
+  lignes.push(['Date', 'Type', 'Libellé', 'Catégorie', 'Montant HT (euros)'].map(echapper).join(';'))
   for (const t of client.transactions) {
     lignes.push([
       new Date(t.transactionDate).toLocaleDateString('fr-FR'),
@@ -45,7 +45,7 @@ export async function GET() {
   }
 
   lignes.push('')
-  lignes.push(echapper('Synthese mensuelle sur douze mois glissants'))
+  lignes.push(echapper('Synthèse mensuelle sur douze mois glissants'))
   lignes.push(['Mois', 'CA (euros)', 'Charges (euros)', 'Net (euros)'].map(echapper).join(';'))
   for (const p of serieDouzeMois(client.transactions)) {
     lignes.push([p.cle, String(p.ca), String(p.charges), String(p.net)].map(echapper).join(';'))

@@ -12,9 +12,9 @@ import { ArbitrageIdee, SuppressionIdee } from '@/components/FormulairesSysteme'
 
 const LIBELLE_ISSUE: Record<string, { texte: string; ton: 'succes' | 'attente' | 'neutre' | 'info' }> = {
   PARKED: { texte: 'En attente de relecture', ton: 'info' },
-  KEPT: { texte: 'Gardee', ton: 'succes' },
-  POSTPONED: { texte: 'Reportee', ton: 'attente' },
-  DROPPED: { texte: 'Abandonnee', ton: 'neutre' },
+  KEPT: { texte: 'Gardée', ton: 'succes' },
+  POSTPONED: { texte: 'Reportée', ton: 'attente' },
+  DROPPED: { texte: 'Abandonnée', ton: 'neutre' },
 }
 
 export default async function HistoriquePage({
@@ -58,7 +58,7 @@ export default async function HistoriquePage({
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Historique des cycles</h1>
-        <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
+        <p className="text-sm text-muted">Espace réservé aux entrepreneurs accompagnés.</p>
       </div>
     )
   }
@@ -89,12 +89,12 @@ export default async function HistoriquePage({
       </div>
 
       <Carte
-        titre="Relecture du parking d'idees"
-        sousTitre="Le rituel de cloture : chaque idee garee est reprise, gardee, reportee ou abandonnee"
+        titre="Relecture du parking d’idées"
+        sousTitre="Le rituel de clôture : chaque idée garée est reprise, gardée, reportée ou abandonnée"
         action={
           enAttente.length > 0
             ? <Etiquette texte={`${enAttente.length} en attente`} ton="attente" />
-            : <Etiquette texte="Parking a jour" ton="succes" />
+            : <Etiquette texte="Parking à jour" ton="succes" />
         }
       >
         {client.ideas.length > 0 ? (
@@ -123,7 +123,7 @@ export default async function HistoriquePage({
             })}
           </div>
         ) : (
-          <Vide texte="Aucune idee garee pour l'instant." />
+          <Vide texte="Aucune idée garée pour l’instant." />
         )}
       </Carte>
 
@@ -158,7 +158,7 @@ export default async function HistoriquePage({
                 </div>
                 <div className="rounded-xl bg-surface-muted p-3.5">
                   <p className="text-lg font-extrabold text-positive">{euros(caRealise)}</p>
-                  <p className="text-xs text-ghost mt-0.5">Realise</p>
+                  <p className="text-xs text-ghost mt-0.5">Réalisé</p>
                 </div>
                 <div className="rounded-xl bg-surface-muted p-3.5">
                   <p className="text-lg font-extrabold text-accent-ink">{revues.length} / 12</p>
@@ -168,7 +168,7 @@ export default async function HistoriquePage({
 
               {cycle.objectives.length > 0 && (
                 <div className="mb-5">
-                  <p className="text-xs font-bold text-muted mb-2">Les priorites, et ou elles se sont arretees</p>
+                  <p className="text-xs font-bold text-muted mb-2">Les priorités, et où elles se sont arrêtées</p>
                   <div className="space-y-2">
                     {cycle.objectives.map((o) => (
                       <div key={o.id}>
@@ -227,12 +227,12 @@ export default async function HistoriquePage({
           )
         })
       ) : (
-        <Carte titre="Aucun cycle cloture">
+        <Carte titre="Aucun cycle clôturé">
           <Vide
             texte={
               recherche
                 ? `Aucun cycle ne correspond a « ${recherche} ».`
-                : 'Vos cycles termines apparaitront ici, avec leurs resultats et leurs apprentissages.'
+                : 'Vos cycles terminés apparaîtront ici, avec leurs résultats et leurs apprentissages.'
             }
           />
         </Carte>

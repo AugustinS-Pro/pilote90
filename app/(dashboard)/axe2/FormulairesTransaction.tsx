@@ -59,7 +59,7 @@ function Formulaire({
 
         <div>
           <input type="date" name="transactionDate" defaultValue={aujourdhui} required className={champ}
-                 aria-label="Date de l'operation" />
+                 aria-label="Date de l’opération" />
           {etat.erreurs?.transactionDate && (
             <p className="text-xs text-negative-ink mt-1">{etat.erreurs.transactionDate}</p>
           )}

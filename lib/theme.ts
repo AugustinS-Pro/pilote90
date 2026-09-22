@@ -27,20 +27,20 @@ export const THEMES = [
   {
     cle: 'pilote90',
     nom: 'PILOTE90',
-    description: 'Marine, or et sable, la charte de la methode Pilote90.',
+    description: 'Marine, or et sable, la charte de la méthode Pilote90.',
     apercu: ['#f6f2ea', '#fffdf9', '#c9a84c', '#1b2a4a'],
     famille: 'Palettes',
   },
   {
     cle: 'sombre',
     nom: 'Sombre',
-    description: 'Pour les fins de soiree et les ecrans peu lumineux.',
+    description: 'Pour les fins de soirée et les écrans peu lumineux.',
     apercu: ['#0b1120', '#151d2e', '#818cf8', '#2dd4bf'],
     famille: 'Palettes',
   },
   {
     cle: 'contraste',
-    nom: 'Contraste eleve',
+    nom: 'Contraste élevé',
     description: 'Noir sur blanc, bordures franches. Pour les basses visions et la lecture en plein soleil.',
     apercu: ['#ffffff', '#f2f2f2', '#0b3fb0', '#000000'],
     famille: 'Accessibilite',
@@ -60,8 +60,8 @@ const CLES_THEME = THEMES.map((t) => t.cle) as readonly string[]
 
 /** Echelle de lecture, en pourcentage de la taille de police de la racine. */
 export const ECHELLES = [
-  { valeur: 100, nom: 'Normale', apercu: 'Aa', description: 'La taille de reference.' },
-  { valeur: 112, nom: 'Confortable', apercu: 'Aa', description: 'Un cran plus grand, sans rien deplacer.' },
+  { valeur: 100, nom: 'Normale', apercu: 'Aa', description: 'La taille de référence.' },
+  { valeur: 112, nom: 'Confortable', apercu: 'Aa', description: 'Un cran plus grand, sans rien déplacer.' },
   { valeur: 125, nom: 'Large', apercu: 'Aa', description: 'Pour lire de loin ou avec une basse vision.' },
 ] as const
 

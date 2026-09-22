@@ -51,7 +51,7 @@ export async function enregistrerPersona(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = personaInput.safeParse({
     name: formData.get('name'),
@@ -80,7 +80,7 @@ export async function enregistrerPersona(
   }
 
   rafraichir()
-  return { ok: true, message: 'Client ideal enregistre.' }
+  return { ok: true, message: 'Client idéal enregistré.' }
 }
 
 export async function supprimerPersona(formData: FormData): Promise<void> {
@@ -101,7 +101,7 @@ export async function creerOffre(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = offerInput.safeParse({
     name: formData.get('name'),
@@ -144,7 +144,7 @@ export async function creerOffre(
   })
 
   rafraichir()
-  return { ok: true, message: 'Offre ajoutee au catalogue.' }
+  return { ok: true, message: 'Offre ajoutée au catalogue.' }
 }
 
 export async function changerStatutOffre(formData: FormData): Promise<void> {
@@ -182,7 +182,7 @@ export async function creerNiveauOffre(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = offerLevelInput.safeParse({
     level: formData.get('level'),
@@ -227,7 +227,7 @@ export async function enregistrerFicheClient(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = crmClientInput.safeParse({
     companyName: formData.get('companyName'),
@@ -259,7 +259,7 @@ export async function enregistrerFicheClient(
   }
 
   rafraichir()
-  return { ok: true, message: 'Fiche client enregistree.' }
+  return { ok: true, message: 'Fiche client enregistrée.' }
 }
 
 export async function supprimerFicheClient(formData: FormData): Promise<void> {
@@ -280,7 +280,7 @@ export async function enregistrerAchat(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = purchaseInput.safeParse({
     crmClientId: formData.get('crmClientId'),
@@ -318,7 +318,7 @@ export async function enregistrerAchat(
   })
 
   rafraichir()
-  return { ok: true, message: 'Achat enregistre.' }
+  return { ok: true, message: 'Achat enregistré.' }
 }
 
 export async function enregistrerRetour(
@@ -326,7 +326,7 @@ export async function enregistrerRetour(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClientAutorise(ACCES_REQUIS)
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = feedbackInput.safeParse({
     crmClientId: texte(formData.get('crmClientId')),
@@ -364,7 +364,7 @@ export async function enregistrerRetour(
   })
 
   rafraichir()
-  return { ok: true, message: 'Retour enregistre.' }
+  return { ok: true, message: 'Retour enregistré.' }
 }
 
 export async function supprimerRetour(formData: FormData): Promise<void> {

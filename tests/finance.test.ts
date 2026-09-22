@@ -148,7 +148,7 @@ describe('auditerFinances', () => {
   it('alerte quand la tresorerie est negative', () => {
     const i = calculerIndicateurs([charge(50000, 3)], 0, REFERENCE)
     const constats = auditerFinances(i, previsionnelNeutre, 1)
-    expect(constats.some((c) => c.niveau === 'ALERTE' && c.titre.includes('Tresorerie'))).toBe(true)
+    expect(constats.some((c) => c.niveau === 'ALERTE' && /Tr[ée]sorerie/.test(c.titre))).toBe(true)
   })
 
   it('signale un ratio de charges au-dela de 40 %', () => {

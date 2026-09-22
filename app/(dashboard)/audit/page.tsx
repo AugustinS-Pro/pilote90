@@ -34,7 +34,7 @@ export default async function AuditPage() {
   if (!client) {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
-        <h1 className="text-2xl font-extrabold text-ink mb-2">Audit &amp; Previsionnel</h1>
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Audit &amp; Prévisionnel</h1>
         <p className="text-sm text-muted">
           Cet espace est celui des entrepreneurs accompagnes. Depuis un compte administrateur,
           ouvrez l&apos;audit d&apos;un client depuis votre portefeuille.
@@ -60,10 +60,10 @@ export default async function AuditPage() {
       : 'bg-positive-soft border-positive text-positive-ink'
 
   const kpis = [
-    { titre: 'Tresorerie', valeur: euros(indicateurs.tresorerie), formule: 'Encaissements moins decaissements depuis le debut', couleur: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
-    { titre: 'CA du mois', valeur: euros(indicateurs.caDuMois), formule: 'Somme des revenus rattaches au mois en cours', couleur: 'text-positive' },
+    { titre: 'Trésorerie', valeur: euros(indicateurs.tresorerie), formule: 'Encaissements moins décaissements depuis le début', couleur: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
+    { titre: 'CA du mois', valeur: euros(indicateurs.caDuMois), formule: 'Somme des revenus rattachés au mois en cours', couleur: 'text-positive' },
     { titre: 'Charges du mois', valeur: euros(indicateurs.chargesDuMois), formule: `Somme des charges du mois, ratio ${indicateurs.ratioCharges} % du CA`, couleur: 'text-negative' },
-    { titre: 'Resultat net', valeur: euros(indicateurs.resultatNet), formule: 'CA du mois moins charges du mois', couleur: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
+    { titre: 'Résultat net', valeur: euros(indicateurs.resultatNet), formule: 'CA du mois moins charges du mois', couleur: indicateurs.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative' },
   ]
 
   return (
@@ -71,7 +71,7 @@ export default async function AuditPage() {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-ink">Audit &amp; Previsionnel</h1>
+          <h1 className="text-2xl font-extrabold text-ink">Audit &amp; Prévisionnel</h1>
           <p className="text-muted text-sm mt-1">
             {client.companyName} · Support des seances d&apos;accompagnement
           </p>

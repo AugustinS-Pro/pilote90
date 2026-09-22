@@ -37,7 +37,7 @@ export async function creerDecision(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClient()
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = decisionInput.safeParse({
     title: formData.get('title'),
@@ -71,7 +71,7 @@ export async function creerDecision(
 
   revalidatePath('/decisions')
   revalidatePath('/axe1')
-  return { ok: true, message: 'Decision consignee.' }
+  return { ok: true, message: 'Décision consignée.' }
 }
 
 export async function supprimerDecision(formData: FormData): Promise<void> {
@@ -92,7 +92,7 @@ export async function creerIdee(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClient()
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const parsed = ideaInput.safeParse({ content: formData.get('content') })
   if (!parsed.success) return { ok: false, message: 'Saisie incomplete.', erreurs: versErreurs(parsed.error) }
@@ -108,7 +108,7 @@ export async function creerIdee(
 
   revalidatePath('/axe1')
   revalidatePath('/historique')
-  return { ok: true, message: 'Idee garee. Elle sera relue a la cloture du cycle.' }
+  return { ok: true, message: 'Idée garée. Elle sera relue à la clôture du cycle.' }
 }
 
 /** Arbitrage d'une idee au moment de la cloture : gardee, reportee ou abandonnee. */
@@ -151,7 +151,7 @@ export async function creerRessource(
   formData: FormData,
 ): Promise<EtatAction> {
   const utilisateur = await getCurrentUser()
-  if (!utilisateur) return { ok: false, message: 'Session expiree.' }
+  if (!utilisateur) return { ok: false, message: 'Session expirée.' }
 
   const parsed = resourceInput.safeParse({
     title: formData.get('title'),
@@ -186,7 +186,7 @@ export async function creerRessource(
   })
 
   revalidatePath('/bibliotheque')
-  return { ok: true, message: 'Ressource ajoutee.' }
+  return { ok: true, message: 'Ressource ajoutée.' }
 }
 
 export async function supprimerRessource(formData: FormData): Promise<void> {
@@ -221,7 +221,7 @@ export async function enregistrerPilier(
   formData: FormData,
 ): Promise<EtatAction> {
   const client = await getCurrentClient()
-  if (!client) return { ok: false, message: 'Session expiree.' }
+  if (!client) return { ok: false, message: 'Session expirée.' }
 
   const cle = String(formData.get('cle') ?? '')
   const cles = ['VISION', 'MISSION', 'GRAND_POURQUOI', 'OBJECTIF_ANNUEL'] as const

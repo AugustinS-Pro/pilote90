@@ -159,7 +159,7 @@ export default async function PortefeuillePage({
       {!voirArchives && peut(utilisateur, 'COMPTES_ADMINISTRER') && <NouveauClient />}
 
       <Carte
-        titre={voirArchives ? 'Accompagnements termines' : 'Les entreprises accompagnees'}
+        titre={voirArchives ? 'Accompagnements terminés' : 'Les entreprises accompagnées'}
         action={
           <div className="flex flex-wrap items-center gap-1">
             {nombreArchives > 0 && (
@@ -205,7 +205,7 @@ export default async function PortefeuillePage({
                       <p className="text-sm font-semibold text-ink-soft">{f.nom}</p>
                       {f.secteur && <Etiquette texte={f.secteur} ton="neutre" />}
                       {f.cycle && <Etiquette texte={f.cycle} ton="info" />}
-                      {f.etat === 'ARCHIVE' && <Etiquette texte="Archive" ton="neutre" />}
+                      {f.etat === 'ARCHIVE' && <Etiquette texte="Archivé" ton="neutre" />}
                       {f.etat === 'INVITE' && <Etiquette texte="Invite, pas encore connecte" ton="attente" />}
                       {f.alerte && <Etiquette texte={f.alerte} ton="alerte" />}
                       {f.fraicheur.niveau !== 'ACTIF' && (
@@ -232,7 +232,7 @@ export default async function PortefeuillePage({
                       <p className={`text-sm font-bold ${f.resultatNet >= 0 ? 'text-accent-ink' : 'text-negative'}`}>
                         {euros(f.resultatNet)}
                       </p>
-                      <p className="text-[11px] text-ghost">Resultat net</p>
+                      <p className="text-[11px] text-ghost">Résultat net</p>
                     </div>
                     <div className="text-right w-16">
                       <p className="text-sm font-bold text-ink-soft">{f.progression} %</p>
@@ -244,7 +244,7 @@ export default async function PortefeuillePage({
             ))}
           </div>
         ) : (
-          <Vide texte={voirArchives ? 'Aucun accompagnement archive.' : 'Aucune entreprise rattachee a votre compte.'} />
+          <Vide texte={voirArchives ? 'Aucun accompagnement archivé.' : 'Aucune entreprise rattachée à votre compte.'} />
         )}
       </Carte>
     </div>

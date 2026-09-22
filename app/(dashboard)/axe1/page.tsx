@@ -38,7 +38,7 @@ export default async function Axe1Page() {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Vision CEO</h1>
-        <p className="text-sm text-muted">Espace reserve aux entrepreneurs accompagnes.</p>
+        <p className="text-sm text-muted">Espace réservé aux entrepreneurs accompagnés.</p>
       </div>
     )
   }
@@ -78,7 +78,7 @@ export default async function Axe1Page() {
           Vision strategique
         </p>
         <h1 className="text-2xl md:text-3xl font-extrabold leading-snug mb-1 max-w-3xl">
-          {vision ?? cycle?.mainObjective ?? 'Definissez le cap de votre activite'}
+          {vision ?? cycle?.mainObjective ?? 'Définissez le cap de votre activité'}
         </h1>
         <p className="text-on-inverse text-sm">
           {cycle ? `Cycle ${cycle.cycleNumber} · ${joursRestants} jours restants` : 'Aucun cycle en cours'}
@@ -95,11 +95,11 @@ export default async function Axe1Page() {
           </div>
           <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{objectives.length} / 3</p>
-            <p className="text-xs text-on-inverse mt-1">Priorites definies</p>
+            <p className="text-xs text-on-inverse mt-1">Priorités définies</p>
           </div>
           <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
             <p className="text-2xl font-extrabold">{client.ideas.length}</p>
-            <p className="text-xs text-on-inverse mt-1">Idees garees</p>
+            <p className="text-xs text-on-inverse mt-1">Idées garées</p>
           </div>
         </div>
       </div>
@@ -115,8 +115,8 @@ export default async function Axe1Page() {
       </div>
 
       <Carte
-        titre="Les priorites de ce cycle"
-        sousTitre="Trois priorites au maximum par cycle"
+        titre="Les priorités de ce cycle"
+        sousTitre="Trois priorités au maximum par cycle"
       >
         <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {objectives.map((obj, i) => (
@@ -138,8 +138,8 @@ export default async function Axe1Page() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
         <Carte
-          titre="Parking d'idees"
-          sousTitre="Ces idees sont relues a la cloture du cycle, pas avant"
+          titre="Parking d’idées"
+          sousTitre="Ces idées sont relues à la clôture du cycle, pas avant"
         >
           <div className="mb-4"><FormulaireIdee /></div>
 
@@ -161,13 +161,13 @@ export default async function Axe1Page() {
               ))}
             </div>
           ) : (
-            <Vide texte="Aucune idee garee. Notez-les ici plutot que de les suivre tout de suite." />
+            <Vide texte="Aucune idée garée. Notez-les ici plutôt que de les suivre tout de suite." />
           )}
         </Carte>
 
         <Carte
-          titre="Mes dernieres decisions"
-          sousTitre="Extrait du centre de decisions"
+          titre="Mes dernières décisions"
+          sousTitre="Extrait du centre de décisions"
           action={
             <Link href="/decisions" className="text-xs font-semibold text-accent-ink hover:underline">
               Tout voir
@@ -189,13 +189,13 @@ export default async function Axe1Page() {
               ))}
             </div>
           ) : (
-            <Vide texte="Aucune decision consignee." />
+            <Vide texte="Aucune décision consignée." />
           )}
         </Carte>
       </div>
 
       {objectifAnnuel && (
-        <Carte titre="Mon objectif annuel" sousTitre="Le cap dont chaque cycle de 90 jours est une etape">
+        <Carte titre="Mon objectif annuel" sousTitre="Le cap dont chaque cycle de 90 jours est une étape">
           <p className="text-sm text-ink-soft leading-relaxed whitespace-pre-line">{objectifAnnuel}</p>
         </Carte>
       )}

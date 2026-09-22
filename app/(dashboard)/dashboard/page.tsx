@@ -34,7 +34,7 @@ export default async function DashboardPage() {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-extrabold text-ink mb-2">Tableau de bord</h1>
-        <p className="text-sm text-muted">Aucun dossier client rattache a ce compte.</p>
+        <p className="text-sm text-muted">Aucun dossier client rattaché à ce compte.</p>
       </div>
     )
   }
@@ -123,7 +123,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
         <Carte
           titre="Mon top du jour"
-          sousTitre="Les trois prochaines actions, et la priorite qu'elles font avancer"
+          sousTitre="Les trois prochaines actions, et la priorité qu’elles font avancer"
           action={<Link href="/axe5" className="text-xs font-semibold text-accent-ink hover:underline">Le cockpit</Link>}
         >
           {client.tasks.length > 0 ? (
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
         </Carte>
 
         <Carte
-          titre="Les priorites du cycle"
+          titre="Les priorités du cycle"
           action={<Link href="/axe1" className="text-xs font-semibold text-accent-ink hover:underline">Vision CEO</Link>}
         >
           {cycle && cycle.objectives.length > 0 ? (
@@ -166,14 +166,14 @@ export default async function DashboardPage() {
               ))}
             </div>
           ) : (
-            <Vide texte="Aucune priorite definie." />
+            <Vide texte="Aucune priorité définie." />
           )}
         </Carte>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { t: 'Tresorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
+          { t: 'Trésorerie', v: euros(indicateurs.tresorerie), c: indicateurs.tresorerie >= 0 ? 'text-positive' : 'text-negative' },
           { t: 'CA du mois', v: euros(indicateurs.caDuMois), c: 'text-positive' },
           { t: 'Charges du mois', v: euros(indicateurs.chargesDuMois), c: 'text-negative' },
           { t: 'Objectif mensuel', v: `${indicateurs.progressionObjectif} %`, c: 'text-accent-ink' },
@@ -186,7 +186,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Etiquette texte="Audit & Previsionnel" ton="info" />
+        <Etiquette texte="Audit & Prévisionnel" ton="info" />
         <Link href="/audit" className="text-sm text-muted hover:text-ink-soft">
           Voir le detail financier, le previsionnel et l&apos;audit automatique →
         </Link>
