@@ -187,9 +187,9 @@ function FormulaireMois({ cycleId, plan }: { cycleId: string; plan: PlanMoisVue 
       <input type="hidden" name="cycleId" value={cycleId} />
       <input type="hidden" name="monthNumber" value={plan.monthNumber} />
       <p className="text-xs font-bold text-muted">Mois {plan.monthNumber}</p>
-      <Champ nom="theme" idUnique={`theme-${plan.monthNumber}`} libelle="Theme du mois" maxLength={120}
+      <Champ nom="theme" idUnique={`theme-${plan.monthNumber}`} libelle="Thème du mois" maxLength={120}
              defaultValue={plan.theme ?? ''} placeholder="Structurer l'offre" />
-      <Champ nom="caTarget" idUnique={`caTarget-${plan.monthNumber}`} libelle="CA vise (€)" inputMode="decimal"
+      <Champ nom="caTarget" idUnique={`caTarget-${plan.monthNumber}`} libelle="CA visé (€)" inputMode="decimal"
              defaultValue={plan.caTargetHt ? String(plan.caTargetHt / 100) : ''} />
       <ZoneTexte nom="notes" idUnique={`notes-${plan.monthNumber}`} libelle="Notes" rows={2} maxLength={600}
                  defaultValue={plan.notes ?? ''} />
@@ -365,7 +365,7 @@ export function SectionTaches({
             <Liste
               nom="objectiveId" libelle="Rattacher à une priorité"
               options={[
-                { valeur: '', libelle: '— tache libre —' },
+                { valeur: '', libelle: '— tâche libre —' },
                 ...priorites.map((p) => ({ valeur: p.id, libelle: p.title })),
               ]}
             />
@@ -374,7 +374,7 @@ export function SectionTaches({
           <BoutonSoumettre>Ajouter</BoutonSoumettre>
           <Retour etat={etat} />
           <p className="text-xs text-ghost">
-            Une tache rattachee a une priorite fait avancer sa progression automatiquement.
+            Une tâche rattachée à une priorité fait avancer sa progression automatiquement.
           </p>
         </form>
       </PanneauAjout>

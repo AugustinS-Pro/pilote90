@@ -573,7 +573,7 @@ function pieds(doc: Rapport, entreprise: string, genereLe: string): void {
       start: { x: MARGE, y: MARGE + 18 }, end: { x: MARGE + UTILE, y: MARGE + 18 },
       thickness: 0.5, color: TRAIT,
     })
-    const gauche = sain(`Pilote90 · ${entreprise} · genere le ${genereLe}`)
+    const gauche = sain(`Pilote90 · ${entreprise} · généré le ${genereLe}`)
     page.drawText(gauche, {
       x: MARGE, y: MARGE + 6, size: 7, font: doc.normal, color: PALE,
     })
@@ -639,7 +639,7 @@ export async function construireRapportComptable(
 
   const moisLong = (date: Date) =>
     date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-  const periode = `Periode : ${moisLong(debutPeriode)} a ${moisLong(aujourdhui)}`
+  const periode = `Période : ${moisLong(debutPeriode)} à ${moisLong(aujourdhui)}`
   const genereLe = aujourdhui.toLocaleDateString('fr-FR')
 
   enTete(doc, donnees.companyName, periode)

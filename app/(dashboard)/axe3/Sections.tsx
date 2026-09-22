@@ -28,7 +28,7 @@ export const STATUTS_OFFRE = [
   { valeur: 'IDEE', libelle: 'Idée' },
   { valeur: 'EN_TEST', libelle: 'En test' },
   { valeur: 'ACTIF', libelle: 'Actif' },
-  { valeur: 'A_AMELIORER', libelle: 'A ameliorer' },
+  { valeur: 'A_AMELIORER', libelle: 'À améliorer' },
   { valeur: 'ABANDONNE', libelle: 'Abandonné' },
 ]
 
@@ -134,7 +134,7 @@ function ChampsPersona({
                  placeholder="Que fait-elle, quelle est sa situation, à quoi ressemble son quotidien ?" />
       <ZoneTexte nom="frustrations" idUnique={`${p}-frustrations`} libelle="Ses frustrations" defaultValue={persona?.frustrations ?? ''}
                  placeholder="Qu'est-ce qui la bloque, la fatigue, ne fonctionne pas ?" />
-      <ZoneTexte nom="desires" idUnique={`${p}-desires`} libelle="Ses desirs" defaultValue={persona?.desires ?? ''}
+      <ZoneTexte nom="desires" idUnique={`${p}-desires`} libelle="Ses désirs" defaultValue={persona?.desires ?? ''}
                  placeholder="Qu’est-ce qu’elle veut vraiment ? À quoi ressemblerait sa réussite ?" />
       <ZoneTexte nom="objections" idUnique={`${p}-objections`} libelle="Ses objections" defaultValue={persona?.objections ?? ''}
                  placeholder="Pourquoi ne passe-t-elle pas à l’action ? Qu’est-ce qui la freine ?" />
@@ -324,7 +324,7 @@ export function SectionArchitecture({ niveaux }: { niveaux: NiveauVue[] }) {
           <div className="grid grid-cols-2 gap-3">
             <Champ nom="level" idUnique="escalier-level" libelle="Niveau" required maxLength={40} placeholder="Entrée de gamme"
                    erreur={etat.erreurs?.level} />
-            <Champ nom="price" idUnique="escalier-price" libelle="Prix affiche" maxLength={40} placeholder="490 € ou 49 €/mois" />
+            <Champ nom="price" idUnique="escalier-price" libelle="Prix affiché" maxLength={40} placeholder="490 € ou 49 €/mois" />
           </div>
           <Champ nom="offerName" idUnique="escalier-offerName" libelle="Nom de l'offre" required maxLength={120} erreur={etat.erreurs?.offerName} />
           <Champ nom="goal" idUnique="escalier-goal" libelle="Objectif de cette offre" maxLength={240}
@@ -395,7 +395,7 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Champ nom="email" idUnique="fiche-email" libelle="Email" type="email" maxLength={160} />
-              <Champ nom="phone" idUnique="fiche-phone" libelle="Telephone" maxLength={40} />
+              <Champ nom="phone" idUnique="fiche-phone" libelle="Téléphone" maxLength={40} />
             </div>
             <ZoneTexte nom="notes" idUnique="fiche-notes" libelle="Notes de suivi" maxLength={1000} />
             <BoutonSoumettre>Enregistrer la fiche</BoutonSoumettre>
@@ -409,7 +409,7 @@ export function SectionClients({ fiches, offres }: { fiches: FicheVue[]; offres:
               <Liste nom="crmClientId" idUnique="achat-crmClientId" libelle="Client" required
                      options={fiches.map((f) => ({ valeur: f.id, libelle: f.companyName }))} />
               <Liste nom="offerId" idUnique="achat-offerId" libelle="Offre"
-                     options={[{ valeur: '', libelle: '— non rattachee —' },
+                     options={[{ valeur: '', libelle: '— non rattachée —' },
                                ...offres.map((o) => ({ valeur: o.id, libelle: o.name }))]} />
               <div className="grid grid-cols-2 gap-3">
                 <Champ nom="amount" idUnique="achat-amount" libelle="Montant HT (€)" inputMode="decimal" required

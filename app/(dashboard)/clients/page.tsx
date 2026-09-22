@@ -123,7 +123,7 @@ export default async function PortefeuillePage({
                 : 'bg-surface text-ink-soft border-subtle hover:bg-surface-muted'
             }`}
           >
-            {confidentiel ? 'Mode Confidentialite actif' : 'Activer le mode Confidentialite'}
+            {confidentiel ? 'Mode Confidentialité actif' : 'Activer le mode Confidentialité'}
           </button>
         </form>
       </div>

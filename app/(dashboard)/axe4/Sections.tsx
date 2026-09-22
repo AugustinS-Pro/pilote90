@@ -16,7 +16,7 @@ import {
 // --- Listes de valeurs, reprises de la version Notion ----------------------
 
 export const TYPES_CONTENU = [
-  { valeur: 'EDUCATION', libelle: 'Education' },
+  { valeur: 'EDUCATION', libelle: 'Éducation' },
   { valeur: 'CONNEXION', libelle: 'Connexion' },
   { valeur: 'PREUVE', libelle: 'Preuve' },
   { valeur: 'CONVERSION', libelle: 'Conversion' },
@@ -28,7 +28,7 @@ export const FORMATS_CONTENU = [
   { valeur: 'CARROUSEL', libelle: 'Carrousel' },
   { valeur: 'REEL', libelle: 'Réel' },
   { valeur: 'STORY', libelle: 'Story' },
-  { valeur: 'VIDEO', libelle: 'Video' },
+  { valeur: 'VIDEO', libelle: 'Vidéo' },
   { valeur: 'EMAIL', libelle: 'Email' },
   { valeur: 'PODCAST', libelle: 'Podcast' },
   { valeur: 'WEBINAIRE', libelle: 'Webinaire' },
@@ -51,7 +51,7 @@ export const ETAPES = [
   { valeur: 'DECOUVERTE', libelle: 'Découverte', teinte: 'border-firm', fond: 'bg-surface-muted' },
   { valeur: 'QUALIFICATION', libelle: 'Qualification', teinte: 'border-accent', fond: 'bg-accent-soft' },
   { valeur: 'PROPOSITION', libelle: 'Proposition', teinte: 'border-warning', fond: 'bg-warning-soft/60' },
-  { valeur: 'SIGNE', libelle: 'Signe', teinte: 'border-positive', fond: 'bg-positive-soft/60' },
+  { valeur: 'SIGNE', libelle: 'Signé', teinte: 'border-positive', fond: 'bg-positive-soft/60' },
 ] as const
 
 const libelleDe = (liste: { valeur: string; libelle: string }[], v: string) =>
@@ -355,7 +355,7 @@ export function SectionCalendrier({
             />
             <Liste
               nom="weekNumber" libelle="Semaine"
-              options={[{ valeur: '', libelle: '— sans creneau —' },
+              options={[{ valeur: '', libelle: '— sans créneau —' },
                         ...[1, 2, 3, 4].map((n) => ({ valeur: String(n), libelle: `Semaine ${n}` }))]}
             />
             <Liste nom="status" libelle="Statut" options={STATUTS_CONTENU} defaultValue="IDEE" />
@@ -423,7 +423,7 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
                         <select
                           name="stage" defaultValue={p.stage}
                           onChange={(e) => e.currentTarget.form?.requestSubmit()}
-                          aria-label={`Etape de ${p.companyName}`}
+                          aria-label={`Étape de ${p.companyName}`}
                           className="w-full text-[11px] px-1.5 py-1 rounded border border-subtle bg-surface
                                      focus:outline-none focus:border-accent"
                         >
@@ -457,7 +457,7 @@ export function SectionPipeline({ prospects }: { prospects: ProspectVue[] }) {
             <Champ nom="contactName" libelle="Contact" maxLength={80} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Champ nom="estimated" libelle="Montant estime HT (€)" inputMode="decimal" required
+            <Champ nom="estimated" libelle="Montant estimé HT (€)" inputMode="decimal" required
                    erreur={etat.erreurs?.estimated} />
             <Champ nom="source" libelle="Source" maxLength={60} placeholder="LinkedIn, recommandation..." />
             <Liste nom="stage" libelle="Étape" options={ETAPES.map((e) => ({ valeur: e.valeur, libelle: e.libelle }))}

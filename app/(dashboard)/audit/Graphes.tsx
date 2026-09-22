@@ -154,7 +154,7 @@ export function GraphePrevisionnel({
       </div>
 
       <p className="text-xs text-ghost mt-3 leading-relaxed">
-        Le previsionnel fait varier deux parametres : le rythme d&apos;encaissement et
+        Le prévisionnel fait varier deux paramètres : le rythme d&apos;encaissement et
         l&apos;evolution des charges. Il ne donne pas une prevision unique et faussement
         precise, mais une fourchette de trajectoires possibles.
       </p>

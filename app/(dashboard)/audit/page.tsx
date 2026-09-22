@@ -89,7 +89,7 @@ export default async function AuditPage() {
             className="text-xs font-semibold px-3.5 py-2 rounded-lg border border-subtle
                        bg-surface text-ink-soft hover:bg-surface-muted transition-colors whitespace-nowrap"
           >
-            Donnees brutes (CSV)
+            Données brutes (CSV)
           </a>
         </div>
       </div>

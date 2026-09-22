@@ -30,7 +30,7 @@ export async function GET() {
   const lignes: string[] = []
 
   lignes.push(echapper(`Pilote90, export comptable, ${client.companyName}`))
-  lignes.push(echapper(`Genere le ${new Date().toLocaleDateString('fr-FR')}`))
+  lignes.push(echapper(`Généré le ${new Date().toLocaleDateString('fr-FR')}`))
   lignes.push('')
 
   lignes.push(['Date', 'Type', 'Libellé', 'Catégorie', 'Montant HT (euros)'].map(echapper).join(';'))

@@ -62,7 +62,7 @@ export function SectionStructure({ structure }: { structure: StructureVue | null
     { libelle: 'Outil de facturation', valeur: structure?.invoicingTool },
     { libelle: 'Suivi comptable', valeur: structure?.accountingTool },
     { libelle: 'Assurance professionnelle', valeur: structure?.proInsurance ? 'Oui' : 'Non' },
-    { libelle: 'Regime de TVA', valeur: structure?.vatRegime },
+    { libelle: 'Régime de TVA', valeur: structure?.vatRegime },
     { libelle: 'SIRET', valeur: structure?.siret },
     { libelle: 'SIREN', valeur: structure?.siren },
   ]
@@ -88,7 +88,7 @@ export function SectionStructure({ structure }: { structure: StructureVue | null
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Champ nom="legalStatus" libelle="Statut juridique" maxLength={60}
                    defaultValue={structure?.legalStatus ?? ''} placeholder="Micro-entreprise, SASU..." />
-            <Champ nom="vatRegime" libelle="Regime de TVA" maxLength={60}
+            <Champ nom="vatRegime" libelle="Régime de TVA" maxLength={60}
                    defaultValue={structure?.vatRegime ?? ''} placeholder="Franchise en base" />
             <Champ nom="invoicingTool" libelle="Outil de facturation" maxLength={60}
                    defaultValue={structure?.invoicingTool ?? ''} />
@@ -162,7 +162,7 @@ export function SectionTaux({ taux }: { taux: TauxVue }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Champ nom="socialContributionPct" libelle="Cotisations (%)" inputMode="decimal"
                    defaultValue={String(taux.socialContributionPct)} />
-            <Champ nom="incomeTaxPct" libelle="Impot (%)" inputMode="decimal"
+            <Champ nom="incomeTaxPct" libelle="Impôt (%)" inputMode="decimal"
                    defaultValue={String(taux.incomeTaxPct)} />
             <Champ nom="trainingPct" libelle="Formation (%)" inputMode="decimal"
                    defaultValue={String(taux.trainingPct)} />
@@ -235,10 +235,10 @@ export function SectionObjectifRevenu({
 
       <PanneauAjout intitule="Ajouter un objectif" etat={etat}>
         <form action={action} className="space-y-3">
-          <Champ nom="offerName" libelle="Offre concernee" required maxLength={120}
+          <Champ nom="offerName" libelle="Offre concernée" required maxLength={120}
                  erreur={etat.erreurs?.offerName} />
           <div className="grid grid-cols-2 gap-3">
-            <Champ nom="netTarget" libelle="Revenu net vise par mois (€)" inputMode="decimal" required
+            <Champ nom="netTarget" libelle="Revenu net visé par mois (€)" inputMode="decimal" required
                    erreur={etat.erreurs?.netTarget} />
             <Champ nom="offerPrice" libelle="Prix de l'offre (€)" inputMode="decimal" required
                    erreur={etat.erreurs?.offerPrice} />
@@ -320,7 +320,7 @@ export function SectionEcheances({ echeances }: { echeances: EcheanceVue[] }) {
 
       <PanneauAjout intitule="Ajouter une échéance" etat={etat}>
         <form action={action} className="space-y-3">
-          <Champ nom="label" libelle="Intitule" required maxLength={120}
+          <Champ nom="label" libelle="Intitulé" required maxLength={120}
                  placeholder="Declaration URSSAF trimestrielle" erreur={etat.erreurs?.label} />
           <div className="grid grid-cols-2 gap-3">
             <Champ nom="dueDate" libelle="Échéance" type="date" defaultValue={aujourdhui} required />

@@ -92,7 +92,7 @@ export function NouveauClient() {
             <Champ
               nom="email"
               type="email"
-              libelle="Adresse electronique"
+              libelle="Adresse électronique"
               placeholder="claire@atelier-durand.fr"
               erreur={etat.erreurs?.email}
               required

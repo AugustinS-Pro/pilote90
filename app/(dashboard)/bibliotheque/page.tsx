@@ -66,7 +66,7 @@ export default async function BibliothequePage({
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-        <h1 className="text-2xl font-extrabold text-ink">Bibliotheque strategique</h1>
+        <h1 className="text-2xl font-extrabold text-ink">Bibliothèque stratégique</h1>
         <p className="text-muted text-sm mt-1">
           Guides de demarrage, rituels et modeles de cycle partages par votre accompagnant
         </p>

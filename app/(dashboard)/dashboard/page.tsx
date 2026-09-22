@@ -52,8 +52,8 @@ export default async function DashboardPage() {
   const contenusAFaire = client.contentIdeas.filter((c) => c.status !== 'PUBLIE').length
 
   const axes = [
-    { href: '/axe1', icone: '🧭', titre: 'Vision CEO', valeur: `${client.strategyEntries.filter((e) => e.synthesis).length} / 4`, detail: 'piliers renseignes' },
-    { href: '/axe2', icone: '💶', titre: 'Chiffres & Admin', valeur: euros(indicateurs.resultatNet), detail: 'resultat net du mois' },
+    { href: '/axe1', icone: '🧭', titre: 'Vision CEO', valeur: `${client.strategyEntries.filter((e) => e.synthesis).length} / 4`, detail: 'piliers renseignés' },
+    { href: '/axe2', icone: '💶', titre: 'Chiffres & Admin', valeur: euros(indicateurs.resultatNet), detail: 'résultat net du mois' },
     { href: '/axe3', icone: '🎁', titre: 'Offres & Clients', valeur: String(client.offers.length), detail: 'offres actives' },
     { href: '/axe4', icone: '📣', titre: 'Com & Ventes', valeur: String(prospectsActifs), detail: `prospects · ${contenusAFaire} contenus a faire` },
   ]
@@ -188,7 +188,7 @@ export default async function DashboardPage() {
       <div className="flex items-center gap-2">
         <Etiquette texte="Audit & Prévisionnel" ton="info" />
         <Link href="/audit" className="text-sm text-muted hover:text-ink-soft">
-          Voir le detail financier, le previsionnel et l&apos;audit automatique →
+          Voir le détail financier, le prévisionnel et l&apos;audit automatique →
         </Link>
       </div>
     </div>
