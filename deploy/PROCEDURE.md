@@ -210,7 +210,7 @@ crontab -e
 |---|---|---|
 | 1 | `https://votre-domaine` | L'écran de connexion, cadenas fermé |
 | 2 | `http://votre-domaine` | Redirection automatique vers HTTPS |
-| 3 | Connexion, puis parcours des onze pages | Aucune erreur |
+| 3 | Connexion, puis parcours des treize pages de l'espace connecte | Aucune erreur |
 | 4 | Saisie d'une transaction | Propagation au tableau de bord |
 | 5 | Export CSV | Le fichier se télécharge |
 | 6 | `docker compose logs app` | Aucune erreur récurrente |
