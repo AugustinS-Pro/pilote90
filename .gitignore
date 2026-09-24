@@ -46,7 +46,3 @@ next-env.d.ts
 /app/generated/prisma
 test-results/
 playwright-report/
-
-# Fichiers du modele create-next-app, non utilises
-AGENTS.md
-CLAUDE.md
