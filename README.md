@@ -117,7 +117,9 @@ Les fonctions de calcul sont isolées dans `lib/finance.ts` et `lib/charges.ts`,
 
 ## État du projet
 
-Le cœur applicatif est en place : les cinq axes, le module Audit et son rapport PDF, l'espace consultant, les habilitations par formule et les pages système. Les tests unitaires tournent en intégration continue ; les parcours de bout en bout se lancent en local. Restent en chantier la mise en production sur serveur dédié (configuration prête dans `Dockerfile`, `docker-compose.yml` et `deploy/`), l'automatisation des imports comptables et l'audit d'accessibilité.
+L'application est **en production** depuis le 23 septembre 2026 : conteneur Docker derrière Nginx, TLS Let's Encrypt renouvelé automatiquement, supervision toutes les dix minutes et sauvegarde quotidienne restaurée et vérifiée. La configuration est dans `Dockerfile`, `docker-compose.yml` et `deploy/`.
+
+Le cœur applicatif est complet : les cinq axes, le module Audit et son rapport PDF, l'espace consultant, les habilitations par formule et les pages système. Les tests unitaires et la vérification du typage tournent en intégration continue à chaque envoi ; les parcours de bout en bout se lancent en local. Restent en chantier l'automatisation des imports comptables et l'audit d'accessibilité.
 
 ## Licence
 
