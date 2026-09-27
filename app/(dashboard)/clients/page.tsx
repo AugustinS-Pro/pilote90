@@ -7,6 +7,7 @@ import {
   Carte, Vide, Etiquette, Recherche,
 } from '@/components/ui'
 import { correspond } from '@/lib/recherche'
+import { signauxDuPortefeuille, dossiersConcernes } from '@/lib/portefeuille'
 import { euros } from '@/lib/format'
 import { calculerIndicateurs, calculerPrevisionnel, auditerFinances } from '@/lib/finance'
 import { estConfidentiel, basculerConfidentialite, masquer } from '@/lib/confidentialite'
@@ -77,6 +78,7 @@ export default async function PortefeuillePage({
       resultatNet: indicateurs.resultatNet,
       progression: indicateurs.progressionObjectif,
       alerte: alertes[0]?.titre ?? null,
+      constats,
       // La fraicheur se lit sur la date de SAISIE, pas sur la date de
       // l'operation : on peut saisir aujourd'hui une facture du mois dernier.
       fraicheur: evaluerFraicheur(c.transactions),
@@ -107,6 +109,12 @@ export default async function PortefeuillePage({
   const affichees = recherche
     ? triees.filter((f) => correspond([f.nom, f.contact, f.secteur, f.objectif], recherche))
     : triees
+
+  // Les signaux portent sur le portefeuille entier, pas sur le resultat
+  // d'une recherche : ce qui demande une action ne disparait pas parce
+  // qu'on a tape trois lettres dans un champ.
+  const signaux = signauxDuPortefeuille(fiches)
+  const signauxMontres = signaux.slice(0, 10)
 
   const caTotal = fiches.reduce((s, f) => s + f.caDuMois, 0)
   const enAlerte = fiches.filter((f) => f.alerte).length
@@ -167,6 +175,45 @@ export default async function PortefeuillePage({
       </div>
 
       {!voirArchives && peut(utilisateur, 'COMPTES_ADMINISTRER') && <NouveauClient />}
+
+      {signaux.length > 0 && (
+        <Carte
+          titre="Ce qui demande une action"
+          sousTitre={`${signaux.length} signal${signaux.length > 1 ? 'aux' : ''} sur ${dossiersConcernes(signaux)} dossier${dossiersConcernes(signaux) > 1 ? 's' : ''}, du plus grave au moins grave`}
+        >
+          <div className="space-y-2">
+            {signauxMontres.map((signal, i) => (
+              <Link
+                key={`${signal.clientId}-${i}`}
+                href={`/clients/${signal.clientId}`}
+                className="block rounded-xl border border-subtle px-4 py-3 hover:border-accent
+                           hover:bg-surface-muted transition-colors"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-wrap min-w-0">
+                    <Etiquette
+                      texte={signal.niveau === 'ALERTE' ? 'Alerte' : 'À surveiller'}
+                      ton={signal.niveau === 'ALERTE' ? 'alerte' : 'attente'}
+                    />
+                    <p className="text-sm font-semibold text-ink-soft">{signal.client}</p>
+                    <p className="text-sm text-muted">{signal.titre}</p>
+                  </div>
+                  <p className="text-sm font-bold text-ink-soft">{signal.valeur}</p>
+                </div>
+                <p className="text-[11px] text-ghost mt-1">{signal.regle}</p>
+              </Link>
+            ))}
+          </div>
+
+          {signaux.length > signauxMontres.length && (
+            <p className="text-xs text-ghost mt-3">
+              Et {signaux.length - signauxMontres.length} autre
+              {signaux.length - signauxMontres.length > 1 ? 's' : ''}, visible
+              {signaux.length - signauxMontres.length > 1 ? 's' : ''} sur les fiches.
+            </p>
+          )}
+        </Carte>
+      )}
 
       <Carte
         titre={voirArchives ? 'Accompagnements terminés' : 'Les entreprises accompagnées'}
