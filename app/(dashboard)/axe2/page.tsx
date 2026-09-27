@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/session'
 import { peut, pageAccueil } from '@/lib/habilitations'
 import { redirect } from 'next/navigation'
 import { FormulairesTransaction } from './FormulairesTransaction'
+import { ImportCsv } from './ImportCsv'
 import { LigneTransaction } from './LigneTransaction'
 import { Recherche } from '@/components/ui'
 import { correspond } from '@/lib/recherche'
@@ -208,7 +209,10 @@ export default async function Axe2Page({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Saisie : formulaires branches en base (Server Actions + Zod) */}
-        <FormulairesTransaction />
+        <div>
+          <FormulairesTransaction />
+          <ImportCsv />
+        </div>
 
         {/* Liste des transactions récentes */}
         <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">

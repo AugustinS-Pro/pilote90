@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentClientAutorise } from '@/lib/session'
 import type { Acces } from '@/lib/habilitations'
 import { transactionInput, eurosVersCentimes } from '@/lib/validation'
+import { lireTransactionsCsv } from '@/lib/import-transactions'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -375,4 +376,63 @@ export async function modifierTransaction(
   revalidatePath('/historique')
 
   return { ok: true, message: 'Transaction modifiée.' }
+}
+
+/** Taille au-dela de laquelle on refuse sans lire : un CSV d'ecritures est petit. */
+const TAILLE_MAX_IMPORT = 2 * 1024 * 1024
+
+/**
+ * Importe des transactions depuis un fichier CSV au format de l'export.
+ *
+ * Le fichier n'est pas conserve : il est lu, ecrit en base, puis oublie.
+ * Les lignes illisibles sont comptees et rapportees, les autres passent.
+ */
+export async function importerTransactions(
+  _precedent: EtatAction,
+  formData: FormData,
+): Promise<EtatAction> {
+  const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
+  if (!client) return { ok: false, message: 'Session expirée ou compte non client.' }
+
+  const fichier = formData.get('fichier')
+  if (!(fichier instanceof File) || fichier.size === 0) {
+    return { ok: false, message: 'Choisissez un fichier CSV.' }
+  }
+  if (fichier.size > TAILLE_MAX_IMPORT) {
+    return { ok: false, message: 'Fichier trop volumineux, 2 Mo au maximum.' }
+  }
+
+  const lecture = lireTransactionsCsv(await fichier.text())
+
+  if (lecture.enteteIntrouvable) {
+    return {
+      ok: false,
+      message:
+        'Entête introuvable. Le fichier doit porter les colonnes Date, Type, Libellé, Catégorie, Montant — celles de l’export.',
+    }
+  }
+  if (lecture.transactions.length === 0) {
+    return { ok: false, message: 'Aucune ligne exploitable dans ce fichier.' }
+  }
+
+  await prisma.transaction.createMany({
+    data: lecture.transactions.map((t) => ({ ...t, clientId: client.id })),
+  })
+
+  revalidatePath('/axe2')
+  revalidatePath('/audit')
+  revalidatePath('/dashboard')
+
+  const importees = lecture.transactions.length
+  const refusees = lecture.refusees.length
+  return {
+    ok: true,
+    message:
+      refusees === 0
+        ? `${importees} écriture${importees > 1 ? 's' : ''} importée${importees > 1 ? 's' : ''}.`
+        : `${importees} écriture${importees > 1 ? 's' : ''} importée${importees > 1 ? 's' : ''}, ${refusees} ligne${refusees > 1 ? 's' : ''} ignorée${refusees > 1 ? 's' : ''} : ${lecture.refusees
+            .slice(0, 3)
+            .map((r) => `ligne ${r.ligne}, ${r.raison.toLowerCase()}`)
+            .join(' ; ')}${refusees > 3 ? '…' : ''}`,
+  }
 }
