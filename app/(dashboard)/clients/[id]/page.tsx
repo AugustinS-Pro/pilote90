@@ -47,7 +47,7 @@ export default async function FicheClientPage({ params }: { params: Promise<{ id
   const historique = serieDouzeMois(client.transactions)
   const previsionnel = calculerPrevisionnel(client.transactions)
   const constats = auditerFinances(indicateurs, previsionnel, client.transactions.length)
-  const situation = messageDeSituation(constats)
+  const situation = messageDeSituation(constats, indicateurs)
 
   const nom = masquer(client.companyName, confidentiel)
   const fraicheur = evaluerFraicheur(client.transactions)

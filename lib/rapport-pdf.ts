@@ -614,7 +614,7 @@ export async function construireRapportComptable(
   const historique = serieDouzeMois(transactions, aujourdhui)
   const previsionnel = calculerPrevisionnel(transactions, aujourdhui)
   const constats = auditerFinances(indicateurs, previsionnel, transactions.length)
-  const situation = messageDeSituation(constats)
+  const situation = messageDeSituation(constats, indicateurs)
 
   const debutPeriode = new Date(aujourdhui.getFullYear(), aujourdhui.getMonth() - 11, 1)
   const surLaPeriode = transactions

@@ -186,9 +186,52 @@ describe('auditerFinances', () => {
   })
 })
 
+/** Indicateurs neutres : seul le champ teste est surcharge par chaque cas. */
+const INDICATEURS_NEUTRES = {
+  tresorerie: 0,
+  caDuMois: 0,
+  chargesDuMois: 0,
+  resultatNet: 0,
+  ratioCharges: 0,
+  progressionObjectif: 0,
+}
+
 describe('messageDeSituation', () => {
-  it('annonce une tresorerie saine en l absence de signal', () => {
-    expect(messageDeSituation([]).ton).toBe('SAIN')
+  it('ne qualifie rien quand les indicateurs ne sont pas fournis', () => {
+    const message = messageDeSituation([])
+    expect(message.ton).toBe('SAIN')
+    expect(message.texte).not.toContain('saine')
+  })
+
+  // E08 : l'etiquette qualifie un sens de variation, jamais un etat de sante.
+  it('annonce une tresorerie en hausse quand le mois est positif', () => {
+    const indicateurs = { ...INDICATEURS_NEUTRES, resultatNet: 120_000 }
+    expect(messageDeSituation([], indicateurs).texte).toContain('en hausse')
+  })
+
+  it('annonce une tresorerie en baisse quand le mois est negatif', () => {
+    const indicateurs = { ...INDICATEURS_NEUTRES, resultatNet: -45_000 }
+    expect(messageDeSituation([], indicateurs).texte).toContain('en baisse')
+  })
+
+  it('annonce une tresorerie stable quand le mois est a zero', () => {
+    const indicateurs = { ...INDICATEURS_NEUTRES, resultatNet: 0 }
+    expect(messageDeSituation([], indicateurs).texte).toContain('stable')
+  })
+
+  it('ne prononce jamais le mot saine', () => {
+    for (const net of [-1, 0, 1]) {
+      const indicateurs = { ...INDICATEURS_NEUTRES, resultatNet: net }
+      expect(messageDeSituation([], indicateurs).texte).not.toContain('sain')
+    }
+  })
+
+  it('un constat grave prime sur le sens de variation', () => {
+    const constats = [{ niveau: 'ALERTE' as const, titre: 'a', valeur: '1', regle: 'r' }]
+    const indicateurs = { ...INDICATEURS_NEUTRES, resultatNet: 500_000 }
+    const message = messageDeSituation(constats, indicateurs)
+    expect(message.ton).toBe('ALERTE')
+    expect(message.texte).not.toContain('en hausse')
   })
 
   it('retient le constat le plus grave', () => {

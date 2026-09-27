@@ -34,7 +34,7 @@ export default async function AuditPage() {
   if (!client) {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
-        <h1 className="text-2xl font-extrabold text-ink mb-2">Audit &amp; Prévisionnel</h1>
+        <h1 className="text-2xl font-extrabold text-ink mb-2">Suivi d’activité</h1>
         <p className="text-sm text-muted">
           Cet espace est celui des entrepreneurs accompagnes. Depuis un compte administrateur,
           ouvrez l&apos;audit d&apos;un client depuis votre portefeuille.
@@ -50,7 +50,7 @@ export default async function AuditPage() {
   const historique = serieDouzeMois(transactions)
   const previsionnel = calculerPrevisionnel(transactions)
   const constats = auditerFinances(indicateurs, previsionnel, transactions.length)
-  const situation = messageDeSituation(constats)
+  const situation = messageDeSituation(constats, indicateurs)
 
   const bandeau =
     situation.ton === 'ALERTE'
@@ -71,7 +71,7 @@ export default async function AuditPage() {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-ink">Audit &amp; Prévisionnel</h1>
+          <h1 className="text-2xl font-extrabold text-ink">Suivi d’activité</h1>
           <p className="text-muted text-sm mt-1">
             {client.companyName} · Support des seances d&apos;accompagnement
           </p>

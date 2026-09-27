@@ -96,7 +96,7 @@ export default function MentionsLegalesPage() {
             et de portabilité de vos données.
           </p>
           <p>
-            L&apos;export CSV disponible depuis la page Audit &amp; Prévisionnel constitue une première
+            L&apos;export CSV disponible depuis la page Suivi d’activité constitue une première
             mise en œuvre du droit à la portabilité. Pour toute autre demande, adressez-vous à votre
             consultant. Vous pouvez également introduire une réclamation auprès de la CNIL.
           </p>

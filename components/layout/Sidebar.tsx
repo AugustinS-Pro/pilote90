@@ -20,7 +20,7 @@ const ENTREES: Entree[] = [
   { href: '/axe3', icone: '🎁', libelle: 'Offres & Clients', acces: 'AXE_OFFRES' },
   { href: '/axe4', icone: '📣', libelle: 'Com & Ventes', acces: 'AXE_COMMUNICATION' },
   { href: '/axe5', icone: '⚡', libelle: 'Pilotage 90j', acces: 'AXE_PILOTAGE' },
-  { href: '/audit', icone: '📊', libelle: 'Audit & Prévis.', acces: 'AUDIT_PERSONNEL' },
+  { href: '/audit', icone: '📊', libelle: 'Suivi d’activité', acces: 'AUDIT_PERSONNEL' },
   { href: '/clients', icone: '👥', libelle: 'Mon portefeuille', acces: 'PORTEFEUILLE_CONSULTER' },
   { href: '/historique', icone: '🗂', libelle: 'Historique', acces: 'PAGES_TRANSVERSES' },
   { href: '/decisions', icone: '🧠', libelle: 'Décisions', acces: 'PAGES_TRANSVERSES' },

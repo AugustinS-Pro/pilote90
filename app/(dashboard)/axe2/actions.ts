@@ -76,7 +76,10 @@ export async function creerTransaction(
 
   return {
     ok: true,
-    message: parsed.data.type === 'REVENUE' ? 'Revenu enregistré.' : 'Charge enregistrée.',
+    message:
+      parsed.data.type === 'REVENUE'
+        ? 'Revenu ajouté au tableau des revenus.'
+        : 'Charge ajoutée au tableau des charges.',
   }
 }
 

@@ -1,6 +1,6 @@
 import { euros } from '@/lib/format'
 /**
- * Calculs financiers du module Audit & Previsionnel.
+ * Calculs financiers du module Suivi d'activite.
  *
  * Regle du projet : rien de ce qui se calcule n'est stocke.
  * Chaque fonction porte sa formule en commentaire, et l'interface affiche
@@ -286,8 +286,34 @@ export function auditerFinances(
   return constats.sort((a, b) => ordre[a.niveau] - ordre[b.niveau])
 }
 
-/** Message de bandeau, deduit du constat le plus grave. */
-export function messageDeSituation(constats: ConstatAudit[]): {
+/**
+ * Sens de variation de la tresorerie sur le mois en cours.
+ *
+ * Le resultat du mois est la seule information dont on dispose pour dire si la
+ * tresorerie monte ou descend : positif, elle a augmente ; negatif, elle a
+ * diminue. Aucune notion de bonne ou mauvaise sante n'entre ici.
+ */
+export function sensDeVariation(indicateurs: Indicateurs): string {
+  if (indicateurs.resultatNet > 0) return 'en hausse ce mois-ci'
+  if (indicateurs.resultatNet < 0) return 'en baisse ce mois-ci'
+  return 'stable ce mois-ci'
+}
+
+/**
+ * Message de bandeau, deduit du constat le plus grave.
+ *
+ * En l'absence de signal, l'etiquette qualifie un SENS DE VARIATION et non un
+ * etat de sante. « Votre tresorerie est saine » affirmait un diagnostic que ce
+ * calcul ne permet pas de porter : un solde positif qui fond mois apres mois
+ * n'est pas sain. Demande d'Alexis Charlet, revue du 19 septembre (E08).
+ *
+ * Les indicateurs sont facultatifs pour ne pas casser les appels qui n'ont que
+ * les constats ; sans eux, le message ne qualifie rien.
+ */
+export function messageDeSituation(
+  constats: ConstatAudit[],
+  indicateurs?: Indicateurs,
+): {
   ton: NiveauAudit | 'SAIN'
   texte: string
 } {
@@ -297,5 +323,8 @@ export function messageDeSituation(constats: ConstatAudit[]): {
   if (constats.some((c) => c.niveau === 'ATTENTION')) {
     return { ton: 'ATTENTION', texte: 'Votre situation financière est à surveiller' }
   }
-  return { ton: 'SAIN', texte: 'Votre trésorerie est saine' }
+  if (!indicateurs) {
+    return { ton: 'SAIN', texte: 'Votre trésorerie ne présente aucun signal d’alerte' }
+  }
+  return { ton: 'SAIN', texte: `Votre trésorerie est ${sensDeVariation(indicateurs)}` }
 }

@@ -186,7 +186,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Etiquette texte="Audit & Prévisionnel" ton="info" />
+        <Etiquette texte="Suivi d’activité" ton="info" />
         <Link href="/audit" className="text-sm text-muted hover:text-ink-soft">
           Voir le détail financier, le prévisionnel et l&apos;audit automatique →
         </Link>
