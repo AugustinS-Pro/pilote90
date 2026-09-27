@@ -5,6 +5,7 @@ import {
   Carte, Vide, Etiquette, Champ, ZoneTexte, Liste, BoutonSoumettre, BoutonSuppression, TexteEditable, Retour, PanneauAjout, ETAT_INITIAL,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
+import { MAX_THEMATIQUES, depassement, placeDisponible } from '@/lib/invariants'
 import {
   creerProbleme, supprimerProbleme, modifierProbleme,
   creerThematique, supprimerThematique, modifierThematique,
@@ -181,6 +182,17 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
       titre="Mes grandes thématiques"
       sousTitre="Trois à cinq thématiques, pas davantage"
     >
+      {depassement(thematiques.length, MAX_THEMATIQUES) > 0 && (
+        <p
+          role="status"
+          className="mb-4 rounded-xl border border-warning-soft bg-warning-soft px-4 py-3
+                     text-xs leading-relaxed text-warning-ink"
+        >
+          {thematiques.length} thématiques ici alors que la règle en autorise cinq.
+          L’ajout reste fermé jusqu’à ce que le compte redescende à cinq.
+        </p>
+      )}
+
       {thematiques.length > 0 ? (
         <div className="space-y-2 mb-4">
           {thematiques.map((t) => (
@@ -220,7 +232,7 @@ export function SectionThematiques({ thematiques }: { thematiques: ThematiqueVue
         <Vide texte="Aucune thématique définie." />
       )}
 
-      {thematiques.length < 5 && (
+      {placeDisponible(thematiques.length, MAX_THEMATIQUES) && (
         <PanneauAjout intitule="Ajouter une thématique" etat={etat}>
           <form action={action} className="space-y-3">
             <Champ nom="label" libelle="Thématique principale" required maxLength={120}

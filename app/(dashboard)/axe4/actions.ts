@@ -9,6 +9,7 @@ import {
   eurosVersCentimes,
 } from '@/lib/validation'
 import type { ZodError } from 'zod'
+import { MAX_THEMATIQUES, placeDisponible } from '@/lib/invariants'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -106,7 +107,7 @@ export async function creerThematique(
 
   // Trois a cinq thematiques : au-dela, le message se dilue.
   const nombre = await prisma.contentTheme.count({ where: { clientId: client.id } })
-  if (nombre >= 5) {
+  if (!placeDisponible(nombre, MAX_THEMATIQUES)) {
     return { ok: false, message: 'Cinq thématiques au maximum : au-delà, le message se dilue.' }
   }
 
