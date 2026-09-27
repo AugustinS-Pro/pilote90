@@ -243,3 +243,88 @@ describe('messageDeSituation', () => {
     expect(messageDeSituation(constats).ton).toBe('ALERTE')
   })
 })
+
+/**
+ * E04 du cahier des charges v2 : verifier le chiffre d'affaires du mois affiche
+ * sur les fiches clients, et le couvrir par un test sur un jeu connu.
+ *
+ * Le CA du mois, c'est la somme des transactions REVENUE dont la date tombe
+ * dans le mois civil en cours. La comparaison porte sur le mois ET l'annee, et
+ * elle se fait dans le fuseau du serveur : les dates ci-dessous sont donc
+ * construites en heure locale, pour que le test dise la meme chose partout.
+ */
+describe('E04 - le CA du mois affiche sur la fiche client', () => {
+  const REF = new Date(2026, 8, 15, 12, 0, 0) // 15 septembre 2026, heure locale
+
+  const le = (annee: number, moisZeroBase: number, jourDuMois: number, heure = 12) =>
+    new Date(annee, moisZeroBase, jourDuMois, heure)
+
+  it('inclut le premier et le dernier jour du mois', () => {
+    const i = calculerIndicateurs(
+      [
+        { type: 'REVENUE', amountHt: 100_00, transactionDate: le(2026, 8, 1, 0) },
+        { type: 'REVENUE', amountHt: 200_00, transactionDate: le(2026, 8, 30, 23) },
+      ],
+      0,
+      REF,
+    )
+    expect(i.caDuMois).toBe(300_00)
+  })
+
+  it('exclut le premier jour du mois suivant', () => {
+    const i = calculerIndicateurs(
+      [{ type: 'REVENUE', amountHt: 500_00, transactionDate: le(2026, 9, 1, 0) }],
+      0,
+      REF,
+    )
+    expect(i.caDuMois).toBe(0)
+  })
+
+  it('exclut le meme mois d une autre annee', () => {
+    const i = calculerIndicateurs(
+      [
+        { type: 'REVENUE', amountHt: 700_00, transactionDate: le(2025, 8, 15) },
+        { type: 'REVENUE', amountHt: 300_00, transactionDate: le(2026, 8, 15) },
+      ],
+      0,
+      REF,
+    )
+    expect(i.caDuMois).toBe(300_00)
+  })
+
+  it('ne compte aucune charge dans le CA du mois', () => {
+    const i = calculerIndicateurs(
+      [
+        { type: 'REVENUE', amountHt: 400_00, transactionDate: le(2026, 8, 10) },
+        { type: 'EXPENSE', amountHt: 999_00, transactionDate: le(2026, 8, 10) },
+      ],
+      0,
+      REF,
+    )
+    expect(i.caDuMois).toBe(400_00)
+    expect(i.chargesDuMois).toBe(999_00)
+    expect(i.resultatNet).toBe(-599_00)
+  })
+
+  // Jeu connu, recalcule a la main : 1 250,00 + 480,50 + 69,50 = 1 800,00 euros
+  // de revenus, 320,00 + 130,00 = 450,00 de charges sur le mois.
+  it('confirme la valeur sur un jeu de donnees connu', () => {
+    const i = calculerIndicateurs(
+      [
+        { type: 'REVENUE', amountHt: 125_000, transactionDate: le(2026, 8, 3) },
+        { type: 'REVENUE', amountHt: 48_050, transactionDate: le(2026, 8, 11) },
+        { type: 'REVENUE', amountHt: 6_950, transactionDate: le(2026, 8, 28) },
+        { type: 'EXPENSE', amountHt: 32_000, transactionDate: le(2026, 8, 5) },
+        { type: 'EXPENSE', amountHt: 13_000, transactionDate: le(2026, 8, 20) },
+        { type: 'REVENUE', amountHt: 999_999, transactionDate: le(2026, 7, 31) },
+      ],
+      180_000,
+      REF,
+    )
+    expect(i.caDuMois).toBe(180_000)
+    expect(i.chargesDuMois).toBe(45_000)
+    expect(i.resultatNet).toBe(135_000)
+    expect(i.ratioCharges).toBe(25)
+    expect(i.progressionObjectif).toBe(100)
+  })
+})
