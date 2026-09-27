@@ -46,7 +46,12 @@ test('aucune ressource statique ne manque sur le portefeuille', async ({ page })
 
   await seConnecter(page, COMPTES.alexis)
   await page.goto('/clients')
-  await page.waitForLoadState('networkidle')
+
+  // Attendre un element de la page plutot que networkidle : l'attente reseau
+  // ne se termine jamais franchement et laisse le parcours tourner jusqu'au
+  // delai maximal quand une requete traine.
+  await expect(page.getByRole('heading', { name: /portefeuille/i })).toBeVisible()
+  await expect(page.locator('a[href^="/clients/"]').first()).toBeVisible()
 
   expect(manquantes, `Ressources manquantes :\n${manquantes.join('\n')}`).toEqual([])
 })
