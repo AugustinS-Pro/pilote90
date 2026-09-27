@@ -266,7 +266,7 @@ export default async function PortefeuillePage({
         </div>
 
         {affichees.length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-2" data-liste="portefeuille">
             {affichees.map((f) => (
               <Link
                 key={f.id}

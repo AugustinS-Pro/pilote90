@@ -29,7 +29,10 @@ test('deux consultants ne voient pas les memes entreprises', async ({ page }) =>
 test("un consultant ne peut pas ouvrir la fiche d'un client qui n'est pas le sien", async ({ page }) => {
   await seConnecter(page, COMPTES.alexis)
   await page.goto('/clients')
-  const lien = await page.locator('a[href^="/clients/"]').first().getAttribute('href')
+  const lien = await page
+    .locator('[data-liste="portefeuille"] a[href^="/clients/"]')
+    .first()
+    .getAttribute('href')
   expect(lien).toBeTruthy()
 
   await seDeconnecter(page)

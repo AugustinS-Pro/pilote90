@@ -17,7 +17,10 @@ test('cliquer sur une ligne du portefeuille ouvre la fiche du client', async ({ 
   await seConnecter(page, COMPTES.alexis)
   await page.goto('/clients')
 
-  const premiereFiche = page.locator('a[href^="/clients/"]').first()
+  // La liste, et pas le premier lien de la page : la carte des signaux pointe
+  // elle aussi vers des fiches, et elle s'affiche au-dessus.
+  const liste = page.locator('[data-liste="portefeuille"]')
+  const premiereFiche = liste.locator('a[href^="/clients/"]').first()
   await expect(premiereFiche).toBeVisible()
 
   // Le nom lu AVANT le clic sert de temoin : c'est lui qui doit apparaitre en
@@ -51,7 +54,9 @@ test('aucune ressource statique ne manque sur le portefeuille', async ({ page })
   // ne se termine jamais franchement et laisse le parcours tourner jusqu'au
   // delai maximal quand une requete traine.
   await expect(page.getByRole('heading', { name: /portefeuille/i })).toBeVisible()
-  await expect(page.locator('a[href^="/clients/"]').first()).toBeVisible()
+  await expect(
+    page.locator('[data-liste="portefeuille"] a[href^="/clients/"]').first(),
+  ).toBeVisible()
 
   expect(manquantes, `Ressources manquantes :\n${manquantes.join('\n')}`).toEqual([])
 })
