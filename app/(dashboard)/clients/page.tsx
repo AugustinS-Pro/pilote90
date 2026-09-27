@@ -4,8 +4,9 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 import { peut, pageAccueil } from '@/lib/habilitations'
 import {
-  Carte, Vide, Etiquette,
+  Carte, Vide, Etiquette, Recherche,
 } from '@/components/ui'
+import { correspond } from '@/lib/recherche'
 import { euros } from '@/lib/format'
 import { calculerIndicateurs, calculerPrevisionnel, auditerFinances } from '@/lib/finance'
 import { estConfidentiel, basculerConfidentialite, masquer } from '@/lib/confidentialite'
@@ -23,11 +24,12 @@ type CleTri = (typeof TRIS)[number]['cle']
 export default async function PortefeuillePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tri?: string; archives?: string }>
+  searchParams: Promise<{ tri?: string; archives?: string; q?: string }>
 }) {
   const parametres = await searchParams
   const tri: CleTri = TRIS.some((t) => t.cle === parametres.tri) ? (parametres.tri as CleTri) : 'urgence'
   const voirArchives = parametres.archives === '1'
+  const recherche = (parametres.q ?? '').trim()
 
   const utilisateur = await getCurrentUser()
   if (!utilisateur) redirect('/login')
@@ -98,6 +100,14 @@ export default async function PortefeuillePage({
     return a.nom.localeCompare(b.nom, 'fr')
   })
 
+  // La recherche porte sur ce qui identifie un dossier de memoire : le nom,
+  // la personne, le secteur, l'objectif du cycle. Les totaux du bandeau
+  // restent ceux du portefeuille entier : une recherche ne doit pas donner
+  // l'impression que le chiffre d'affaires a fondu.
+  const affichees = recherche
+    ? triees.filter((f) => correspond([f.nom, f.contact, f.secteur, f.objectif], recherche))
+    : triees
+
   const caTotal = fiches.reduce((s, f) => s + f.caDuMois, 0)
   const enAlerte = fiches.filter((f) => f.alerte).length
   const aRelancer = fiches.filter(
@@ -164,7 +174,11 @@ export default async function PortefeuillePage({
           <div className="flex flex-wrap items-center gap-1">
             {nombreArchives > 0 && (
               <Link
-                href={voirArchives ? '/clients' : '/clients?archives=1'}
+                href={
+                  voirArchives
+                    ? `/clients${recherche ? `?q=${encodeURIComponent(recherche)}` : ''}`
+                    : `/clients?archives=1${recherche ? `&q=${encodeURIComponent(recherche)}` : ''}`
+                }
                 className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors mr-2 ${
                   voirArchives
                     ? 'bg-inverse text-on-inverse border-inverse'
@@ -177,7 +191,9 @@ export default async function PortefeuillePage({
             {TRIS.map((t) => (
               <Link
                 key={t.cle}
-                href={`/clients?tri=${t.cle}`}
+                href={`/clients?tri=${t.cle}${voirArchives ? '&archives=1' : ''}${
+                  recherche ? `&q=${encodeURIComponent(recherche)}` : ''
+                }`}
                 aria-current={tri === t.cle ? 'true' : undefined}
                 className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${
                   tri === t.cle
@@ -191,9 +207,20 @@ export default async function PortefeuillePage({
           </div>
         }
       >
-        {triees.length > 0 ? (
+        <div className="mb-4">
+          <Recherche
+            action="/clients"
+            valeur={recherche}
+            placeholder="Rechercher une entreprise, un contact, un secteur..."
+          >
+            {tri !== 'urgence' && <input type="hidden" name="tri" value={tri} />}
+            {voirArchives && <input type="hidden" name="archives" value="1" />}
+          </Recherche>
+        </div>
+
+        {affichees.length > 0 ? (
           <div className="space-y-2">
-            {triees.map((f) => (
+            {affichees.map((f) => (
               <Link
                 key={f.id}
                 href={`/clients/${f.id}`}
@@ -244,7 +271,15 @@ export default async function PortefeuillePage({
             ))}
           </div>
         ) : (
-          <Vide texte={voirArchives ? 'Aucun accompagnement archivé.' : 'Aucune entreprise rattachée à votre compte.'} />
+          <Vide
+            texte={
+              recherche
+                ? `Aucune entreprise ne correspond à « ${recherche} ».`
+                : voirArchives
+                  ? 'Aucun accompagnement archivé.'
+                  : 'Aucune entreprise rattachée à votre compte.'
+            }
+          />
         )}
       </Carte>
     </div>
