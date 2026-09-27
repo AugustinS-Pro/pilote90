@@ -8,6 +8,7 @@ import {
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import { calculerIndicateurs } from '@/lib/finance'
+import { echeancesASignaler, TON_ECHEANCE } from '@/lib/echeances'
 
 export default async function DashboardPage() {
   const utilisateur = await getCurrentUser()
@@ -26,6 +27,7 @@ export default async function DashboardPage() {
       offers: { where: { status: 'ACTIF' } },
       prospects: true,
       contentIdeas: true,
+      deadlines: { where: { done: false }, orderBy: { dueDate: 'asc' } },
       tasks: { where: { done: false }, orderBy: { position: 'asc' }, take: 3, include: { objective: { select: { title: true } } } },
     },
   })
@@ -42,6 +44,7 @@ export default async function DashboardPage() {
   const cycle = client.cycles[0]
   const aujourdhui = new Date()
   const indicateurs = calculerIndicateurs(client.transactions, cycle?.caTargetMonthly ?? 0)
+  const echeances = echeancesASignaler(client.deadlines)
 
   const semaine = cycle
     ? Math.min(12, Math.max(1, Math.ceil((aujourdhui.getTime() - new Date(cycle.startDate).getTime()) / (7 * 86400000))))
@@ -170,6 +173,28 @@ export default async function DashboardPage() {
           )}
         </Carte>
       </div>
+
+      <Carte
+        titre="Ce qui arrive"
+        sousTitre="Vos échéances administratives des trente prochains jours"
+        action={<Link href="/axe2" className="text-xs font-semibold text-accent-ink hover:underline">Chiffres &amp; Admin</Link>}
+      >
+        {echeances.length > 0 ? (
+          <div className="space-y-2">
+            {echeances.map((e) => (
+              <div
+                key={e.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-subtle px-4 py-3"
+              >
+                <p className="text-sm font-medium text-ink-soft min-w-0">{e.label}</p>
+                <Etiquette texte={e.libelle} ton={TON_ECHEANCE[e.urgence]} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Vide texte="Aucune échéance dans les trente prochains jours." />
+        )}
+      </Carte>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
