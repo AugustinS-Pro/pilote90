@@ -6,6 +6,7 @@ import { getCurrentClientAutorise } from '@/lib/session'
 import type { Acces } from '@/lib/habilitations'
 import { prioriteInput, progressionInput, versPourcentage } from '@/lib/validation'
 import { progressionEstSaisissable, statutDeduit } from '@/lib/progression'
+import { actionsAProposer } from '@/lib/modeles-taches'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -142,4 +143,57 @@ export async function supprimerPriorite(formData: FormData): Promise<void> {
 
   await prisma.objective.deleteMany({ where: { id, cycleId: cycle.id } })
   rafraichir()
+}
+
+/**
+ * Cree les actions proposees pour une priorite.
+ *
+ * Le cahier des charges de janvier promettait cette generation ; elle manquait.
+ * Rien n'est devine a la place du dirigeant : l'intitule de la priorite
+ * designe un modele, et les actions creees se modifient et se suppriment
+ * comme les autres. Une page blanche ne se remplit jamais, une proposition
+ * qui ne convient pas se supprime en deux clics.
+ */
+export async function proposerActions(
+  _precedent: EtatAction,
+  formData: FormData,
+): Promise<EtatAction> {
+  const cycle = await cycleActifDuClient()
+  if (!cycle) return { ok: false, message: 'Session expirée.' }
+
+  const id = String(formData.get('id') ?? '')
+  if (!id) return { ok: false, message: 'Priorité introuvable.' }
+
+  // Cloisonnement : la priorite doit appartenir au cycle actif du client.
+  const priorite = await prisma.objective.findFirst({
+    where: { id, cycleId: cycle.id },
+    select: { id: true, title: true, tasks: { select: { label: true } } },
+  })
+  if (!priorite) return { ok: false, message: 'Priorité introuvable.' }
+
+  const actions = actionsAProposer(priorite.title, priorite.tasks.map((t) => t.label))
+  if (actions.length === 0) {
+    return { ok: true, message: 'Ces actions sont déjà dans votre cockpit.' }
+  }
+
+  const depart = await prisma.task.count({ where: { clientId: cycle.clientId, done: false } })
+
+  await prisma.task.createMany({
+    data: actions.map((action, i) => ({
+      clientId: cycle.clientId,
+      cycleId: cycle.id,
+      objectiveId: priorite.id,
+      label: action.label,
+      tag: action.tag,
+      position: depart + i,
+    })),
+  })
+
+  rafraichir()
+  revalidatePath('/axe5')
+
+  return {
+    ok: true,
+    message: `${actions.length} actions ajoutées au cockpit. La progression de cette priorité se calcule désormais à partir d’elles.`,
+  }
 }

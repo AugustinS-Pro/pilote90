@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import { useFormStatus } from 'react-dom'
-import { majPriorite, supprimerPriorite, type EtatAction } from './actions'
+import { majPriorite, proposerActions, supprimerPriorite, type EtatAction } from './actions'
 import { BoutonSuppression } from '@/components/ui'
 
 const ETAT_INITIAL: EtatAction = { ok: false }
@@ -21,6 +21,50 @@ const STATUTS: Record<string, { libelle: string; classe: string }> = {
   COMPLETED: { libelle: 'Terminé', classe: 'bg-positive-soft text-positive-ink' },
   LATE: { libelle: 'En retard', classe: 'bg-negative-soft text-negative-ink' },
   IN_PROGRESS: { libelle: 'En cours', classe: 'bg-warning-soft text-warning-ink' },
+}
+
+function BoutonProposer() {
+  const { pending } = useFormStatus()
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-subtle
+                 bg-surface text-muted hover:bg-surface-muted disabled:opacity-60
+                 transition-colors"
+    >
+      {pending ? 'Ajout...' : 'Proposer des actions'}
+    </button>
+  )
+}
+
+/**
+ * Proposition d'actions, offerte tant que la priorite n'en porte aucune.
+ *
+ * Passe la premiere action, la priorite a son cockpit et le bouton n'a plus
+ * lieu d'etre : c'est au dirigeant d'ecrire la suite, pas a un modele.
+ */
+function Proposition({ id }: { id: string }) {
+  const [etat, action] = useActionState(proposerActions, ETAT_INITIAL)
+
+  return (
+    <form action={action} className="mt-3 pt-3 border-t border-subtle">
+      <input type="hidden" name="id" value={id} />
+      <p className="text-[11px] text-ghost mb-2 leading-snug">
+        Aucune action rattachée. Partir d’une proposition est souvent plus facile
+        que partir d’une page blanche.
+      </p>
+      <BoutonProposer />
+      {etat.message && (
+        <p
+          role="status"
+          className={`text-[11px] mt-2 ${etat.ok ? 'text-positive-ink' : 'text-negative-ink'}`}
+        >
+          {etat.message}
+        </p>
+      )}
+    </form>
+  )
 }
 
 function BoutonMaj({ modifie }: { modifie: boolean }) {
@@ -129,6 +173,8 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
           <p className={`text-xs ${etat.ok ? 'text-positive-ink' : 'text-negative-ink'}`}>{etat.message}</p>
         )}
       </form>
+
+      {!deduite && <Proposition id={priorite.id} />}
     </div>
   )
 }
