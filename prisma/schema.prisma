@@ -75,6 +75,7 @@ model Client {
   chargeRate      ChargeRate?
   revenueGoals    RevenueGoal[]
   deadlines       AdminDeadline[]
+  coffre          CoffreEntree[]
   personas        Persona[]
   offers          Offer[]
   offerLevels     OfferLevel[]
@@ -552,6 +553,40 @@ model Resource {
 // -----------------------------------------------------------------------------
 
 /// Ce qui est vendu. Deux offres distinctes, servies par la meme application.
+/// Coffre strategique : la synthese d'un axe, une ligne par question cle.
+///
+/// C'est le mecanisme qui fait de cinq pages independantes un cockpit : chaque
+/// axe y depose ses reponses essentielles, et le tableau de bord comme les
+/// cycles y lisent la meme source au lieu de la recalculer chacun de leur cote.
+///
+/// La cle est stable et technique, le libelle est ce que l'utilisateur lit :
+/// reformuler un intitule ne doit pas perdre la valeur deja saisie.
+model CoffreEntree {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  axe       AxeCoffre
+  cle       String
+  libelle   String
+  valeur    String?
+  rang      Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([clientId, axe, cle])
+  @@index([clientId, axe])
+}
+
+/// Axe auquel se rattache une ligne du coffre strategique.
+/// Reprend le decoupage de la methode, celui des cinq pages d'axes.
+enum AxeCoffre {
+  VISION
+  CHIFFRES
+  OFFRES
+  COMMUNICATION
+  PILOTAGE
+}
+
 enum Formule {
   /// Les cinq axes, en autonomie. L'entrepreneur pilote seul.
   AUTONOMIE
