@@ -6,9 +6,8 @@ import {
 } from '@/lib/progression'
 
 /**
- * La progression d'une priorite avait deux auteurs : un curseur et un recalcul.
- * Ces tests fixent la regle qui tranche - les taches gagnent des qu'il y en a -
- * pour que le defaut ne puisse pas revenir par une autre porte.
+ * La progression avait deux auteurs. Ces tests fixent la regle qui tranche :
+ * les taches gagnent des qu'il y en a.
  */
 
 const fait = { done: true }

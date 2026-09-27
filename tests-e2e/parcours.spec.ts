@@ -33,9 +33,8 @@ test('une transaction saisie remonte au tableau de bord', async ({ page }) => {
   await formulaire.getByLabel(/montant hors taxes/i).fill(String(montant))
   await formulaire.getByRole('button', { name: /enregistrer/i }).click()
 
-  // E09 : le message d'ajout nomme la DESTINATION de la saisie. L'assertion
-  // porte donc sur ce que l'exigence garantit - le tableau ou la ligne a
-  // atterri - et non sur un participe passe qui peut etre reformule demain.
+  // Le message nomme la destination de la saisie : c'est ce que l'assertion
+  // verifie, plutot qu'un participe passe reformulable.
   await expect(page.getByRole('status')).toContainText(/tableau des revenus/i)
   await expect(page.getByText(libelle)).toBeVisible()
 

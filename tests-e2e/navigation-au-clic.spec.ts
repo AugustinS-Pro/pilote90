@@ -3,22 +3,14 @@ import { COMPTES } from './comptes'
 import { seConnecter } from './connexion'
 
 /**
- * E02 du cahier des charges v2 : un parcours qui CLIQUE.
+ * Un parcours qui CLIQUE.
  *
- * Pourquoi ce fichier existe. Le 19 septembre 2026, pendant la revue produit,
- * cliquer sur un client n'ouvrait pas sa fiche et le changement de theme ne
- * s'appliquait qu'au rechargement. Un seul defaut expliquait les deux : le
- * projet est configure en sortie autonome pour l'image Docker, et dans ce mode
- * le serveur ne sert pas les fichiers statiques. Les pages s'affichaient - elles
- * sont rendues cote serveur - mais les scripts du navigateur manquaient.
+ * Le 19 septembre, cliquer sur un client n'ouvrait pas sa fiche : en sortie
+ * autonome mal demarree, les fichiers statiques ne sont pas servis et
+ * l'hydratation echoue. Les parcours existants ne l'ont pas vu parce qu'ils
+ * naviguent par adresse au lieu de cliquer.
  *
- * Aucun test ne l'a vu, et la raison est structurelle : les parcours existants
- * lisent l'adresse d'une fiche puis y naviguent directement. Ils ne cliquent
- * jamais. Un test qui ne fait pas ce que fait l'utilisateur ne teste pas
- * l'application.
- *
- * Ces trois tests ferment la porte par deux chemins : le geste lui-meme, et la
- * cause racine - une ressource statique qui manque.
+ * Deux chemins ici : le geste, et la cause racine.
  */
 
 test('cliquer sur une ligne du portefeuille ouvre la fiche du client', async ({ page }) => {

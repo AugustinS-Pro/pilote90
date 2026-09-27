@@ -33,11 +33,8 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 
   webServer: {
-    // E01 : le projet est configure en sortie autonome pour l'image Docker, et
-    // dans ce mode `next start` ne sert pas les fichiers statiques - c'est le
-    // defaut rencontre en revue le 19 septembre. Les parcours doivent exercer
-    // l'application comme elle est deployee, sinon ils valident un mode que
-    // personne n'utilise en production.
+    // Sortie autonome : `next start` ne sert pas les fichiers statiques dans
+    // ce mode. Les parcours doivent exercer l'application comme elle tourne.
     command: 'npm run build && npm run start:standalone',
     url: 'http://127.0.0.1:3000/login',
     reuseExistingServer: !process.env.CI,

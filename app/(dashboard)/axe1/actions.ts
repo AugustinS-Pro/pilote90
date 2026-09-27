@@ -98,11 +98,8 @@ export async function majPriorite(
   const pct = versPourcentage(parsed.data.progressPct)
   if (pct === null) return { ok: false, message: 'Progression invalide.' }
 
-  // Une priorite qui porte des taches n'a pas de progression saisissable : sa
-  // valeur se deduit de ses taches (lib/progression.ts). Sans cette garde, ce
-  // curseur et le recalcul de l'axe 5 ecrivaient tous deux le meme champ, sans
-  // arbitrage : la derniere ecriture gagnait. Le refus est ici, cote serveur,
-  // parce que c'est lui qui fait foi ; le composant ne fait que s'y conformer.
+  // Une priorite qui porte des taches n'a pas de progression saisissable.
+  // Le refus est ici, cote serveur : le composant ne fait que s'y conformer.
   const nombreDeTaches = await prisma.task.count({
     where: { objectiveId: parsed.data.id, clientId: cycle.clientId },
   })

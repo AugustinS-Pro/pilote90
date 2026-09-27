@@ -2,12 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { eurosVersCentimes, versPourcentage } from '@/lib/validation'
 
 /**
- * eurosVersCentimes est la fonction la plus risquee du projet : elle se trouve
- * sur le chemin de CHAQUE montant saisi - transactions, objectifs de revenu,
- * prix d'une offre, valeur estimee d'un prospect - et une erreur d'echelle y
- * vaut un facteur cent sur tous les chiffres affiches. Elle n'avait aucun test.
+ * eurosVersCentimes est sur le chemin de chaque montant saisi, et une erreur
+ * d'echelle y vaut un facteur cent. Elle n'avait aucun test.
  *
- * Convention du projet : tous les montants sont stockes en CENTIMES entiers.
+ * Rappel de convention : tous les montants sont en CENTIMES.
  */
 
 describe('eurosVersCentimes', () => {

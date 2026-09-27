@@ -286,13 +286,7 @@ export function auditerFinances(
   return constats.sort((a, b) => ordre[a.niveau] - ordre[b.niveau])
 }
 
-/**
- * Sens de variation de la tresorerie sur le mois en cours.
- *
- * Le resultat du mois est la seule information dont on dispose pour dire si la
- * tresorerie monte ou descend : positif, elle a augmente ; negatif, elle a
- * diminue. Aucune notion de bonne ou mauvaise sante n'entre ici.
- */
+/** Sens de variation de la tresorerie, lu sur le resultat du mois. */
 export function sensDeVariation(indicateurs: Indicateurs): string {
   if (indicateurs.resultatNet > 0) return 'en hausse ce mois-ci'
   if (indicateurs.resultatNet < 0) return 'en baisse ce mois-ci'
@@ -302,13 +296,9 @@ export function sensDeVariation(indicateurs: Indicateurs): string {
 /**
  * Message de bandeau, deduit du constat le plus grave.
  *
- * En l'absence de signal, l'etiquette qualifie un SENS DE VARIATION et non un
- * etat de sante. « Votre tresorerie est saine » affirmait un diagnostic que ce
- * calcul ne permet pas de porter : un solde positif qui fond mois apres mois
- * n'est pas sain. Demande d'Alexis Charlet, revue du 19 septembre (E08).
- *
- * Les indicateurs sont facultatifs pour ne pas casser les appels qui n'ont que
- * les constats ; sans eux, le message ne qualifie rien.
+ * Sans signal, l'etiquette dit un sens de variation et non un etat de sante :
+ * un solde positif qui fond mois apres mois n'est pas sain. Les indicateurs
+ * sont facultatifs, et sans eux le message ne qualifie rien.
  */
 export function messageDeSituation(
   constats: ConstatAudit[],
