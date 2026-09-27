@@ -8,6 +8,7 @@ import {
 } from '@/components/ui'
 import { euros } from '@/lib/format'
 import { PILIERS } from '@/lib/piliers'
+import { MAX_PRIORITES_PAR_CYCLE, depassement, placeDisponible } from '@/lib/invariants'
 import { BlocPilier, type ReponsesPilier } from './BlocPilier'
 import { CartePriorite } from './CartePriorite'
 import { FormulairePriorite } from './FormulairePriorite'
@@ -31,7 +32,9 @@ export default async function Axe1Page() {
               include: {
                 objectives: {
                   orderBy: { rank: 'asc' },
-                  include: { _count: { select: { tasks: true } } },
+                  include: {
+                    tasks: { orderBy: { position: 'asc' }, select: { id: true, label: true, done: true } },
+                  },
                 },
               },
             },
@@ -81,7 +84,7 @@ export default async function Axe1Page() {
 
       <div className="bg-gradient-to-br from-accent to-accent-alt rounded-3xl p-8 text-on-accent">
         <p className="text-xs uppercase tracking-wider text-on-inverse font-semibold mb-2">
-          Vision strategique
+          Vision stratégique
         </p>
         <h1 className="text-2xl md:text-3xl font-extrabold leading-snug mb-1 max-w-3xl">
           {vision ?? cycle?.mainObjective ?? 'Définissez le cap de votre activité'}
@@ -100,7 +103,7 @@ export default async function Axe1Page() {
             <p className="text-xs text-on-inverse mt-1">Progression moyenne</p>
           </div>
           <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
-            <p className="text-2xl font-extrabold">{objectives.length} / 3</p>
+            <p className="text-2xl font-extrabold">{objectives.length} / {MAX_PRIORITES_PAR_CYCLE}</p>
             <p className="text-xs text-on-inverse mt-1">Priorités définies</p>
           </div>
           <div className="bg-surface/10 rounded-2xl p-4 backdrop-blur-sm">
@@ -124,6 +127,18 @@ export default async function Axe1Page() {
         titre="Les priorités de ce cycle"
         sousTitre="Trois priorités au maximum par cycle"
       >
+        {depassement(objectives.length, MAX_PRIORITES_PAR_CYCLE) > 0 && (
+          <p
+            role="status"
+            className="mb-4 rounded-xl border border-warning-soft bg-warning-soft px-4 py-3
+                       text-xs leading-relaxed text-warning-ink"
+          >
+            Ce cycle porte {objectives.length} priorités alors que la règle en autorise trois.
+            L’ajout est fermé tant que le compte n’est pas redescendu à trois : supprimez celles
+            qui font doublon, ou clôturez-en avant d’en ouvrir une autre.
+          </p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {objectives.map((obj, i) => (
             <CartePriorite
@@ -135,11 +150,13 @@ export default async function Axe1Page() {
                 description: obj.description,
                 progressPct: obj.progressPct,
                 status: obj.status,
-                nombreDeTaches: obj._count.tasks,
+                taches: obj.tasks,
               }}
             />
           ))}
-          {objectives.length < 3 && <FormulairePriorite cycleActif={Boolean(cycle)} />}
+          {placeDisponible(objectives.length, MAX_PRIORITES_PAR_CYCLE) && (
+            <FormulairePriorite cycleActif={Boolean(cycle)} />
+          )}
         </div>
       </Carte>
 

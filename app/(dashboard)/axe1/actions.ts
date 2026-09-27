@@ -7,6 +7,8 @@ import type { Acces } from '@/lib/habilitations'
 import { prioriteInput, progressionInput, versPourcentage } from '@/lib/validation'
 import { progressionEstSaisissable, statutDeduit } from '@/lib/progression'
 import { actionsAProposer } from '@/lib/modeles-taches'
+import { rangSuivant } from '@/lib/rang-taches'
+import { MAX_PRIORITES_PAR_CYCLE, placeDisponible } from '@/lib/invariants'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -60,16 +62,20 @@ export async function creerPriorite(
   // Trois priorites par cycle : regle commune au dossier professionnel,
   // au cahier des charges et a la version Notion (Priorite 1 / 2 / 3).
   const nombre = await prisma.objective.count({ where: { cycleId: cycle.id } })
-  if (nombre >= 3) {
+  if (!placeDisponible(nombre, MAX_PRIORITES_PAR_CYCLE)) {
     return {
       ok: false,
       message: 'Trois priorités au maximum par cycle. Terminez-en une ou supprimez-la avant d’en ajouter une autre.',
     }
   }
 
+  // Le rang est ce qui fait « Priorite 1 / 2 / 3 » : cinq pages trient dessus.
+  // Sans valeur explicite, toutes les priorites creees prenaient le rang par
+  // defaut et l'ordre affiche ne voulait plus rien dire.
   await prisma.objective.create({
     data: {
       cycleId: cycle.id,
+      rank: nombre + 1,
       title: parsed.data.title,
       description: parsed.data.description || null,
       progressPct: 0,
@@ -176,7 +182,7 @@ export async function proposerActions(
     return { ok: true, message: 'Ces actions sont déjà dans votre cockpit.' }
   }
 
-  const depart = await prisma.task.count({ where: { clientId: cycle.clientId, done: false } })
+  const depart = await rangSuivant(cycle.clientId)
 
   await prisma.task.createMany({
     data: actions.map((action, i) => ({

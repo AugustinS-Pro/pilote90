@@ -40,7 +40,7 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
     return (
       <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5 text-center">
         <p className="text-sm text-ghost">
-          Aucun cycle actif. Creez un cycle de 90 jours pour definir vos priorites.
+          Aucun cycle actif. Créez un cycle de 90 jours pour définir vos priorités.
         </p>
       </div>
     )
@@ -54,7 +54,7 @@ export function FormulairePriorite({ cycleActif }: { cycleActif: boolean }) {
                    shadow-sm p-5 text-sm text-muted hover:border-accent
                    hover:text-accent-ink transition-colors"
       >
-        + Ajouter une priorite
+        + Ajouter une priorité
       </button>
     )
   }

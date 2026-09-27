@@ -14,6 +14,7 @@ import {
   eurosVersCentimes,
 } from '@/lib/validation'
 import type { ZodError } from 'zod'
+import { rangSuivant } from '@/lib/rang-taches'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -288,11 +289,13 @@ export async function creerTache(
     select: { id: true },
   })
 
-  // La priorite est verifiee : elle doit appartenir a un cycle du client.
+  // La priorite est verifiee : elle doit appartenir au cycle actif du client.
+  // Un cycle clos ne recoit plus d'actions, sinon sa progression bougerait
+  // apres sa cloture et son bilan ne voudrait plus rien dire.
   let objectiveId: string | null = null
-  if (parsed.data.objectiveId) {
+  if (parsed.data.objectiveId && cycle) {
     const priorite = await prisma.objective.findFirst({
-      where: { id: parsed.data.objectiveId, cycle: { clientId: client.id } },
+      where: { id: parsed.data.objectiveId, cycleId: cycle.id },
       select: { id: true },
     })
     objectiveId = priorite?.id ?? null
@@ -304,7 +307,7 @@ export async function creerTache(
     if (!Number.isNaN(d.getTime())) echeance = d
   }
 
-  const position = await prisma.task.count({ where: { clientId: client.id, done: false } })
+  const position = await rangSuivant(client.id)
 
   await prisma.task.create({
     data: {

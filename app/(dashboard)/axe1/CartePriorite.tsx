@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { majPriorite, proposerActions, supprimerPriorite, type EtatAction } from './actions'
@@ -7,14 +8,20 @@ import { BoutonSuppression } from '@/components/ui'
 
 const ETAT_INITIAL: EtatAction = { ok: false }
 
+export type TacheRattachee = {
+  id: string
+  label: string
+  done: boolean
+}
+
 export type Priorite = {
   id: string
   title: string
   description: string | null
   progressPct: number
   status: string
-  /** Nombre de taches rattachees. Au-dela de zero, la progression est deduite. */
-  nombreDeTaches: number
+  /** Taches rattachees. Des qu'il y en a une, la progression est deduite. */
+  taches: readonly TacheRattachee[]
 }
 
 const STATUTS: Record<string, { libelle: string; classe: string }> = {
@@ -67,6 +74,46 @@ function Proposition({ id }: { id: string }) {
   )
 }
 
+/**
+ * Les actions rattachees a la priorite, cochables depuis le cockpit.
+ *
+ * La carte affichait la progression deduite sans montrer ce dont elle est
+ * deduite : le dirigeant lisait « calculee a partir de 4 taches » sans savoir
+ * lesquelles ni ou les trouver. On les nomme, et le lien va la ou on les coche.
+ */
+function Actions({ taches }: { taches: readonly TacheRattachee[] }) {
+  const faites = taches.filter((t) => t.done).length
+
+  return (
+    <div className="mt-3 pt-3 border-t border-subtle">
+      <div className="flex items-baseline justify-between mb-2">
+        <p className="text-[11px] font-semibold text-muted uppercase tracking-wide">
+          Actions rattachées
+        </p>
+        <span className="text-[11px] text-ghost">{faites} / {taches.length}</span>
+      </div>
+      <ul className="space-y-1">
+        {taches.map((tache) => (
+          <li key={tache.id} className="flex items-start gap-2 text-[11px] leading-snug">
+            <span aria-hidden className={tache.done ? 'text-positive-ink' : 'text-ghost'}>
+              {tache.done ? '✓' : '•'}
+            </span>
+            <span className={tache.done ? 'text-ghost line-through' : 'text-ink-soft'}>
+              {tache.label}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <Link
+        href="/axe5"
+        className="inline-block mt-2 text-[11px] font-semibold text-accent-ink hover:underline"
+      >
+        Les cocher dans Pilote 90 jours
+      </Link>
+    </div>
+  )
+}
+
 function BoutonMaj({ modifie }: { modifie: boolean }) {
   const { pending } = useFormStatus()
   return (
@@ -89,7 +136,7 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
 
   // Une priorite qui porte des taches n'a pas de progression saisissable : le
   // serveur refuse la valeur, l'interface ne la propose donc pas.
-  const deduite = priorite.nombreDeTaches > 0
+  const deduite = priorite.taches.length > 0
   const modifie = (!deduite && pct !== priorite.progressPct) || statut !== priorite.status
   const badge = STATUTS[statut] ?? STATUTS.IN_PROGRESS
 
@@ -105,7 +152,7 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
           <BoutonSuppression
             action={supprimerPriorite}
             id={priorite.id}
-            intitule={`Supprimer la priorite ${priorite.title}`}
+            intitule={`Supprimer la priorité ${priorite.title}`}
           />
         </div>
       </div>
@@ -131,7 +178,7 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
 
         {deduite ? (
           <p className="text-[11px] text-ghost leading-snug">
-            Calculée à partir des {priorite.nombreDeTaches} tâches rattachées. Cochez-les dans
+            Calculée à partir des {priorite.taches.length} actions rattachées. Cochez-les dans
             Pilote 90 jours, la progression suit.
           </p>
         ) : (
@@ -174,7 +221,7 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
         )}
       </form>
 
-      {!deduite && <Proposition id={priorite.id} />}
+      {deduite ? <Actions taches={priorite.taches} /> : <Proposition id={priorite.id} />}
     </div>
   )
 }
