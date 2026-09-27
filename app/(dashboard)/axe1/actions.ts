@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentClientAutorise } from '@/lib/session'
 import type { Acces } from '@/lib/habilitations'
 import { prioriteInput, progressionInput, versPourcentage } from '@/lib/validation'
+import { progressionEstSaisissable, statutDeduit } from '@/lib/progression'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -97,12 +98,34 @@ export async function majPriorite(
   const pct = versPourcentage(parsed.data.progressPct)
   if (pct === null) return { ok: false, message: 'Progression invalide.' }
 
+  // Une priorite qui porte des taches n'a pas de progression saisissable : sa
+  // valeur se deduit de ses taches (lib/progression.ts). Sans cette garde, ce
+  // curseur et le recalcul de l'axe 5 ecrivaient tous deux le meme champ, sans
+  // arbitrage : la derniere ecriture gagnait. Le refus est ici, cote serveur,
+  // parce que c'est lui qui fait foi ; le composant ne fait que s'y conformer.
+  const nombreDeTaches = await prisma.task.count({
+    where: { objectiveId: parsed.data.id, clientId: cycle.clientId },
+  })
+
+  if (!progressionEstSaisissable(nombreDeTaches)) {
+    const seulStatut = await prisma.objective.updateMany({
+      where: { id: parsed.data.id, cycleId: cycle.id },
+      data: { status: parsed.data.status },
+    })
+    if (seulStatut.count === 0) return { ok: false, message: 'Priorité introuvable.' }
+    rafraichir()
+    return {
+      ok: true,
+      message: 'Statut enregistré. La progression est calculée à partir des tâches rattachées.',
+    }
+  }
+
   // Cloisonnement : le cycleId du client fait partie du filtre.
   const resultat = await prisma.objective.updateMany({
     where: { id: parsed.data.id, cycleId: cycle.id },
     data: {
       progressPct: pct,
-      status: pct === 100 ? 'COMPLETED' : parsed.data.status,
+      status: pct === 100 ? statutDeduit(pct) : parsed.data.status,
     },
   })
 

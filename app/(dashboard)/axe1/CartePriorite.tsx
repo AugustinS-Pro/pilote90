@@ -13,6 +13,8 @@ export type Priorite = {
   description: string | null
   progressPct: number
   status: string
+  /** Nombre de taches rattachees. Au-dela de zero, la progression est deduite. */
+  nombreDeTaches: number
 }
 
 const STATUTS: Record<string, { libelle: string; classe: string }> = {
@@ -41,7 +43,10 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
   const [pct, setPct] = useState(priorite.progressPct)
   const [statut, setStatut] = useState(priorite.status)
 
-  const modifie = pct !== priorite.progressPct || statut !== priorite.status
+  // Une priorite qui porte des taches n'a pas de progression saisissable : le
+  // serveur refuse la valeur, l'interface ne la propose donc pas.
+  const deduite = priorite.nombreDeTaches > 0
+  const modifie = (!deduite && pct !== priorite.progressPct) || statut !== priorite.status
   const badge = STATUTS[statut] ?? STATUTS.IN_PROGRESS
 
   return (
@@ -72,20 +77,31 @@ export function CartePriorite({ priorite, icone }: { priorite: Priorite; icone: 
         <input type="hidden" name="status" value={statut} />
 
         <div className="flex justify-between text-xs">
-          <label htmlFor={`pct-${priorite.id}`} className="text-ghost">Progression</label>
+          {deduite ? (
+            <span className="text-ghost">Progression calculée</span>
+          ) : (
+            <label htmlFor={`pct-${priorite.id}`} className="text-ghost">Progression</label>
+          )}
           <span className="font-semibold text-ink-soft">{pct}%</span>
         </div>
 
-        <input
-          id={`pct-${priorite.id}`}
-          type="range"
-          min={0}
-          max={100}
-          step={5}
-          value={pct}
-          onChange={(e) => setPct(Number(e.target.value))}
-          className="w-full accent-accent"
-        />
+        {deduite ? (
+          <p className="text-[11px] text-ghost leading-snug">
+            Calculée à partir des {priorite.nombreDeTaches} tâches rattachées. Cochez-les dans
+            Pilote 90 jours, la progression suit.
+          </p>
+        ) : (
+          <input
+            id={`pct-${priorite.id}`}
+            type="range"
+            min={0}
+            max={100}
+            step={5}
+            value={pct}
+            onChange={(e) => setPct(Number(e.target.value))}
+            className="w-full accent-accent"
+          />
+        )}
 
         <div className="h-1.5 bg-surface-muted rounded-full">
           <div

@@ -27,7 +27,12 @@ export default async function Axe1Page() {
             cycles: {
               where: { status: 'ACTIVE' },
               take: 1,
-              include: { objectives: { orderBy: { rank: 'asc' } } },
+              include: {
+                objectives: {
+                  orderBy: { rank: 'asc' },
+                  include: { _count: { select: { tasks: true } } },
+                },
+              },
             },
             ideas: { where: { outcome: 'PARKED' }, orderBy: { createdAt: 'desc' } },
             decisions: { orderBy: { decidedAt: 'desc' }, take: 3 },
@@ -129,6 +134,7 @@ export default async function Axe1Page() {
                 description: obj.description,
                 progressPct: obj.progressPct,
                 status: obj.status,
+                nombreDeTaches: obj._count.tasks,
               }}
             />
           ))}

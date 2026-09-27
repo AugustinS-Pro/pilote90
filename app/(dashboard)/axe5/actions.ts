@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { progressionDeduite, statutDeduit } from '@/lib/progression'
 import { getCurrentClientAutorise } from '@/lib/session'
 import type { Acces } from '@/lib/habilitations'
 import {
@@ -341,12 +342,11 @@ export async function basculerTache(formData: FormData): Promise<void> {
       where: { objectiveId: tache.objectiveId, clientId: client.id },
       select: { done: true },
     })
-    if (taches.length > 0) {
-      const faites = taches.filter((t) => t.done).length
-      const pct = Math.round((faites / taches.length) * 100)
+    const pct = progressionDeduite(taches)
+    if (pct !== null) {
       await prisma.objective.updateMany({
         where: { id: tache.objectiveId, cycle: { clientId: client.id } },
-        data: { progressPct: pct, status: pct === 100 ? 'COMPLETED' : 'IN_PROGRESS' },
+        data: { progressPct: pct, status: statutDeduit(pct) },
       })
     }
   }
