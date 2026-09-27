@@ -8,6 +8,7 @@ import {
   Carte, Vide, Etiquette,
 } from '@/components/ui'
 import { euros } from '@/lib/format'
+import { comparerCycles, libelleEcart, TON_ECART } from '@/lib/cycles'
 import { ArbitrageIdee, SuppressionIdee } from '@/components/FormulairesSysteme'
 
 const LIBELLE_ISSUE: Record<string, { texte: string; ton: 'succes' | 'attente' | 'neutre' | 'info' }> = {
@@ -128,7 +129,7 @@ export default async function HistoriquePage({
       </Carte>
 
       {cycles.length > 0 ? (
-        cycles.map((cycle) => {
+        cycles.map((cycle, rang) => {
           const debut = new Date(cycle.startDate)
           const fin = new Date(cycle.endDate)
           const caRealise = client.transactions
@@ -141,6 +142,10 @@ export default async function HistoriquePage({
           const objectif90 = cycle.caTargetMonthly * 3
           const atteinte = objectif90 > 0 ? Math.round((caRealise / objectif90) * 100) : 0
           const revues = cycle.weeks.filter((w) => w.review)
+
+          // Les cycles sont tries du plus recent au plus ancien : le suivant
+          // dans la liste est le precedent dans le temps.
+          const comparaison = comparerCycles(cycle, cycles[rang + 1])
 
           return (
             <Carte
@@ -165,6 +170,28 @@ export default async function HistoriquePage({
                   <p className="text-xs text-ghost mt-0.5">Revues hebdomadaires tenues</p>
                 </div>
               </div>
+
+              {comparaison && (
+                <div className="mb-5 rounded-xl border border-subtle px-4 py-3">
+                  <p className="text-xs font-bold text-muted mb-2">
+                    Par rapport au cycle {comparaison.numeroPrecedent}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Etiquette
+                      texte={`Avancement moyen ${libelleEcart(comparaison.progression, 'points')}`}
+                      ton={TON_ECART[comparaison.progression.sens]}
+                    />
+                    <Etiquette
+                      texte={`Priorités terminées ${libelleEcart(comparaison.prioritesTerminees, 'priorites')}`}
+                      ton={TON_ECART[comparaison.prioritesTerminees.sens]}
+                    />
+                    <Etiquette
+                      texte={`Revues tenues ${libelleEcart(comparaison.assiduite, 'points')}`}
+                      ton={TON_ECART[comparaison.assiduite.sens]}
+                    />
+                  </div>
+                </div>
+              )}
 
               {cycle.objectives.length > 0 && (
                 <div className="mb-5">
