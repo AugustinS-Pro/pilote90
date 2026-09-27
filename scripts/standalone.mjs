@@ -11,7 +11,7 @@
  * Next attend que `public/` et `.next/static` soient recopies a cote du
  * serveur autonome. Ce script le fait, puis lance le serveur.
  */
-import { cpSync, existsSync } from 'node:fs'
+import { cpSync, existsSync, readFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { join } from 'node:path'
 
@@ -20,6 +20,42 @@ const autonome = join(racine, '.next', 'standalone')
 
 if (!existsSync(autonome)) {
   console.error("Serveur autonome introuvable. Lancez d'abord : npm run build")
+  process.exit(1)
+}
+
+/**
+ * Le serveur autonome ne lit aucun fichier d'environnement.
+ *
+ * `next start` charge .env.local tout seul ; le serveur produit dans
+ * .next/standalone, non. En production ce n'est pas un probleme, les variables
+ * viennent de l'environnement du conteneur. En local, elles manquent, et
+ * NextAuth s'arrete sur NO_SECRET a chaque requete.
+ *
+ * Ce qui est deja dans l'environnement l'emporte : on ne fait que combler.
+ */
+function chargerEnv(fichier) {
+  const chemin = join(racine, fichier)
+  if (!existsSync(chemin)) return
+  for (const ligne of readFileSync(chemin, 'utf8').split(/\r?\n/)) {
+    const m = ligne.match(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/)
+    if (!m) continue
+    const [, cle, brut] = m
+    if (process.env[cle] !== undefined) continue
+    process.env[cle] = brut.trim().replace(/^(['"])(.*)\1$/s, '$2')
+  }
+}
+
+chargerEnv('.env.local')
+chargerEnv('.env')
+
+// Mieux vaut un message clair maintenant que cent quatre-vingts secondes de
+// traces identiques parce que le serveur refuse chaque requete.
+const manquantes = ['DATABASE_URL', 'NEXTAUTH_SECRET'].filter((c) => !process.env[c])
+if (manquantes.length > 0) {
+  console.error(
+    `Variables absentes : ${manquantes.join(', ')}.\n` +
+      'Renseignez-les dans .env.local, ou dans l\'environnement avant de lancer.',
+  )
   process.exit(1)
 }
 
