@@ -80,13 +80,13 @@ async function main() {
     where: { id: 'cycle-marie-1' },
     update: {
       startDate: debut, endDate: fin, status: 'ACTIVE',
-      mainObjective: 'Atteindre 5 000 € de CA mensuel recurrent',
+      mainObjective: 'Atteindre 5 000 € de CA mensuel récurrent',
       caTargetMonthly: 500000, name: 'Structurer et vendre',
     },
     create: {
       id: 'cycle-marie-1', clientId: marie.id, cycleNumber: 1,
       name: 'Structurer et vendre',
-      mainObjective: 'Atteindre 5 000 € de CA mensuel recurrent',
+      mainObjective: 'Atteindre 5 000 € de CA mensuel récurrent',
       startDate: debut, endDate: fin, caTargetMonthly: 500000, status: 'ACTIVE',
     },
   })
@@ -122,8 +122,8 @@ async function main() {
   }
 
   const revues = [
-    { semaine: 4, works: 'Les appels de decouverte se remplissent tout seuls', blocks: 'Trop de temps sur la mise en forme des propositions', adjust: 'Creer un modele de proposition reutilisable' },
-    { semaine: 5, works: 'Le modele de proposition fait gagner une heure par dossier', blocks: 'Deux relances oubliees', adjust: 'Bloquer 20 minutes de relance le vendredi matin' },
+    { semaine: 4, works: 'Les appels de découverte se remplissent tout seuls', blocks: 'Trop de temps sur la mise en forme des propositions', adjust: 'Créer un modèle de proposition réutilisable' },
+    { semaine: 5, works: 'Le modèle de proposition fait gagner une heure par dossier', blocks: 'Deux relances oubliees', adjust: 'Bloquer 20 minutes de relance le vendredi matin' },
   ]
   for (const r of revues) {
     const weekId = idSemaine.get(r.semaine)
@@ -137,8 +137,8 @@ async function main() {
 
   const plans = [
     { monthNumber: 1, theme: 'Clarifier l offre', caTargetHt: 300000, notes: 'Retravailler la promesse et le prix' },
-    { monthNumber: 2, theme: 'Remplir le pipeline', caTargetHt: 500000, notes: 'Vingt conversations de decouverte' },
-    { monthNumber: 3, theme: 'Installer le recurrent', caTargetHt: 700000, notes: 'Convertir trois accompagnements en mensuel' },
+    { monthNumber: 2, theme: 'Remplir le pipeline', caTargetHt: 500000, notes: 'Vingt conversations de découverte' },
+    { monthNumber: 3, theme: 'Installer le récurrent', caTargetHt: 700000, notes: 'Convertir trois accompagnements en mensuel' },
   ]
   for (const p of plans) {
     await prisma.monthlyPlan.upsert({
@@ -162,7 +162,7 @@ async function main() {
 
   const taches = [
     { id: 'task-1', label: 'Appeler Sophie pour la reconduction', tag: 'VENTE' as const, objectiveId: 'obj-marie-1', done: true, jours: 0 },
-    { id: 'task-2', label: 'Publier le retour d experience de Nathalie', tag: 'COMMUNICATION' as const, objectiveId: 'obj-marie-2', done: false, jours: 0 },
+    { id: 'task-2', label: 'Publier le retour d’expérience de Nathalie', tag: 'COMMUNICATION' as const, objectiveId: 'obj-marie-2', done: false, jours: 0 },
     { id: 'task-3', label: 'Finaliser la page de vente de l offre socle', tag: 'OFFRE' as const, objectiveId: 'obj-marie-3', done: false, jours: 0 },
     { id: 'task-4', label: 'Rapprocher les charges URSSAF du trimestre', tag: 'FINANCE' as const, objectiveId: null, done: false, jours: 1 },
     { id: 'task-5', label: 'Relancer les deux propositions en attente', tag: 'VENTE' as const, objectiveId: 'obj-marie-2', done: false, jours: 2 },
@@ -178,10 +178,10 @@ async function main() {
   // === Axe 1 : les quatre piliers ==========================================
 
   const piliers = [
-    { cle: 'VISION' as const, synthese: "Un cabinet de conseil a taille humaine, qui accompagne quinze dirigeantes par an sans que je travaille le week-end." },
-    { cle: 'MISSION' as const, synthese: "J'aide les dirigeantes de TPE a piloter leur activite par cycles de 90 jours, pour obtenir de la clarte et du temps, grace a un accompagnement structure." },
+    { cle: 'VISION' as const, synthese: "Un cabinet de conseil à taille humaine, qui accompagne quinze dirigeantes par an sans que je travaille le week-end." },
+    { cle: 'MISSION' as const, synthese: "J’aide les dirigeantes de TPE à piloter leur activité par cycles de 90 jours, pour obtenir de la clarté et du temps, grâce à un accompagnement structuré." },
     { cle: 'GRAND_POURQUOI' as const, synthese: "Parce que j'ai vu trop de bonnes entrepreneuses s'epuiser faute d'un cap, pas faute de talent." },
-    { cle: 'OBJECTIF_ANNUEL' as const, synthese: "60 000 € de chiffre d'affaires, dont la moitie en recurrent, avec douze clientes accompagnees." },
+    { cle: 'OBJECTIF_ANNUEL' as const, synthese: "60 000 € de chiffre d’affaires, dont la moitié en récurrent, avec douze clientes accompagnées." },
   ]
   for (const p of piliers) {
     await prisma.strategyEntry.upsert({
@@ -194,7 +194,7 @@ async function main() {
   const idees = [
     { id: 'idea-1', content: 'Un atelier collectif trimestriel pour les anciennes clientes' },
     { id: 'idea-2', content: 'Une newsletter mensuelle avec un indicateur commente' },
-    { id: 'idea-3', content: 'Tester un tarif d entree a 490 € pour la premiere seance' },
+    { id: 'idea-3', content: 'Tester un tarif d’entrée à 490 € pour la première séance' },
   ]
   for (const i of idees) {
     await prisma.idea.upsert({
@@ -204,9 +204,9 @@ async function main() {
   }
 
   const decisions = [
-    { id: 'dec-1', title: "Arreter l'offre a la carte pour ne garder que l'accompagnement 90 jours", category: 'OFFRE' as const, context: 'Trop de temps de vente pour un panier faible. On concentre sur ce qui transforme.', jours: 28 },
-    { id: 'dec-2', title: 'Passer la prospection sur LinkedIn uniquement', category: 'COMMUNICATION' as const, context: 'Les trois dernieres clientes viennent toutes de la meme source.', jours: 14 },
-    { id: 'dec-3', title: 'Provisionner 25 % de chaque encaissement pour les charges', category: 'FINANCE' as const, context: 'Deux echeances URSSAF ont ete difficiles a absorber.', jours: 5 },
+    { id: 'dec-1', title: "Arrêter l’offre à la carte pour ne garder que l’accompagnement 90 jours", category: 'OFFRE' as const, context: 'Trop de temps de vente pour un panier faible. On concentre sur ce qui transforme.', jours: 28 },
+    { id: 'dec-2', title: 'Passer la prospection sur LinkedIn uniquement', category: 'COMMUNICATION' as const, context: 'Les trois dernières clientes viennent toutes de la même source.', jours: 14 },
+    { id: 'dec-3', title: 'Provisionner 25 % de chaque encaissement pour les charges', category: 'FINANCE' as const, context: 'Deux échéances URSSAF ont été difficiles à absorber.', jours: 5 },
   ]
   for (const d of decisions) {
     const { id, jours, ...donnees } = d
@@ -299,20 +299,20 @@ async function main() {
     where: { id: 'persona-1' }, update: {},
     create: {
       id: 'persona-1', clientId: marie.id, name: 'Camille, dirigeante de TPE',
-      dailyLife: 'Trois ans d activite, deux salaries, elle fait tout elle-meme et court apres le temps.',
+      dailyLife: 'Trois ans d’activité, deux salariés, elle fait tout elle-même et court après le temps.',
       frustrations: 'Elle ne sait jamais si le mois sera bon avant la fin du mois.',
       desires: 'Une vision claire de ses chiffres et un plan qui tient sur trois mois.',
-      objections: "Elle a deja essaye des outils qu'elle n'a jamais remplis.",
-      transformation: 'De la navigation a vue a un pilotage par cycles de 90 jours.',
-      magicSentence: "J'aide les dirigeantes de TPE a reprendre la main sur leur activite en 90 jours.",
+      objections: "Elle a déjà essayé des outils qu’elle n’a jamais remplis.",
+      transformation: 'De la navigation à vue à un pilotage par cycles de 90 jours.',
+      magicSentence: "J’aide les dirigeantes de TPE à reprendre la main sur leur activité en 90 jours.",
     },
   })
 
   const offres = [
     { id: 'off-1', name: 'Accompagnement Pilotage 90 jours', promise: 'Un cap clair et un plan tenu sur douze semaines', priceHt: 150000, format: 'COACHING' as const, status: 'ACTIF' as const },
-    { id: 'off-2', name: 'Audit financier TPE', promise: 'Comprendre ou part l argent en une seance', priceHt: 80000, format: 'SERVICE' as const, status: 'ACTIF' as const },
-    { id: 'off-3', name: 'Atelier collectif Vision CEO', promise: 'Une demi-journee pour poser sa vision a trois ans', priceHt: 35000, format: 'ATELIER' as const, status: 'EN_TEST' as const },
-    { id: 'off-4', name: 'Abonnement suivi mensuel', promise: 'Un point mensuel et un tableau de bord tenu a jour', priceHt: 29000, format: 'PROGRAMME' as const, status: 'IDEE' as const },
+    { id: 'off-2', name: 'Audit financier TPE', promise: 'Comprendre où part l’argent en une séance', priceHt: 80000, format: 'SERVICE' as const, status: 'ACTIF' as const },
+    { id: 'off-3', name: 'Atelier collectif Vision CEO', promise: 'Une demi-journée pour poser sa vision à trois ans', priceHt: 35000, format: 'ATELIER' as const, status: 'EN_TEST' as const },
+    { id: 'off-4', name: 'Abonnement suivi mensuel', promise: 'Un point mensuel et un tableau de bord tenu à jour', priceHt: 29000, format: 'PROGRAMME' as const, status: 'IDEE' as const },
   ]
   for (const o of offres) {
     const { id, ...donnees } = o
@@ -323,7 +323,7 @@ async function main() {
   }
 
   const niveaux = [
-    { id: 'lvl-1', level: 'Entree', offerName: 'Atelier collectif Vision CEO', price: '350 €', goal: 'Faire decouvrir la methode', position: 0 },
+    { id: 'lvl-1', level: 'Entrée', offerName: 'Atelier collectif Vision CEO', price: '350 €', goal: 'Faire découvrir la méthode', position: 0 },
     { id: 'lvl-2', level: 'Coeur de gamme', offerName: 'Accompagnement Pilotage 90 jours', price: '1 500 €', goal: 'La transformation principale', position: 1 },
     { id: 'lvl-3', level: 'Premium', offerName: 'Accompagnement annuel', price: '4 800 €', goal: 'Installer le pilotage dans la duree', position: 2 },
   ]
@@ -333,9 +333,9 @@ async function main() {
   }
 
   const fiches = [
-    { id: 'crm-1', companyName: 'Sophie Mercier', contactName: 'Sophie Mercier', email: 'sophie@exemple.fr', status: 'ACTIF' as const, notes: 'Accompagnement mensuel, tres reguliere. Reconduction a preparer.' },
-    { id: 'crm-2', companyName: 'Nathalie Roy', contactName: 'Nathalie Roy', email: 'nathalie@exemple.fr', status: 'TERMINE' as const, notes: 'Cycle termine, retour tres positif. Candidate a l offre annuelle.' },
-    { id: 'crm-3', companyName: 'Claire Besson', contactName: 'Claire Besson', email: 'claire@exemple.fr', status: 'ACTIF' as const, notes: 'Demarrage recent, premiere seance faite.' },
+    { id: 'crm-1', companyName: 'Sophie Mercier', contactName: 'Sophie Mercier', email: 'sophie@exemple.fr', status: 'ACTIF' as const, notes: 'Accompagnement mensuel, très régulière. Reconduction à préparer.' },
+    { id: 'crm-2', companyName: 'Nathalie Roy', contactName: 'Nathalie Roy', email: 'nathalie@exemple.fr', status: 'TERMINE' as const, notes: 'Cycle terminé, retour très positif. Candidate à l’offre annuelle.' },
+    { id: 'crm-3', companyName: 'Claire Besson', contactName: 'Claire Besson', email: 'claire@exemple.fr', status: 'ACTIF' as const, notes: 'Démarrage récent, première séance faite.' },
     { id: 'crm-4', companyName: 'Carole Vidal', contactName: 'Carole Vidal', status: 'INACTIF' as const, notes: 'Session flash uniquement.' },
   ]
   for (const f of fiches) {
@@ -357,9 +357,9 @@ async function main() {
   }
 
   const retours = [
-    { id: 'fb-1', crmClientId: 'crm-2', offerId: 'off-1', rating: 5, comment: 'Pour la premiere fois je sais ou je vais. Le decoupage en 90 jours a tout change.' },
+    { id: 'fb-1', crmClientId: 'crm-2', offerId: 'off-1', rating: 5, comment: 'Pour la première fois je sais où je vais. Le découpage en 90 jours a tout changé.' },
     { id: 'fb-2', crmClientId: 'crm-1', offerId: 'off-1', rating: 5, comment: 'Le point mensuel est devenu mon rendez-vous le plus utile.' },
-    { id: 'fb-3', crmClientId: 'crm-4', offerId: 'off-3', rating: 4, comment: "Tres bien, j'aurais aime une demi-journee de plus." },
+    { id: 'fb-3', crmClientId: 'crm-4', offerId: 'off-3', rating: 4, comment: "Très bien, j’aurais aimé une demi-journée de plus." },
   ]
   for (const r of retours) {
     const { id, ...donnees } = r
@@ -369,8 +369,8 @@ async function main() {
   // === Axe 4 : contenus et pipeline ========================================
 
   const problemes = [
-    { id: 'pb-1', problem: 'Je ne sais pas si mon mois sera bon', question: 'Comment anticiper mon chiffre ?', understanding: 'Ce qui fait varier son CA', topic: 'Le previsionnel a trois scenarios', angle: 'Le calcul en cinq minutes', position: 0 },
-    { id: 'pb-2', problem: 'Je travaille beaucoup et je gagne peu', question: 'Ou part mon temps ?', understanding: 'La rentabilite par offre', topic: 'Calculer le CA genere par offre', angle: "L'offre qui rapporte le moins est souvent la preferee", position: 1 },
+    { id: 'pb-1', problem: 'Je ne sais pas si mon mois sera bon', question: 'Comment anticiper mon chiffre ?', understanding: 'Ce qui fait varier son CA', topic: 'Le prévisionnel à trois scénarios', angle: 'Le calcul en cinq minutes', position: 0 },
+    { id: 'pb-2', problem: 'Je travaille beaucoup et je gagne peu', question: 'Ou part mon temps ?', understanding: 'La rentabilité par offre', topic: 'Calculer le CA généré par offre', angle: "L’offre qui rapporte le moins est souvent la préférée", position: 1 },
   ]
   for (const p of problemes) {
     const { id, ...donnees } = p
@@ -378,8 +378,8 @@ async function main() {
   }
 
   const thematiques = [
-    { id: 'th-1', label: 'Pilotage financier', whyImportant: 'C est la premiere source d angoisse des dirigeantes', linkToOffer: 'Audit financier TPE', position: 0 },
-    { id: 'th-2', label: 'Methode des 90 jours', whyImportant: 'Le cadre qui rend un objectif annuel atteignable', linkToOffer: 'Accompagnement Pilotage 90 jours', position: 1 },
+    { id: 'th-1', label: 'Pilotage financier', whyImportant: 'C’est la première source d’angoisse des dirigeantes', linkToOffer: 'Audit financier TPE', position: 0 },
+    { id: 'th-2', label: 'Méthode des 90 jours', whyImportant: 'Le cadre qui rend un objectif annuel atteignable', linkToOffer: 'Accompagnement Pilotage 90 jours', position: 1 },
     { id: 'th-3', label: 'Posture de dirigeante', whyImportant: 'Sortir de l execution pour decider', linkToOffer: 'Atelier collectif Vision CEO', position: 2 },
   ]
   for (const t of thematiques) {
@@ -388,10 +388,10 @@ async function main() {
   }
 
   const contenus = [
-    { id: 'ct-1', subject: 'Les 3 chiffres a regarder chaque lundi matin', themeId: 'th-1', contentType: 'EDUCATION' as const, format: 'CARROUSEL' as const, platform: 'LinkedIn', marketingGoal: 'ATTIRER' as const, weekNumber: 1, status: 'PUBLIE' as const },
-    { id: 'ct-2', subject: 'Pourquoi un objectif annuel ne se realise jamais', themeId: 'th-2', contentType: 'EDUCATION' as const, format: 'POST' as const, platform: 'LinkedIn', marketingGoal: 'ATTIRER' as const, weekNumber: 2, status: 'PUBLIE' as const },
-    { id: 'ct-3', subject: 'Le retour de Nathalie apres 90 jours', themeId: 'th-2', contentType: 'PREUVE' as const, format: 'VIDEO' as const, platform: 'LinkedIn', marketingGoal: 'NOURRIR' as const, weekNumber: 3, status: 'A_CREER' as const },
-    { id: 'ct-4', subject: "Ouverture des inscriptions a l'atelier Vision", themeId: 'th-3', contentType: 'VENTE' as const, format: 'EMAIL' as const, platform: 'Newsletter', marketingGoal: 'VENDRE' as const, weekNumber: 4, status: 'A_CREER' as const },
+    { id: 'ct-1', subject: 'Les 3 chiffres à regarder chaque lundi matin', themeId: 'th-1', contentType: 'EDUCATION' as const, format: 'CARROUSEL' as const, platform: 'LinkedIn', marketingGoal: 'ATTIRER' as const, weekNumber: 1, status: 'PUBLIE' as const },
+    { id: 'ct-2', subject: 'Pourquoi un objectif annuel ne se réalise jamais', themeId: 'th-2', contentType: 'EDUCATION' as const, format: 'POST' as const, platform: 'LinkedIn', marketingGoal: 'ATTIRER' as const, weekNumber: 2, status: 'PUBLIE' as const },
+    { id: 'ct-3', subject: 'Le retour de Nathalie après 90 jours', themeId: 'th-2', contentType: 'PREUVE' as const, format: 'VIDEO' as const, platform: 'LinkedIn', marketingGoal: 'NOURRIR' as const, weekNumber: 3, status: 'A_CREER' as const },
+    { id: 'ct-4', subject: "Ouverture des inscriptions à l’atelier Vision", themeId: 'th-3', contentType: 'VENTE' as const, format: 'EMAIL' as const, platform: 'Newsletter', marketingGoal: 'VENDRE' as const, weekNumber: 4, status: 'A_CREER' as const },
     { id: 'ct-5', subject: 'Ce que je fais quand un mois est mauvais', themeId: 'th-3', contentType: 'CONNEXION' as const, format: 'POST' as const, platform: 'LinkedIn', marketingGoal: 'NOURRIR' as const, weekNumber: null, status: 'IDEE' as const },
   ]
   for (const c of contenus) {
@@ -418,15 +418,15 @@ async function main() {
   // ce qu'il apporte. Quelques lignes suffisent : le coffre est une synthese,
   // pas un questionnaire.
   const coffreMarie = [
-    { axe: 'VISION' as const, cle: 'vision', libelle: 'Ma vision', valeur: 'Devenir la reference du conseil en image de marque pour les artisans du Nord.' },
-    { axe: 'VISION' as const, cle: 'mission', libelle: 'Ma mission', valeur: 'Aider un artisan a se faire reconnaitre sans qu il ait a se transformer en communicant.' },
-    { axe: 'VISION' as const, cle: 'objectif_annuel', libelle: 'Mon objectif annuel', valeur: '60 000 EUR de CA au 31 decembre, avec douze clients accompagnes.' },
-    { axe: 'CHIFFRES' as const, cle: 'revenu_net_vise', libelle: 'Revenu net mensuel vise', valeur: '2 800 EUR nets par mois.' },
+    { axe: 'VISION' as const, cle: 'vision', libelle: 'Ma vision', valeur: 'Devenir la référence du conseil en image de marque pour les artisans du Nord.' },
+    { axe: 'VISION' as const, cle: 'mission', libelle: 'Ma mission', valeur: 'Aider un artisan à se faire reconnaître sans qu’il ait à se transformer en communicant.' },
+    { axe: 'VISION' as const, cle: 'objectif_annuel', libelle: 'Mon objectif annuel', valeur: '60 000 € de chiffre d’affaires au 31 décembre, avec douze clients accompagnés.' },
+    { axe: 'CHIFFRES' as const, cle: 'revenu_net_vise', libelle: 'Revenu net mensuel visé', valeur: '2 800 € nets par mois.' },
     { axe: 'CHIFFRES' as const, cle: 'statut', libelle: 'Statut juridique', valeur: 'SASU, TVA sur les encaissements.' },
-    { axe: 'OFFRES' as const, cle: 'client_ideal', libelle: 'Mon client ideal', valeur: 'Artisan installe depuis trois ans, seul ou avec un apprenti, qui refuse du travail faute de visibilite.' },
-    { axe: 'OFFRES' as const, cle: 'douleur', libelle: 'Sa douleur principale', valeur: 'Il ne sait pas dire ce qu il fait de mieux que le voisin.' },
-    { axe: 'COMMUNICATION' as const, cle: 'canal', libelle: 'Mon canal principal', valeur: 'Instagram, parce que le travail d un artisan se montre.' },
-    { axe: 'PILOTAGE' as const, cle: 'cap', libelle: 'Mon cap sur ce cycle', valeur: 'Signer trois nouveaux clients et publier le retour d experience de Nathalie.' },
+    { axe: 'OFFRES' as const, cle: 'client_ideal', libelle: 'Mon client idéal', valeur: 'Artisan installé depuis trois ans, seul ou avec un apprenti, qui refuse du travail faute de visibilité.' },
+    { axe: 'OFFRES' as const, cle: 'douleur', libelle: 'Sa douleur principale', valeur: 'Il ne sait pas dire ce qu’il fait de mieux que le voisin.' },
+    { axe: 'COMMUNICATION' as const, cle: 'canal', libelle: 'Mon canal principal', valeur: 'Instagram, parce que le travail d’un artisan se montre.' },
+    { axe: 'PILOTAGE' as const, cle: 'cap', libelle: 'Mon cap sur ce cycle', valeur: 'Signer trois nouveaux clients et publier le retour d’expérience de Nathalie.' },
   ]
   for (const [rang, ligne] of coffreMarie.entries()) {
     const { axe, cle, ...donnees } = ligne
@@ -478,9 +478,9 @@ async function main() {
   // cloisonnement se montre en deux connexions.
 
   const RESSOURCES = [
-    { cle: 'res-1', title: 'Bien demarrer son premier cycle de 90 jours', type: 'GUIDE' as const, description: 'Les six etapes de la mise en route, a lire avant la premiere seance.' },
-    { cle: 'res-2', title: 'Le point du lundi matin', type: 'RITUEL' as const, description: 'Quinze minutes chaque lundi : trois chiffres, trois priorites, une decision.' },
-    { cle: 'res-3', title: 'Modele de cycle, lancement d une nouvelle offre', type: 'MODELE' as const, description: 'Un decoupage en douze semaines deja rempli, a adapter.' },
+    { cle: 'res-1', title: 'Bien démarrer son premier cycle de 90 jours', type: 'GUIDE' as const, description: 'Les six étapes de la mise en route, à lire avant la première séance.' },
+    { cle: 'res-2', title: 'Le point du lundi matin', type: 'RITUEL' as const, description: 'Quinze minutes chaque lundi : trois chiffres, trois priorités, une décision.' },
+    { cle: 'res-3', title: 'Modèle de cycle, lancement d’une nouvelle offre', type: 'MODELE' as const, description: 'Un découpage en douze semaines déjà rempli, à adapter.' },
   ]
 
   for (const [suffixe, consultant] of [['alexis', alexis], ['sandrine', sandrine], ['augustin', augustin]] as const) {
@@ -572,7 +572,7 @@ async function main() {
             type: 'REVENUE',
             amountHt: Math.round(p.caMensuel * variation),
             transactionDate: mois,
-            label: 'Prestation d accompagnement',
+            label: 'Prestation d’accompagnement',
             category: 'Prestation',
             createdAt: saisiLe,
           },
@@ -588,7 +588,7 @@ async function main() {
             amountHt: Math.round(p.caMensuel * variation * p.ratioCharges),
             transactionDate: mois,
             label: 'Charges du mois',
-            category: 'Frais generaux',
+            category: 'Frais généraux',
             createdAt: saisiLe,
           },
         })
@@ -606,7 +606,7 @@ async function main() {
     { email: 'paul@demo.fr', nom: 'Paul Ferrand', entreprise: 'Ferrand Menuiserie', secteur: 'Artisanat', statut: 'EURL', profil: 'sain', formule: 'COMPLETE' },
   ])
 
-  console.log('Seed termine.')
+  console.log('Seed terminé.')
   console.log('')
   console.log('  Consultants')
   console.log('    alexis@pilote90.fr   / pilote90       -> Marie & Co, Thomas Consulting')
