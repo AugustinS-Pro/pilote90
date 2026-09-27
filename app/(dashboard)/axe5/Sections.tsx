@@ -157,7 +157,7 @@ export function SectionCycle({ cycle }: { cycle: CycleVue | null }) {
 
       <details className="group">
         <summary className="cursor-pointer text-xs text-ghost hover:text-on-inverse">
-          Cloturer ce cycle
+          Clôturer ce cycle
         </summary>
         <form action={actionCloture} className="mt-3 space-y-2">
           <input type="hidden" name="id" value={cycle.id} />

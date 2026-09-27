@@ -124,7 +124,7 @@ export default async function Axe5Page() {
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Pilotage 90 jours</h1>
         <p className="text-muted text-sm mt-1">
-          Le cockpit : du cap trimestriel jusqu&apos;a la tache du jour
+          Le cockpit : du cap trimestriel jusqu&apos;à la tâche du jour
         </p>
       </div>
 

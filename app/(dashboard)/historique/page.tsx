@@ -83,7 +83,7 @@ export default async function HistoriquePage({
         <div>
           <h1 className="text-2xl font-extrabold text-ink">Historique des cycles</h1>
           <p className="text-muted text-sm mt-1">
-            Ce que vous avez vise, ce que vous avez obtenu, et ce que vous en avez appris
+            Ce que vous avez visé, ce que vous avez obtenu, et ce que vous en avez appris
           </p>
         </div>
         <Recherche action="/historique" valeur={recherche} placeholder="Objectif ou nom de cycle" />
@@ -182,7 +182,7 @@ export default async function HistoriquePage({
                       ton={TON_ECART[comparaison.progression.sens]}
                     />
                     <Etiquette
-                      texte={`Priorités terminées ${libelleEcart(comparaison.prioritesTerminees, 'priorites')}`}
+                      texte={`Priorités terminées ${libelleEcart(comparaison.prioritesTerminees, 'priorités')}`}
                       ton={TON_ECART[comparaison.prioritesTerminees.sens]}
                     />
                     <Etiquette

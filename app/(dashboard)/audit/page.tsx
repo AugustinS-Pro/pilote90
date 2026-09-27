@@ -120,7 +120,7 @@ export default async function AuditPage() {
         <div className="bg-surface rounded-2xl border border-subtle shadow-sm p-5">
           <h2 className="text-sm font-bold text-ink-soft mb-1">Audit financier automatique</h2>
           <p className="text-xs text-ghost mb-4">
-            Chaque constat indique la regle qui l&apos;a declenche.
+            Chaque constat indique la règle qui l&apos;a déclenchée.
           </p>
 
           {constats.length > 0 ? (
@@ -144,7 +144,7 @@ export default async function AuditPage() {
             </div>
           ) : (
             <p className="text-sm text-ghost text-center py-8">
-              Aucun signal a signaler sur la periode.
+              Aucun signal à signaler sur la période.
             </p>
           )}
         </div>

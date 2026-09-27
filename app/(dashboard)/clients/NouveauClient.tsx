@@ -10,7 +10,7 @@ const ETAT_INITIAL: EtatCreation = { ok: false }
  * Entree d'un nouveau client dans le portefeuille.
  *
  * Le consultant saisit ce qu'il tient de la vente. Le reste, ce que lui seul
- * sait, sera complete par le client a sa premiere connexion.
+ * sait, sera complete par le client à sa première connexion.
  *
  * Le mot de passe provisoire s'affiche une seule fois, apres la creation.
  * C'est une etape intermediaire assumee : la version cible envoie un jeton
@@ -41,7 +41,7 @@ export function NouveauClient() {
           <h3 className="text-sm font-bold text-ink-soft">Nouveau client</h3>
           <p className="text-xs text-muted mt-0.5">
             Les informations recueillies a la vente. Le client completera son dossier
-            a sa premiere connexion.
+            à sa première connexion.
           </p>
         </div>
         <button
@@ -63,7 +63,7 @@ export function NouveauClient() {
             {etat.motDePasseProvisoire}
           </p>
           <p className="text-[11px] text-warning-ink opacity-80">
-            Demandez-lui de le changer des sa premiere connexion.
+            Demandez-lui de le changer dès sa première connexion.
           </p>
         </div>
       ) : (

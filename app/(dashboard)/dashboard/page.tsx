@@ -102,7 +102,7 @@ export default async function DashboardPage() {
       ) : (
         <Carte titre="Aucun cycle en cours">
           <p className="text-sm text-muted mb-3">
-            Tout part d&apos;un cycle de 90 jours : l&apos;objectif, les priorites, les semaines.
+            Tout part d&apos;un cycle de 90 jours : l&apos;objectif, les priorités, les semaines.
           </p>
           <Link href="/axe5" className="text-sm font-semibold text-accent-ink hover:underline">
             Ouvrir un cycle →

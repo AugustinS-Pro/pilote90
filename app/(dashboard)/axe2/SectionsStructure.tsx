@@ -193,7 +193,7 @@ export function SectionObjectifRevenu({
   return (
     <Carte
       titre="Combien dois-je générer pour vivre ?"
-      sousTitre={`CA necessaire = revenu net vise / (1 − ${total} %) · clients = CA necessaire / prix de l'offre`}
+      sousTitre={`CA nécessaire = revenu net visé / (1 − ${total} %) · clients = CA nécessaire / prix de l'offre`}
     >
       {objectifs.length > 0 ? (
         <div className="space-y-3 mb-4">
@@ -207,7 +207,7 @@ export function SectionObjectifRevenu({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
                   <p className="text-lg font-bold text-ink-soft">{euros(o.netTargetHt)}</p>
-                  <p className="text-[11px] text-ghost">revenu net vise</p>
+                  <p className="text-[11px] text-ghost">revenu net visé</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-ink-soft">{euros(o.offerPriceHt)}</p>
@@ -348,7 +348,7 @@ export function SectionSuiviMensuel({
   return (
     <Carte
       titre="Suivi mensuel"
-      sousTitre={`Charges estimees = CA × ${total} % · revenu net = CA − charges estimees. Aucune de ces colonnes ne se saisit.`}
+      sousTitre={`Charges estimées = CA × ${total} % · revenu net = CA − charges estimées. Aucune de ces colonnes ne se saisit.`}
     >
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -356,7 +356,7 @@ export function SectionSuiviMensuel({
             <tr className="text-left text-xs font-semibold text-muted border-b border-subtle">
               <th className="pb-2">Mois</th>
               <th className="pb-2 text-right">Chiffre d&apos;affaires</th>
-              <th className="pb-2 text-right">Charges estimees</th>
+              <th className="pb-2 text-right">Charges estimées</th>
               <th className="pb-2 text-right">Revenu net</th>
             </tr>
           </thead>

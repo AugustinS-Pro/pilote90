@@ -150,7 +150,7 @@ export default async function BibliothequePage({
         </Carte>
       )}
 
-      <Carte titre="Ajouter" sousTitre={client ? 'Visible par vous seul' : 'Deposee comme ressource commune, visible par tous vos clients'}>
+      <Carte titre="Ajouter" sousTitre={client ? 'Visible par vous seul' : 'Déposée comme ressource commune, visible par tous vos clients'}>
         <FormulaireRessource />
       </Carte>
     </div>

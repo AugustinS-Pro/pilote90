@@ -294,7 +294,7 @@ export default async function PortefeuillePage({
                   </div>
 
                   {/* flex-wrap et pleine largeur sous 640 px : cette ligne
-                      porte deja le nom, le secteur, le cycle, l'etat et
+                      porte déjà le nom, le secteur, le cycle, l'état et
                       jusqu'a trois etiquettes. Sans repli, elle deborde sur
                       un telephone, et c'est la page d'accueil du consultant. */}
                   <div className="flex items-center gap-6 w-full sm:w-auto sm:shrink-0">
