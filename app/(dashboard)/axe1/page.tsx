@@ -12,6 +12,7 @@ import { BlocPilier, type ReponsesPilier } from './BlocPilier'
 import { CartePriorite } from './CartePriorite'
 import { FormulairePriorite } from './FormulairePriorite'
 import { FormulaireIdee, ArbitrageIdee, SuppressionIdee } from '@/components/FormulairesSysteme'
+import { Coffre } from '../coffre/Coffre'
 
 export default async function Axe1Page() {
   const utilisateur = await getCurrentUser()
@@ -205,6 +206,8 @@ export default async function Axe1Page() {
           <p className="text-sm text-ink-soft leading-relaxed whitespace-pre-line">{objectifAnnuel}</p>
         </Carte>
       )}
+
+      <Coffre axe="VISION" />
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import { Coffre } from '../coffre/Coffre'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
@@ -137,6 +138,8 @@ export default async function Axe5Page() {
           <SectionSemaines semaines={semaines} />
         </>
       )}
+
+      <Coffre axe="PILOTAGE" />
     </div>
   )
 }

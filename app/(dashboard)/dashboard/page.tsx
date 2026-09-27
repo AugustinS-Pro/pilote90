@@ -9,6 +9,7 @@ import {
 import { euros } from '@/lib/format'
 import { calculerIndicateurs } from '@/lib/finance'
 import { echeancesASignaler, TON_ECHEANCE } from '@/lib/echeances'
+import { coffreComplet, completudeGlobale } from '@/lib/coffre'
 
 export default async function DashboardPage() {
   const utilisateur = await getCurrentUser()
@@ -28,6 +29,7 @@ export default async function DashboardPage() {
       prospects: true,
       contentIdeas: true,
       deadlines: { where: { done: false }, orderBy: { dueDate: 'asc' } },
+      coffre: { select: { axe: true, cle: true, valeur: true } },
       tasks: { where: { done: false }, orderBy: { position: 'asc' }, take: 3, include: { objective: { select: { title: true } } } },
     },
   })
@@ -45,6 +47,8 @@ export default async function DashboardPage() {
   const aujourdhui = new Date()
   const indicateurs = calculerIndicateurs(client.transactions, cycle?.caTargetMonthly ?? 0)
   const echeances = echeancesASignaler(client.deadlines)
+  const coffre = coffreComplet(client.coffre)
+  const coffreRempli = completudeGlobale(coffre)
 
   const semaine = cycle
     ? Math.min(12, Math.max(1, Math.ceil((aujourdhui.getTime() - new Date(cycle.startDate).getTime()) / (7 * 86400000))))
@@ -173,6 +177,41 @@ export default async function DashboardPage() {
           )}
         </Carte>
       </div>
+
+      <Carte
+        titre="Mon coffre stratégique"
+        sousTitre="Les réponses déposées par chaque axe, au même endroit"
+        action={<span className="text-xs font-semibold text-muted">{coffreRempli} % renseigné</span>}
+      >
+        {coffreRempli > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {coffre
+              .filter((a) => a.renseignees.length > 0)
+              .map((a) => (
+                <div key={a.axe} className="rounded-xl border border-subtle px-4 py-3">
+                  <Link
+                    href={a.chemin}
+                    className="text-xs font-bold text-accent-ink hover:underline"
+                  >
+                    {a.titre}
+                  </Link>
+                  <dl className="mt-2 space-y-2">
+                    {a.renseignees.map((ligne) => (
+                      <div key={ligne.cle}>
+                        <dt className="text-[11px] text-ghost">{ligne.libelle}</dt>
+                        <dd className="text-sm text-ink-soft leading-snug whitespace-pre-line">
+                          {ligne.valeur}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+          </div>
+        ) : (
+          <Vide texte="Votre coffre est vide. Chaque axe se termine par les quelques réponses qui comptent." />
+        )}
+      </Carte>
 
       <Carte
         titre="Ce qui arrive"

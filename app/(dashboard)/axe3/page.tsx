@@ -1,3 +1,4 @@
+import { Coffre } from '../coffre/Coffre'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
@@ -146,6 +147,8 @@ export default async function Axe3Page() {
         <SectionClients fiches={fiches} offres={offres} />
         <SectionRetours retours={retours} fiches={fiches} offres={offres} moyenne={moyenne} />
       </div>
+
+      <Coffre axe="OFFRES" />
     </div>
   )
 }

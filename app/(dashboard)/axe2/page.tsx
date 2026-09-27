@@ -17,6 +17,7 @@ import {
   tauxTotal, caNecessaire, clientsNecessaires, chargesEstimees, revenuNet, joursAvant,
 } from '@/lib/charges'
 import { serieDouzeMois } from '@/lib/finance'
+import { Coffre } from '../coffre/Coffre'
 
 export default async function Axe2Page({
   searchParams,
@@ -261,6 +262,8 @@ export default async function Axe2Page({
         <SectionSuiviMensuel lignes={suiviMensuel} total={total} />
         <SectionEcheances echeances={echeances} />
       </div>
+
+      <Coffre axe="CHIFFRES" />
     </div>
   )
 }

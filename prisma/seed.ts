@@ -412,6 +412,31 @@ async function main() {
     await prisma.prospect.upsert({ where: { id }, update: enregistrement, create: { id, clientId: marie.id, ...enregistrement } })
   }
 
+  // === Le coffre strategique de Marie =======================================
+  //
+  // Sans lui, le coffre s'affiche vide dans la demonstration et on ne voit pas
+  // ce qu'il apporte. Quelques lignes suffisent : le coffre est une synthese,
+  // pas un questionnaire.
+  const coffreMarie = [
+    { axe: 'VISION' as const, cle: 'vision', libelle: 'Ma vision', valeur: 'Devenir la reference du conseil en image de marque pour les artisans du Nord.' },
+    { axe: 'VISION' as const, cle: 'mission', libelle: 'Ma mission', valeur: 'Aider un artisan a se faire reconnaitre sans qu il ait a se transformer en communicant.' },
+    { axe: 'VISION' as const, cle: 'objectif_annuel', libelle: 'Mon objectif annuel', valeur: '60 000 EUR de CA au 31 decembre, avec douze clients accompagnes.' },
+    { axe: 'CHIFFRES' as const, cle: 'revenu_net_vise', libelle: 'Revenu net mensuel vise', valeur: '2 800 EUR nets par mois.' },
+    { axe: 'CHIFFRES' as const, cle: 'statut', libelle: 'Statut juridique', valeur: 'SASU, TVA sur les encaissements.' },
+    { axe: 'OFFRES' as const, cle: 'client_ideal', libelle: 'Mon client ideal', valeur: 'Artisan installe depuis trois ans, seul ou avec un apprenti, qui refuse du travail faute de visibilite.' },
+    { axe: 'OFFRES' as const, cle: 'douleur', libelle: 'Sa douleur principale', valeur: 'Il ne sait pas dire ce qu il fait de mieux que le voisin.' },
+    { axe: 'COMMUNICATION' as const, cle: 'canal', libelle: 'Mon canal principal', valeur: 'Instagram, parce que le travail d un artisan se montre.' },
+    { axe: 'PILOTAGE' as const, cle: 'cap', libelle: 'Mon cap sur ce cycle', valeur: 'Signer trois nouveaux clients et publier le retour d experience de Nathalie.' },
+  ]
+  for (const [rang, ligne] of coffreMarie.entries()) {
+    const { axe, cle, ...donnees } = ligne
+    await prisma.coffreEntree.upsert({
+      where: { clientId_axe_cle: { clientId: marie.id, axe, cle } },
+      update: { ...donnees, rang },
+      create: { clientId: marie.id, axe, cle, ...donnees, rang },
+    })
+  }
+
   // === Les trois portefeuilles ==============================================
   //
   // Sandrine et Alexis n'accompagnent pas les memes entreprises, et c'est deja

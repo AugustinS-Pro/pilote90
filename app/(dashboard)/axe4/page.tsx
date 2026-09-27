@@ -1,3 +1,4 @@
+import { Coffre } from '../coffre/Coffre'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
@@ -110,6 +111,8 @@ export default async function Axe4Page() {
       </div>
 
       <SectionCalendrier idees={idees} thematiques={thematiques} />
+
+      <Coffre axe="COMMUNICATION" />
     </div>
   )
 }
