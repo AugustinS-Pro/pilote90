@@ -3,6 +3,7 @@ import {
   progressionDeduite,
   progressionEstSaisissable,
   statutDeduit,
+  statutApresRecalcul,
 } from '@/lib/progression'
 
 /**
@@ -83,5 +84,24 @@ describe('la regle, vue de bout en bout', () => {
   it('une priorite sans tache est saisissable, et rien ne se deduit', () => {
     expect(progressionEstSaisissable(0)).toBe(true)
     expect(progressionDeduite([])).toBeNull()
+  })
+})
+
+describe('statutApresRecalcul', () => {
+  it('conclut la priorite a 100 %', () => {
+    expect(statutApresRecalcul('IN_PROGRESS', 100)).toBe('COMPLETED')
+    expect(statutApresRecalcul('LATE', 100)).toBe('COMPLETED')
+  })
+
+  it('rouvre une priorite terminee qui retombe sous 100 %', () => {
+    expect(statutApresRecalcul('COMPLETED', 75)).toBe('IN_PROGRESS')
+  })
+
+  // Le defaut jumeau de la double source : decocher une tache effacait un
+  // « en retard » pose par le dirigeant.
+  it('ne touche pas a un statut que le recalcul ne connait pas', () => {
+    expect(statutApresRecalcul('LATE', 50)).toBe('LATE')
+    expect(statutApresRecalcul('LATE', 0)).toBe('LATE')
+    expect(statutApresRecalcul('IN_PROGRESS', 50)).toBe('IN_PROGRESS')
   })
 })

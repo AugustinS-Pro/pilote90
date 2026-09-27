@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { progressionDeduite, statutDeduit } from '@/lib/progression'
+import {
+  progressionDeduite,
+  statutApresRecalcul,
+  type StatutPriorite,
+} from '@/lib/progression'
 import { getCurrentClientAutorise } from '@/lib/session'
 import type { Acces } from '@/lib/habilitations'
 import {
@@ -338,15 +342,22 @@ export async function basculerTache(formData: FormData): Promise<void> {
   await prisma.task.update({ where: { id: tache.id }, data: { done: !tache.done } })
 
   if (tache.objectiveId) {
+    const priorite = await prisma.objective.findFirst({
+      where: { id: tache.objectiveId, cycle: { clientId: client.id } },
+      select: { id: true, status: true },
+    })
     const taches = await prisma.task.findMany({
       where: { objectiveId: tache.objectiveId, clientId: client.id },
       select: { done: true },
     })
     const pct = progressionDeduite(taches)
-    if (pct !== null) {
+    if (priorite && pct !== null) {
       await prisma.objective.updateMany({
-        where: { id: tache.objectiveId, cycle: { clientId: client.id } },
-        data: { progressPct: pct, status: statutDeduit(pct) },
+        where: { id: priorite.id, cycle: { clientId: client.id } },
+        data: {
+          progressPct: pct,
+          status: statutApresRecalcul(priorite.status as StatutPriorite, pct),
+        },
       })
     }
   }

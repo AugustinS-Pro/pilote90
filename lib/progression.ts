@@ -23,7 +23,26 @@ export function progressionEstSaisissable(nombreDeTaches: number): boolean {
   return nombreDeTaches === 0
 }
 
+export type StatutPriorite = 'IN_PROGRESS' | 'COMPLETED' | 'LATE'
+
 /** Seul 100 % conclut une priorite. */
 export function statutDeduit(pourcentage: number): 'COMPLETED' | 'IN_PROGRESS' {
   return pourcentage === 100 ? 'COMPLETED' : 'IN_PROGRESS'
+}
+
+/**
+ * Statut apres un recalcul de progression.
+ *
+ * Le recalcul n'a le droit de toucher au statut que pour ce qu'il sait :
+ * une priorite complete est terminee, une priorite qui retombe sous 100 %
+ * ne l'est plus. Le reste appartient au dirigeant - en particulier « en
+ * retard », qu'il pose lui-meme et qu'une tache decochee effacait.
+ */
+export function statutApresRecalcul(
+  statutActuel: StatutPriorite,
+  pourcentage: number,
+): StatutPriorite {
+  if (pourcentage === 100) return 'COMPLETED'
+  if (statutActuel === 'COMPLETED') return 'IN_PROGRESS'
+  return statutActuel
 }
