@@ -547,9 +547,16 @@ model Resource {
   type        ResourceType @default(GUIDE)
   description String?
   url         String?
+
+  /// Axe dont cette ressource est le cours d'introduction, le « Mentor » de la
+  /// version Notion. Nul pour une ressource de bibliotheque ordinaire : seules
+  /// les ressources rattachees a un axe s'affichent en tete de cet axe.
+  axe         AxeCoffre?
+
   createdAt   DateTime     @default(now())
 
   @@index([clientId])
+  @@index([axe])
   @@index([adminId])
 }
 
@@ -754,4 +761,5 @@ enum ResourceType {
   RITUEL
   MODELE
   LIEN
+  COURS
 }

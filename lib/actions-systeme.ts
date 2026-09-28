@@ -6,6 +6,7 @@ import { getCurrentClient, getCurrentUser } from '@/lib/session'
 import { peut } from '@/lib/habilitations'
 import { decisionInput, ideaInput, resourceInput } from '@/lib/validation'
 import { PILIER_PAR_CLE, type ClePilier } from '@/lib/piliers'
+import { CHEMINS_AXES } from '@/lib/coffre'
 import type { ZodError } from 'zod'
 
 export type EtatAction = {
@@ -158,6 +159,7 @@ export async function creerRessource(
     type: formData.get('type'),
     description: texte(formData.get('description')),
     url: texte(formData.get('url')),
+    axe: texte(formData.get('axe')),
   })
   if (!parsed.success) return { ok: false, message: 'Saisie incomplete.', erreurs: versErreurs(parsed.error) }
 
@@ -182,10 +184,15 @@ export async function creerRessource(
       type: parsed.data.type,
       description: parsed.data.description ?? null,
       url: parsed.data.url ?? null,
+      axe: parsed.data.axe ?? null,
     },
   })
 
   revalidatePath('/bibliotheque')
+  // Un cours rattache a un axe s'affiche en tete de cet axe : la page d'axe
+  // doit donc etre relue, sinon le depot reste invisible la ou il compte.
+  if (parsed.data.axe) revalidatePath(CHEMINS_AXES[parsed.data.axe])
+
   return { ok: true, message: 'Ressource ajoutée.' }
 }
 

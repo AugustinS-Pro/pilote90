@@ -10,7 +10,7 @@ import {
   creerIdee, arbitrerIdee, supprimerIdee,
   creerRessource, supprimerRessource,
 } from '@/lib/actions-systeme'
-import { CATEGORIES_DECISION, TYPES_RESSOURCE } from '@/lib/listes'
+import { AXES_RESSOURCE, CATEGORIES_DECISION, TYPES_RESSOURCE } from '@/lib/listes'
 
 export function FormulaireDecision() {
   const [etat, action] = useActionState(creerDecision, ETAT_INITIAL)
@@ -103,6 +103,11 @@ export function FormulaireRessource() {
         </div>
         <ZoneTexte nom="description" libelle="Description" rows={2} maxLength={600} />
         <Champ nom="url" libelle="Lien (facultatif)" maxLength={500} placeholder="https://" />
+        <Liste nom="axe" libelle="Cours d’un axe ?" options={AXES_RESSOURCE} defaultValue="" />
+        <p className="text-[11px] text-ghost leading-snug">
+          Une ressource rattachée à un axe s’affiche en tête de cet axe, comme le cours
+          à lire avant de remplir les blocs.
+        </p>
         <BoutonSoumettre>Ajouter</BoutonSoumettre>
         <Retour etat={etat} />
       </form>

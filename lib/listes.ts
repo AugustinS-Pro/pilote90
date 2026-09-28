@@ -17,10 +17,25 @@ export const CATEGORIES_DECISION: Option[] = [
 ]
 
 export const TYPES_RESSOURCE: Option[] = [
+  { valeur: 'COURS', libelle: 'Cours' },
   { valeur: 'GUIDE', libelle: 'Guide' },
   { valeur: 'RITUEL', libelle: 'Rituel' },
   { valeur: 'MODELE', libelle: 'Modèle de cycle' },
   { valeur: 'LIEN', libelle: 'Lien' },
+]
+
+/**
+ * Axes auxquels une ressource peut servir de cours. La valeur vide laisse la
+ * ressource dans la bibliotheque sans la rattacher a un axe : c'est le cas le
+ * plus courant, donc le premier de la liste.
+ */
+export const AXES_RESSOURCE: Option[] = [
+  { valeur: '', libelle: 'Aucun — ressource de bibliothèque' },
+  { valeur: 'VISION', libelle: 'Cours de l’axe Vision CEO' },
+  { valeur: 'CHIFFRES', libelle: 'Cours de l’axe Chiffres & Admin' },
+  { valeur: 'OFFRES', libelle: 'Cours de l’axe Offres & Clients' },
+  { valeur: 'COMMUNICATION', libelle: 'Cours de l’axe Com & Ventes' },
+  { valeur: 'PILOTAGE', libelle: 'Cours de l’axe Pilotage 90 jours' },
 ]
 
 export const libelleDe = (liste: Option[], valeur: string): string =>

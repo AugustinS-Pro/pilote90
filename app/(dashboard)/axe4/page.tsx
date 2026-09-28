@@ -1,3 +1,4 @@
+import { Mentor } from '@/components/Mentor'
 import { Coffre } from '../coffre/Coffre'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
@@ -92,6 +93,8 @@ export default async function Axe4Page() {
           Ce que vous dites, a qui, et ou en sont vos opportunites
         </p>
       </div>
+
+      <Mentor axe="COMMUNICATION" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (

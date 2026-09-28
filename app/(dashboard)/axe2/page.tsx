@@ -1,3 +1,4 @@
+import { Mentor } from '@/components/Mentor'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 import { peut, pageAccueil } from '@/lib/habilitations'
@@ -142,6 +143,10 @@ export default async function Axe2Page({
         <p className="text-muted text-sm mt-1">
           Suivez vos revenus et charges en temps réel
         </p>
+      </div>
+
+      <div className="mb-6">
+        <Mentor axe="CHIFFRES" />
       </div>
 
       {/* 4 KPIs Bento */}

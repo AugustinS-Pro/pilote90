@@ -1,3 +1,4 @@
+import { Mentor } from '@/components/Mentor'
 import { Coffre } from '../coffre/Coffre'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
@@ -125,6 +126,8 @@ export default async function Axe3Page() {
           Votre catalogue, vos clients et ce que chaque offre rapporte reellement
         </p>
       </div>
+
+      <Mentor axe="OFFRES" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (

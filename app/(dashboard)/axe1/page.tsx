@@ -1,3 +1,4 @@
+import { Mentor } from '@/components/Mentor'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
@@ -112,6 +113,8 @@ export default async function Axe1Page() {
           </div>
         </div>
       </div>
+
+      <Mentor axe="VISION" />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
         {PILIERS.map((p) => (

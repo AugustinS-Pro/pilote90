@@ -7,6 +7,7 @@ import { FormulaireRessource, SuppressionRessource } from '@/components/Formulai
 import { TYPES_RESSOURCE } from '@/lib/listes'
 import { Recherche } from '@/components/ui'
 import { correspond } from '@/lib/recherche'
+import { appartenancesRessources } from '@/lib/mentor'
 
 export default async function BibliothequePage({
   searchParams,
@@ -33,15 +34,17 @@ export default async function BibliothequePage({
       })
     : null
 
-  // Trois appartenances possibles, et aucune autre : ses propres ressources,
-  // les ressources communes de SON accompagnant, et, s'il est consultant,
-  // celles qu'il a lui-meme deposees. Une ressource commune n'est plus
-  // visible par tous les locataires.
-  const appartenances = [
-    ...(client ? [{ clientId: client.id }] : []),
-    ...(client?.adminId ? [{ clientId: null, adminId: client.adminId }] : []),
-    ...(peut(utilisateur, 'COMPTES_ADMINISTRER') ? [{ clientId: null, adminId: utilisateur.id }] : []),
-  ]
+  // La regle d'appartenance vit dans lib/mentor.ts : le cours en tete d'axe la
+  // lit aussi, et deux copies d'une regle de cloisonnement finiraient par
+  // diverger. Trois appartenances possibles et aucune autre : ses propres
+  // ressources, les ressources communes de SON accompagnant, et, s'il est
+  // consultant, celles qu'il a lui-meme deposees.
+  const appartenances = appartenancesRessources({
+    clientId: client?.id ?? null,
+    adminDuClient: client?.adminId ?? null,
+    utilisateurEstConsultant: peut(utilisateur, 'COMPTES_ADMINISTRER'),
+    utilisateurId: utilisateur.id,
+  })
 
   const ressources = appartenances.length
     ? await prisma.resource.findMany({

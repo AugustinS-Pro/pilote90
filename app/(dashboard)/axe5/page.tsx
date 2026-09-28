@@ -1,3 +1,4 @@
+import { Mentor } from '@/components/Mentor'
 import { Coffre } from '../coffre/Coffre'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
@@ -127,6 +128,8 @@ export default async function Axe5Page() {
           Le cockpit : du cap trimestriel jusqu&apos;à la tâche du jour
         </p>
       </div>
+
+      <Mentor axe="PILOTAGE" />
 
       <SectionCycle cycle={vueCycle} />
 

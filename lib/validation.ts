@@ -186,9 +186,14 @@ export const ideaInput = z.object({
 
 export const resourceInput = z.object({
   title: z.string().trim().min(1, 'Le titre est obligatoire').max(160),
-  type: z.enum(['GUIDE', 'RITUEL', 'MODELE', 'LIEN']),
+  type: z.enum(['GUIDE', 'RITUEL', 'MODELE', 'LIEN', 'COURS']),
   description: z.string().trim().max(600).optional(),
   url: z.string().trim().max(500).optional(),
+  /**
+   * Axe dont cette ressource est le cours d'introduction. Facultatif : une
+   * ressource sans axe reste une ressource de bibliotheque ordinaire.
+   */
+  axe: z.enum(['VISION', 'CHIFFRES', 'OFFRES', 'COMMUNICATION', 'PILOTAGE']).optional(),
 })
 
 // ---------------------------------------------------------------------------
