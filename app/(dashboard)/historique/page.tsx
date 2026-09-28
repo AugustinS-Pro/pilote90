@@ -182,7 +182,7 @@ export default async function HistoriquePage({
                       ton={TON_ECART[comparaison.progression.sens]}
                     />
                     <Etiquette
-                      texte={`Priorités terminées ${libelleEcart(comparaison.prioritesTerminees, 'priorités')}`}
+                      texte={`Priorités terminées ${libelleEcart(comparaison.prioritesTerminees, 'priorites')}`}
                       ton={TON_ECART[comparaison.prioritesTerminees.sens]}
                     />
                     <Etiquette
