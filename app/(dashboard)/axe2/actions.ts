@@ -6,6 +6,7 @@ import { getCurrentClientAutorise } from '@/lib/session'
 import type { Acces } from '@/lib/habilitations'
 import { transactionInput, eurosVersCentimes } from '@/lib/validation'
 import { lireTransactionsCsv } from '@/lib/import-transactions'
+import { extraireXmlFacturX, lireFacturX, type FactureLue } from '@/lib/factur-x'
 
 /**
  * Acces requis pour ecrire dans cet axe. La page fait la meme verification,
@@ -23,6 +24,32 @@ export type EtatAction = {
   ok: boolean
   message?: string
   erreurs?: Record<string, string>
+}
+
+/**
+ * Facture lue, presentee au dirigeant avant tout enregistrement.
+ *
+ * Les montants sont en centimes, la date en ISO : c'est ce qui repart dans le
+ * formulaire de confirmation, donc ce qui doit traverser une frontiere reseau
+ * sans se faire reinterpreter au passage.
+ */
+export type FactureProposee = {
+  numero: string
+  dateEmission: string
+  typeDocument: string
+  deduction: boolean
+  vendeur: string | null
+  acheteur: string | null
+  montantHt: number
+  montantTtc: number | null
+  devise: string
+}
+
+export type EtatFacture = {
+  ok: boolean
+  message?: string
+  /** Presente quand la lecture a abouti et attend une validation. */
+  facture?: FactureProposee
 }
 
 /** Cree une transaction pour le client connecte. */
@@ -435,4 +462,137 @@ export async function importerTransactions(
             .map((r) => `ligne ${r.ligne}, ${r.raison.toLowerCase()}`)
             .join(' ; ')}${refusees > 3 ? '…' : ''}`,
   }
+}
+
+/** Taille au-dela de laquelle on refuse une facture sans la lire. */
+const TAILLE_MAX_FACTURE = 8 * 1024 * 1024
+
+function versProposee(facture: FactureLue): FactureProposee {
+  return {
+    numero: facture.numero,
+    dateEmission: facture.dateEmission.toISOString(),
+    typeDocument: facture.typeDocument,
+    deduction: facture.deduction,
+    vendeur: facture.vendeur,
+    acheteur: facture.acheteur,
+    montantHt: facture.montantHt,
+    montantTtc: facture.montantTtc,
+    devise: facture.devise,
+  }
+}
+
+/**
+ * Lit une facture Factur-X et propose l'ecriture correspondante.
+ *
+ * Rien n'est enregistre a cette etape, et c'est le point de la fonction. Une
+ * facture recue n'est pas une depense engagee : le dirigeant voit ce que
+ * l'application a lu, le corrige s'il le faut, et decide. La promesse du produit
+ * est de supprimer la ressaisie, pas le jugement.
+ *
+ * Le PDF n'est pas conserve : il est lu, puis oublie. Ce qui reste en base est
+ * l'ecriture et le numero de la facture, de quoi refuser un second import.
+ */
+export async function lireFactureRecue(
+  _precedent: EtatFacture,
+  formData: FormData,
+): Promise<EtatFacture> {
+  const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
+  if (!client) return { ok: false, message: 'Session expirée ou compte non client.' }
+
+  const fichier = formData.get('fichier')
+  if (!(fichier instanceof File) || fichier.size === 0) {
+    return { ok: false, message: 'Choisissez une facture au format PDF.' }
+  }
+  if (fichier.size > TAILLE_MAX_FACTURE) {
+    return { ok: false, message: 'Fichier trop volumineux, 8 Mo au maximum.' }
+  }
+
+  const xml = extraireXmlFacturX(new Uint8Array(await fichier.arrayBuffer()))
+  if (xml === null) {
+    return {
+      ok: false,
+      message:
+        'Aucune donnée structurée dans ce PDF. Une facture Factur-X embarque un fichier de données ; un PDF imprimé ou scanné n’en a pas, et se saisit à la main.',
+    }
+  }
+
+  const lecture = lireFacturX(xml)
+  if (!lecture.ok) return { ok: false, message: lecture.raison }
+
+  // Un numero deja connu : on le dit avant que le dirigeant ne valide, plutot
+  // que de le laisser buter sur le refus de la base.
+  const deja = await prisma.transaction.findFirst({
+    where: { clientId: client.id, sourceRef: lecture.facture.numero },
+    select: { transactionDate: true },
+  })
+  if (deja) {
+    const jour = deja.transactionDate.toLocaleDateString('fr-FR')
+    return {
+      ok: false,
+      message: `La facture ${lecture.facture.numero} est déjà enregistrée (écriture du ${jour}).`,
+    }
+  }
+
+  return { ok: true, facture: versProposee(lecture.facture) }
+}
+
+/**
+ * Enregistre l'ecriture proposee, apres validation du dirigeant.
+ *
+ * Le sens (depense ou revenu) vient du formulaire, pas du document : une facture
+ * lue peut aussi bien etre une charge recue qu'une vente emise, et le fichier ne
+ * dit pas lequel des deux noms est celui du dirigeant. Un avoir inverse le sens
+ * retenu, puisqu'il vient en deduction.
+ */
+export async function enregistrerFactureLue(
+  _precedent: EtatAction,
+  formData: FormData,
+): Promise<EtatAction> {
+  const client = await getCurrentClientAutorise(ACCES_TRANSACTIONS)
+  if (!client) return { ok: false, message: 'Session expirée ou compte non client.' }
+
+  const numero = String(formData.get('numero') ?? '').trim()
+  const libelle = String(formData.get('label') ?? '').trim()
+  const sens = formData.get('type') === 'REVENUE' ? 'REVENUE' : 'EXPENSE'
+  const deduction = formData.get('deduction') === 'oui'
+  const centimes = Number(formData.get('montantHt'))
+  const date = new Date(String(formData.get('dateEmission') ?? ''))
+
+  if (numero.length === 0 || libelle.length === 0) {
+    return { ok: false, message: 'Numéro ou libellé manquant : relancez la lecture.' }
+  }
+  if (!Number.isInteger(centimes) || centimes <= 0) {
+    return { ok: false, message: 'Montant illisible : relancez la lecture.' }
+  }
+  if (Number.isNaN(date.getTime())) {
+    return { ok: false, message: 'Date illisible : relancez la lecture.' }
+  }
+
+  // Un avoir vient en deduction : une charge qui s'annule, une vente qui se
+  // rembourse. Le sens s'inverse, le montant reste positif.
+  const type = deduction ? (sens === 'EXPENSE' ? 'REVENUE' : 'EXPENSE') : sens
+
+  try {
+    await prisma.transaction.create({
+      data: {
+        clientId: client.id,
+        type,
+        amountHt: centimes,
+        transactionDate: date,
+        label: libelle,
+        category: 'Facture lue',
+        sourceRef: numero,
+      },
+    })
+  } catch {
+    // L'unicite en base est le dernier filet : deux envois simultanes de la
+    // meme facture ne passent pas le controle applicatif, mais pas la base.
+    return { ok: false, message: `La facture ${numero} est déjà enregistrée.` }
+  }
+
+  revalidatePath('/axe2')
+  revalidatePath('/audit')
+  revalidatePath('/dashboard')
+
+  return { ok: true, message: `Facture ${numero} enregistrée.` }
 }

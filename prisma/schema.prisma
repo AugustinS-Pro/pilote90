@@ -279,8 +279,13 @@ model Transaction {
   label           String?
   category        String?
   recurrence      String?
+  /// Reference de la piece d'origine, quand l'ecriture vient d'un document lu
+  /// et non d'une saisie : le numero d'une facture Factur-X, par exemple. Elle
+  /// est unique par client, ce qui empeche d'importer deux fois la meme facture.
+  sourceRef       String?
   createdAt       DateTime        @default(now())
 
+  @@unique([clientId, sourceRef])
   @@index([clientId, transactionDate])
 }
 

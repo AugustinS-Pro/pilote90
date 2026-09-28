@@ -4,6 +4,7 @@ import { peut, pageAccueil } from '@/lib/habilitations'
 import { redirect } from 'next/navigation'
 import { FormulairesTransaction } from './FormulairesTransaction'
 import { ImportCsv } from './ImportCsv'
+import { LectureFacture } from './LectureFacture'
 import { LigneTransaction } from './LigneTransaction'
 import { Recherche } from '@/components/ui'
 import { correspond } from '@/lib/recherche'
@@ -213,6 +214,7 @@ export default async function Axe2Page({
         <div>
           <FormulairesTransaction />
           <ImportCsv />
+          <LectureFacture />
         </div>
 
         {/* Liste des transactions récentes */}
