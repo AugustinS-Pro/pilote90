@@ -46,3 +46,6 @@ next-env.d.ts
 /app/generated/prisma
 test-results/
 playwright-report/
+
+# Factures d exemple produites par scripts/facture-exemple.mjs
+*-exemple.pdf
